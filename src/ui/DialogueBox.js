@@ -42,6 +42,15 @@ export default class DialogueBox {
             0.9
         );
 
+        // Panel Border
+        this.panelBorder = this.scene.add.rectangle(
+            width / 2,
+            height - 300,
+            width - 120,
+            4,
+            0x4FC3F7
+        );
+
         // Speaker Name
         this.speakerText = this.scene.add.text(
             100,
@@ -50,7 +59,7 @@ export default class DialogueBox {
             {
                 fontSize: this.fonts.speaker,
                 fontStyle: "bold",
-                color: this.colors.speaker
+                color: "#7FDBFF"
             }
         );
 
@@ -78,6 +87,15 @@ export default class DialogueBox {
                 color: this.colors.hint
             }
         );
+        
+        // Blinking Animation
+        this.tweens.add({
+            targets: this.continueText,
+            alpha: 0.3,
+            duration: 700,
+            yoyo: true,
+            repeat: -1
+        });
 
         // ----------------------------
         // Store all UI elements
@@ -85,6 +103,7 @@ export default class DialogueBox {
 
         this.elements = [
             this.panel,
+            this.panelBorder,
             this.speakerText,
             this.dialogueText,
             this.continueText
@@ -143,21 +162,46 @@ export default class DialogueBox {
             this.nextDialogue();
         });
 
+        this.scene.input.keyboard.once("keydown-SPACE", () => {
+            this.nextDialogue();
+        });
+
+        this.scene.input.keyboard.once("keydown-ENTER", () => {
+            this.nextDialogue();
+        });
+
     }
-
-
-
+    
     show() {
 
         this.elements.forEach(element => {
             element.setVisible(true);
+            element.setAlpha(0);
         });
-    }
 
+        this.scene.tweens.add({
+            targets: this.elements,
+            alpha: 1,
+            duration: 250,
+            ease: "Power2"
+        });
+
+    }
+    
     hide() {
 
-        this.elements.forEach(element => {
-            element.setVisible(false);
+        this.scene.tweens.add({
+            targets: this.elements,
+            alpha: 0,
+            duration: 250,
+            ease: "Power2",
+            onComplete: () => {
+
+                this.elements.forEach(element => {
+                element.setVisible(false);
+                });
+
+            }
         });
 
     }
