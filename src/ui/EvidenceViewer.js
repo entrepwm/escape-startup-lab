@@ -7,7 +7,6 @@ export default class EvidenceViewer {
         this.scene = scene;
         this.window = window;
         this.evidenceList = evidenceList;
-        this.folderList = this.createFolderList;
 
     }
 
@@ -63,11 +62,56 @@ export default class EvidenceViewer {
 
     }
 
+    createBackButton() {
+
+        const back = this.scene.add.text(
+
+            0,
+            250,
+
+            "← Back",
+
+            {
+
+                fontSize: "22px",
+                color: "#0066cc",
+                fontStyle: "bold"
+
+            }
+
+        )
+        .setInteractive({ useHandCursor: true });
+
+        back.on("pointerover", () => {
+
+            back.setColor("#ff8800");
+
+        });
+
+        back.on("pointerout", () => {
+
+            back.setColor("#0066cc");
+
+        });
+
+        back.on("pointerdown", () => {
+
+            this.openFolder();
+
+        });
+
+        return back;
+
+    }
+
+
     // =====================================================
     // Open Evidence Folder
     // =====================================================
 
     openFolder() {
+
+        const folderList = this.createFolderList();
 
         this.window.open({
             title: "Evidence Folder"
@@ -97,13 +141,39 @@ export default class EvidenceViewer {
 
         }
 
-        this.window.open({
+        this.window.setTitle(evidence.title);
 
-            title: evidence.title,
+        const container = this.scene.add.container(0, 0);
 
-            content: evidence.content
+        const text = this.scene.add.text(
 
-        });
+            0,
+            0,
+
+            evidence.content,
+
+            {
+
+                fontSize: "20px",
+
+                color: "#000000",
+
+                wordWrap: {
+
+                    width: 420
+
+                }
+
+            }
+
+        );
+
+        container.add(text);
+
+        container.add(this.createBackButton());
+
+        this.window.setContent(container);
+        
 
     }
 

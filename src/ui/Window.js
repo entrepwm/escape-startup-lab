@@ -123,15 +123,15 @@ export default class Window {
     // Open Window
     // ======================================
 
-    open(config) {
+    open(config = {}) {
 
-        this.titleText.setText(config.title);
+        this.setTitle(config.title ?? "");
 
-        // Default to text mode
-        this.contentText.setVisible(true);
-        this.contentContainer.setVisible(false);
+        if (config.content !== undefined) {
 
-        this.contentText.setText(config.content ?? "");
+            this.setContent(config.content);
+
+        }
 
         this.elements.forEach(element => {
 
@@ -150,19 +150,49 @@ export default class Window {
 
     }
 
-    setContent(container) {
+    setContent(content) {
 
-        // Remove previous UI
-        this.contentContainer.removeAll(true);
+        this.clearContent();
 
-        // Hide default text
-        this.contentText.setVisible(false);
+        if (typeof content === "string") {
 
-        // Show interactive container
+            this.contentText.setText(content);
+
+            this.contentText.setVisible(true);
+
+            return;
+
+        }
+
+        this.contentContainer.add(content);
+
         this.contentContainer.setVisible(true);
 
-        // Add new content
-        this.contentContainer.add(container);
+    }
+
+    // ======================================
+    // Set Window Title
+    // ======================================
+
+    setTitle(title) {
+
+        this.titleText.setText(title);
+
+    }
+
+    // ======================================
+    // Clear Current Content
+    // ======================================
+
+    clearContent() {
+
+        this.contentContainer.removeAll(true);
+
+        this.contentText.setText("");
+
+        this.contentText.setVisible(false);
+
+        this.contentContainer.setVisible(false);
 
     }
 
@@ -172,7 +202,7 @@ export default class Window {
 
     close() {
 
-        this.contentContainer.removeAll(true);
+        this.clearContent();
 
         this.scene.tweens.add({
 
