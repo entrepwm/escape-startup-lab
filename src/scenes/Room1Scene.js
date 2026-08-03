@@ -1,24 +1,73 @@
 import Phaser from "phaser";
+import DesktopLayout from "../ui/DesktopLayout";
+import Window from "../ui/Window";
+
 
 export default class Room1Scene extends Phaser.Scene {
 
     constructor() {
+
         super("Room1Scene");
+
     }
 
     create() {
 
-        this.cameras.main.setBackgroundColor("#24324a");
+        const desktop = new DesktopLayout(this);
 
-        this.add.text(
-            this.scale.width / 2,
-            this.scale.height / 2,
-            "Room 1 (Under Development)",
-            {
-                fontSize: "42px",
-                color: "#ffffff"
+        const window = new Window(this);
+
+        desktop.onIconClick((id) => {
+
+            if (id === "evidence") {
+
+                window.open({
+
+                    title: "Evidence",
+
+                    content:
+        `Available Evidence
+
+        📄 Customer Reviews
+        📊 Sales Report
+        🖼 Kitchen Photo
+        📝 Employee Interview`
+
+                });
+
             }
-        ).setOrigin(0.5);
+
+        });
+
+        desktop.addIcon({
+            id: "evidence",
+            label: "Evidence",
+            icon: "📂",
+            x: 120,
+            y: 140
+        });
+
+        desktop.addIcon({
+            id: "notebook",
+            label: "Notebook",
+            icon: "📓",
+            x: 120,
+            y: 260
+        });
+
+        desktop.addIcon({
+            id: "assessment",
+            label: "Founder Assessment",
+            icon: "📋",
+            x: 120,
+            y: 380
+        });
+
+        desktop.onIconClick((id) => {
+
+            console.log(`${id} clicked`);
+
+        });
 
     }
 
