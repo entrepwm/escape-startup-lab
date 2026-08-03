@@ -91,12 +91,24 @@ export default class Window {
             }
         ).setVisible(false);
 
+// ======================================
+// Dynamic Content Container
+// ======================================
+
+        this.contentContainer = this.scene.add.container(
+            this.width / 2 - 300,
+            this.height / 2 - 145
+        );
+
+        this.contentContainer.setVisible(false);
+
         this.elements = [
             this.panel,
             this.titleBar,
             this.titleText,
             this.closeButton,
-            this.contentText
+            this.contentText,
+            this.contentContainer
         ];
 
         this.closeButton.on("pointerdown", () => {
@@ -114,7 +126,12 @@ export default class Window {
     open(config) {
 
         this.titleText.setText(config.title);
-        this.contentText.setText(config.content);
+
+        // Default to text mode
+        this.contentText.setVisible(true);
+        this.contentContainer.setVisible(false);
+
+        this.contentText.setText(config.content ?? "");
 
         this.elements.forEach(element => {
 
@@ -133,11 +150,29 @@ export default class Window {
 
     }
 
+    setContent(container) {
+
+        // Remove previous UI
+        this.contentContainer.removeAll(true);
+
+        // Hide default text
+        this.contentText.setVisible(false);
+
+        // Show interactive container
+        this.contentContainer.setVisible(true);
+
+        // Add new content
+        this.contentContainer.add(container);
+
+    }
+
     // ======================================
     // Close Window
     // ======================================
 
     close() {
+
+        this.contentContainer.removeAll(true);
 
         this.scene.tweens.add({
 
