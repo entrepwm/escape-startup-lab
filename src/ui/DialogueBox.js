@@ -89,7 +89,7 @@ export default class DialogueBox {
         );
         
         // Blinking Animation
-        this.tweens.add({
+        this.scene.tweens.add({
             targets: this.continueText,
             alpha: 0.3,
             duration: 700,

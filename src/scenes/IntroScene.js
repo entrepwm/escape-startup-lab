@@ -9,13 +9,49 @@ export default class IntroScene extends Phaser.Scene {
 
     create() {
 
+        // -------------------------------------------------
         // Background
+        // -------------------------------------------------
+
         this.cameras.main.setBackgroundColor("#24324a");
 
-        // Create Dialogue Box
+        // -------------------------------------------------
+        // Title
+        // -------------------------------------------------
+
+        this.add.text(
+            this.scale.width / 2,
+            90,
+            "ESCAPE STARTUP LAB",
+            {
+                fontSize: "40px",
+                color: "#ffffff",
+                fontStyle: "bold"
+            }
+        ).setOrigin(0.5);
+
+        this.add.text(
+            this.scale.width / 2,
+            140,
+            "Founder Assessment Initiated",
+            {
+                fontSize: "22px",
+                color: "#b8c7e0"
+            }
+        ).setOrigin(0.5);
+
+        // -------------------------------------------------
+        // Fade In
+        // -------------------------------------------------
+
+        this.cameras.main.fadeIn(500);
+
+        // -------------------------------------------------
+        // Dialogue
+        // -------------------------------------------------
+
         const dialogue = new DialogueBox(this);
 
-        // Intro Dialogue
         dialogue.start([
             {
                 speaker: "EVA",
@@ -31,19 +67,31 @@ export default class IntroScene extends Phaser.Scene {
             },
             {
                 speaker: "EVA",
-                text: "Each room contains evidence hidden in documents, reports, and customer feedback."
+                text: "Search every room carefully. Evidence may be hidden inside reports, interviews, financial records, and customer feedback."
             },
             {
                 speaker: "EVA",
-                text: "Collect the evidence carefully before making your recommendation."
+                text: "Your objective is not to find the 'correct answer', but to justify the strongest recommendation using evidence."
             },
             {
                 speaker: "EVA",
-                text: "Good luck. Your assessment begins now."
+                text: "The Investment Committee will evaluate both your reasoning and your final proposal."
+            },
+            {
+                speaker: "EVA",
+                text: "Good luck.\n\nYour assessment begins now."
             }
+
         ], () => {
 
-            this.scene.start("Room1Scene");
+            // Fade Out
+            this.cameras.main.fadeOut(500);
+
+            this.cameras.main.once("camerafadeoutcomplete", () => {
+
+                this.scene.start("Room1Scene");
+
+            });
 
         });
 
