@@ -2,11 +2,12 @@ import Phaser from "phaser";
 
 export default class AssessmentViewer {
 
-    constructor(scene, window, assessmentData) {
+    constructor(scene, window, assessmentData, scoreManager) {
 
         this.scene = scene;
         this.window = window;
         this.assessmentData = assessmentData;
+        this.scoreManager = scoreManager;
 
         this.selectedAnswer = null;
 
@@ -124,9 +125,103 @@ export default class AssessmentViewer {
 
             }
 
-            console.log("Final Assessment:", this.selectedAnswer);
+            const result = this.scoreManager.evaluate(this.selectedAnswer);
 
-            this.window.close();
+            const container = this.scene.add.container(0, 0);
+
+            const title = this.scene.add.text(
+
+                0,
+                0,
+
+                result.correct
+                    ? "✅ Correct!"
+                    : "❌ Incorrect",
+
+                {
+
+                    fontSize: "26px",
+                    color: "#000000",
+                    fontStyle: "bold"
+
+                }
+
+            );
+
+            const score = this.scene.add.text(
+
+                0,
+                50,
+
+                `Score: ${result.score}`,
+
+                {
+
+                    fontSize: "22px",
+                    color: "#006600"
+
+                }
+
+            );
+
+            const explanation = this.scene.add.text(
+
+                0,
+                100,
+
+                result.explanation,
+
+                {
+
+                    fontSize: "20px",
+                    color: "#000000",
+
+                    wordWrap: {
+
+                        width: 420
+
+                    }
+
+                }
+
+            );
+
+            const button = this.scene.add.text(
+
+                0,
+                230,
+
+                "Continue",
+
+                {
+
+                    fontSize: "22px",
+                    color: "#0066cc",
+                    fontStyle: "bold"
+
+                }
+
+            )
+            .setInteractive({ useHandCursor: true });
+
+            button.on("pointerdown", () => {
+
+                this.window.close();
+
+            });
+
+            container.add(title);
+            container.add(score);
+            container.add(explanation);
+            container.add(button);
+
+            this.window.open({
+
+                title: "Assessment Result"
+
+            });
+
+            this.window.setContent(container);
 
         });
 

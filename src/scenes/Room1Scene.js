@@ -8,6 +8,8 @@ import ROOM1_NOTEBOOK from "../data/room1Notebook";
 import ROOM1_EVIDENCE from "../data/room1Evidence";
 import AssessmentViewer from "../ui/AssessmentViewer";
 import ROOM1_ASSESSMENT from "../data/room1Assessment";
+import ScoreManager from "../core/ScoreManager";
+import ROOM1_ANSWER from "../data/room1Answer";
 
 export default class Room1Scene extends Phaser.Scene {
 
@@ -57,9 +59,12 @@ export default class Room1Scene extends Phaser.Scene {
 
             this,
             this.window,
-            ROOM1_ASSESSMENT
+            ROOM1_ASSESSMENT,
+            this.scoreManager
 
         );
+
+        this.scoreManager = new ScoreManager(ROOM1_ANSWER);
 
     }
 
