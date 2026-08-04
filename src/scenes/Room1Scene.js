@@ -3,8 +3,11 @@ import Phaser from "phaser";
 import DesktopLayout from "../ui/DesktopLayout";
 import Window from "../ui/Window";
 import EvidenceViewer from "../ui/EvidenceViewer";
-
+import NotebookViewer from "../ui/NotebookViewer";
+import ROOM1_NOTEBOOK from "../data/room1Notebook";
 import ROOM1_EVIDENCE from "../data/room1Evidence";
+import AssessmentViewer from "../ui/AssessmentViewer";
+import ROOM1_ASSESSMENT from "../data/room1Assessment";
 
 export default class Room1Scene extends Phaser.Scene {
 
@@ -39,6 +42,22 @@ export default class Room1Scene extends Phaser.Scene {
             this,
             this.window,
             ROOM1_EVIDENCE
+
+        );
+
+        this.NotebookViewer = new NotebookViewer(
+
+            this,
+            this.window,
+            ROOM1_NOTEBOOK
+
+        );
+
+        this.assessmentViewer = new AssessmentViewer(
+
+            this,
+            this.window,
+            ROOM1_ASSESSMENT
 
         );
 
@@ -112,13 +131,13 @@ export default class Room1Scene extends Phaser.Scene {
 
                 case "notebook":
 
-                    console.log("Notebook clicked");
+                    this.notebookViewer.open();
 
                     break;
 
                 case "assessment":
 
-                    console.log("Assessment clicked");
+                    this.assessmentViewer.open();
 
                     break;
 
