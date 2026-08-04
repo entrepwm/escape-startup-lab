@@ -47,13 +47,15 @@ export default class Room1Scene extends Phaser.Scene {
 
         );
 
-        this.NotebookViewer = new NotebookViewer(
+        this.notebookViewer = new NotebookViewer(
 
             this,
             this.window,
             ROOM1_NOTEBOOK
 
         );
+
+        this.scoreManager = new ScoreManager(ROOM1_ANSWER);
 
         this.assessmentViewer = new AssessmentViewer(
 
@@ -64,7 +66,7 @@ export default class Room1Scene extends Phaser.Scene {
 
         );
 
-        this.scoreManager = new ScoreManager(ROOM1_ANSWER);
+        
 
     }
 

@@ -9,18 +9,43 @@ export default class NotebookViewer {
         this.notebookData = notebookData;
 
         this.answers = {};
+        this.currentPage = 0;
+
+        // 2 questions per page
+        this.questionsPerPage = 2;
 
     }
 
     open() {
 
+        this.window.open({
+            title: "Investigation Notebook"
+        });
+
+        this.renderPage();
+
+    }
+
+    renderPage() {
+
+        this.window.clearContent();
+
         const container = this.scene.add.container(0, 0);
 
         let currentY = 0;
 
-        this.notebookData.forEach(question => {
+        const start =
+            this.currentPage * this.questionsPerPage;
 
-            // Question
+        const end = Math.min(
+            start + this.questionsPerPage,
+            this.notebookData.length
+        );
+
+        for (let i = start; i < end; i++) {
+
+            const question = this.notebookData[i];
+
             const title = this.scene.add.text(
                 0,
                 currentY,
@@ -37,16 +62,18 @@ export default class NotebookViewer {
 
             currentY += 40;
 
-            // Options
             question.options.forEach(option => {
+
+                const selected =
+                    this.answers[question.id] === option;
 
                 const optionText = this.scene.add.text(
                     20,
                     currentY,
-                    `○ ${option}`,
+                    `${selected ? "●" : "○"} ${option}`,
                     {
                         fontSize: "20px",
-                        color: "#0066cc"
+                        color: selected ? "#008800" : "#0066cc"
                     }
                 )
                 .setInteractive({ useHandCursor: true });
@@ -55,17 +82,9 @@ export default class NotebookViewer {
 
                     this.answers[question.id] = option;
 
-                    // Refresh notebook
-                    this.open();
+                    this.renderPage();
 
                 });
-
-                // Show selected answer
-                if (this.answers[question.id] === option) {
-
-                    optionText.setText(`● ${option}`);
-
-                }
 
                 container.add(optionText);
 
@@ -73,36 +92,107 @@ export default class NotebookViewer {
 
             });
 
-            currentY += 25;
+            currentY += 30;
 
-        });
+        }
 
-        // Save Button
-        const saveButton = this.scene.add.text(
-            0,
-            currentY,
-            "💾 Save & Close",
-            {
-                fontSize: "22px",
-                color: "#008800",
-                fontStyle: "bold"
-            }
-        )
-        .setInteractive({ useHandCursor: true });
+        //--------------------------------------------------
+        // Navigation Buttons
+        //--------------------------------------------------
 
-        saveButton.on("pointerdown", () => {
+        if (this.currentPage > 0) {
 
-            console.log(this.answers);
+            const back = this.scene.add.text(
 
-            this.window.close();
+                0,
+                330,
 
-        });
+                "◀ Previous",
 
-        container.add(saveButton);
+                {
+                    fontSize: "20px",
+                    color: "#0066cc",
+                    fontStyle: "bold"
+                }
 
-        this.window.open({
-            title: "Investigation Notebook"
-        });
+            )
+            .setInteractive({ useHandCursor: true });
+
+            back.on("pointerdown", () => {
+
+                this.currentPage--;
+
+                this.renderPage();
+
+            });
+
+            container.add(back);
+
+        }
+
+        const lastPage = Math.ceil(
+            this.notebookData.length /
+            this.questionsPerPage
+        ) - 1;
+
+        if (this.currentPage < lastPage) {
+
+            const next = this.scene.add.text(
+
+                300,
+                330,
+
+                "Next ▶",
+
+                {
+                    fontSize: "20px",
+                    color: "#0066cc",
+                    fontStyle: "bold"
+                }
+
+            )
+            .setInteractive({ useHandCursor: true });
+
+            next.on("pointerdown", () => {
+
+                this.currentPage++;
+
+                this.renderPage();
+
+            });
+
+            container.add(next);
+
+        }
+        else {
+
+            const save = this.scene.add.text(
+
+                250,
+                330,
+
+                "💾 Save & Close",
+
+                {
+                    fontSize: "20px",
+                    color: "#008800",
+                    fontStyle: "bold"
+                }
+
+            )
+            .setInteractive({ useHandCursor: true });
+
+            save.on("pointerdown", () => {
+
+                console.log(this.answers);
+
+                this.window.close();
+
+            });
+
+            container.add(save);
+
+        }
 
         this.window.setContent(container);
 
