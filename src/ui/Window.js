@@ -6,110 +6,90 @@ export default class Window {
 
         this.scene = scene;
 
-        this.width = scene.scale.width;
-        this.height = scene.scale.height;
+        // ======================================
+        // WINDOW CONTAINER
+        // ======================================
 
-        this.elements = [];
+        const windowWidth = 700;
+        const windowHeight = 500;
 
-        this.create();
+        const centerX = (scene.scale.width - windowWidth) / 2;
+        const centerY = (scene.scale.height - windowHeight) / 2;
 
-    }
+        this.container = scene.add.container(
+            centerX,
+            centerY
+        );
 
-    create() {
+        this.container.setDepth(1000);
+        this.container.setVisible(false);
 
-        // =============================
-        // Background Panel
-        // =============================
+        // ======================================
+        // WINDOW BACKGROUND
+        // ======================================
 
-        this.panel = this.scene.add.rectangle(
-            this.width / 2,
-            this.height / 2,
-            650,
-            420,
+        this.background = scene.add.rectangle(
+            0,
+            0,
+            700,
+            500,
             0xffffff
         )
-        .setStrokeStyle(2, 0x222222)
-        .setVisible(false);
+        .setOrigin(0)
+        .setStrokeStyle(2, 0x333333);
 
-        // =============================
-        // Title Bar
-        // =============================
+        this.container.add(this.background);
 
-        this.titleBar = this.scene.add.rectangle(
-            this.width / 2,
-            this.height / 2 - 190,
-            650,
-            40,
-            0x1b2535
-        ).setVisible(false);
+        // ======================================
+        // TITLE BAR
+        // ======================================
 
-        // =============================
-        // Title
-        // =============================
+        this.titleBar = scene.add.rectangle(
+            0,
+            0,
+            700,
+            35,
+            0x182436
+        )
+        .setOrigin(0);
 
-        this.titleText = this.scene.add.text(
-            this.width / 2 - 305,
-            this.height / 2 - 203,
+        this.container.add(this.titleBar);
+
+        // ======================================
+        // TITLE
+        // ======================================
+
+        this.titleText = scene.add.text(
+            15,
+            8,
             "",
+            {
+                fontSize: "16px",
+                color: "#ffffff",
+                fontStyle: "bold"
+            }
+        );
+
+        this.container.add(this.titleText);
+
+        // ======================================
+        // CLOSE BUTTON
+        // ======================================
+
+        this.closeButton = scene.add.text(
+            675,
+            6,
+            "×",
             {
                 fontSize: "20px",
                 color: "#ffffff",
                 fontStyle: "bold"
             }
-        ).setVisible(false);
-
-        // =============================
-        // Close Button
-        // =============================
-
-        this.closeButton = this.scene.add.text(
-            this.width / 2 + 290,
-            this.height / 2 - 205,
-            "✕",
-            {
-                fontSize: "22px",
-                color: "#ffffff"
-            }
         )
-        .setInteractive({ useHandCursor: true })
-        .setVisible(false);
-
-        // =============================
-        // Content
-        // =============================
-
-        this.contentText = this.scene.add.text(
-            this.width / 2 - 300,
-            this.height / 2 - 145,
-            "",
-            {
-                fontSize: "20px",
-                color: "#000000",
-                wordWrap: {
-                    width: 580
-                }
-            }
-        ).setVisible(false);
-
-// ======================================
-// Dynamic Content Container
-// ======================================
-
-        this.contentContainer = this.scene.add.container(
-            this.width / 2 - 300,
-            this.height / 2 - 145
-        );
-
-        this.contentContainer.setVisible(false);
-
-        this.elements = [
-            this.panel,
-            this.titleBar,
-            this.titleText,
-            this.closeButton,
-            this.contentText,
-            this.contentContainer
-        ];
+        .setOrigin(0.5, 0)
+        .setInteractive({
+            useHandCursor: true
+        });
 
         this.closeButton.on("pointerdown", () => {
 
@@ -117,42 +97,95 @@ export default class Window {
 
         });
 
+        this.container.add(this.closeButton);
+
+        // ======================================
+        // CONTENT TEXT
+        // Used for normal text content
+        // ======================================
+
+        this.contentText = scene.add.text(
+            20,
+            65,
+            "",
+            {
+                fontSize: "20px",
+                color: "#000000",
+                wordWrap: {
+                    width: 650
+                }
+            }
+        );
+
+        this.container.add(this.contentText);
+
+        // ======================================
+        // DYNAMIC CONTENT CONTAINER
+        // Used for Notebook / Evidence lists
+        // ======================================
+
+        this.contentContainer = scene.add.container(
+            20,
+            65
+        );
+
+        this.container.add(this.contentContainer);
+
+        // ======================================
+        // INITIAL STATE
+        // ======================================
+
+        this.contentText.setVisible(false);
+
+        this.contentContainer.setVisible(false);
+
     }
 
     // ======================================
-    // Open Window
+    // OPEN WINDOW
     // ======================================
 
-    open(config = {}) {
+    open(options = {}) {
 
-        this.setTitle(config.title ?? "");
+        this.setTitle(options.title ?? "");
 
-        if (config.content !== undefined) {
+        this.clearContent();
 
-            this.setContent(config.content);
+        if (options.content !== undefined) {
+
+            this.setContent(options.content);
 
         }
 
-        this.elements.forEach(element => {
+        this.container.setDepth(1000);
 
-            element.setVisible(true);
-            element.setAlpha(0);
+        this.container.setAlpha(1);
 
-        });
-
-        this.scene.tweens.add({
-
-            targets: this.elements,
-            alpha: 1,
-            duration: 200
-
-        });
+        this.container.setVisible(true);
 
     }
+
+    // ======================================
+    // SET TITLE
+    // ======================================
+
+    setTitle(title) {
+
+        this.titleText.setText(title);
+
+    }
+
+    // ======================================
+    // SET CONTENT
+    // ======================================
 
     setContent(content) {
 
         this.clearContent();
+
+        // --------------------------------------
+        // STRING CONTENT
+        // --------------------------------------
 
         if (typeof content === "string") {
 
@@ -164,63 +197,70 @@ export default class Window {
 
         }
 
-        this.contentContainer.add(content);
+        // --------------------------------------
+        // PHASER CONTAINER CONTENT
+        // --------------------------------------
 
-        this.contentContainer.setVisible(true);
+        if (content instanceof Phaser.GameObjects.Container) {
+
+            this.contentContainer.add(content);
+
+            this.contentContainer.setVisible(true);
+
+            return;
+
+        }
+
+        // --------------------------------------
+        // OTHER PHASER GAME OBJECT
+        // --------------------------------------
+
+        if (content instanceof Phaser.GameObjects.GameObject) {
+
+            this.contentContainer.add(content);
+
+            this.contentContainer.setVisible(true);
+
+            return;
+
+        }
+
+        console.warn(
+            "Window.setContent(): Unsupported content type.",
+            content
+        );
 
     }
 
     // ======================================
-    // Set Window Title
-    // ======================================
-
-    setTitle(title) {
-
-        this.titleText.setText(title);
-
-    }
-
-    // ======================================
-    // Clear Current Content
+    // CLEAR CONTENT
     // ======================================
 
     clearContent() {
 
-        this.contentContainer.removeAll(true);
+        // Clear text content
 
         this.contentText.setText("");
 
         this.contentText.setVisible(false);
+
+        // Clear dynamic content
+
+        this.contentContainer.removeAll(true);
 
         this.contentContainer.setVisible(false);
 
     }
 
     // ======================================
-    // Close Window
+    // CLOSE WINDOW
     // ======================================
 
     close() {
 
         this.clearContent();
 
-        this.scene.tweens.add({
-
-            targets: this.elements,
-            alpha: 0,
-            duration: 200,
-
-            onComplete: () => {
-
-                this.elements.forEach(element => {
-
-                    element.setVisible(false);
-
-                });
-
-            }
-
-        });
+        this.container.setVisible(false);
 
     }
 

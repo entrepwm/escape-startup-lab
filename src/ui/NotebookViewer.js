@@ -51,7 +51,7 @@ export default class NotebookViewer {
                 currentY,
                 question.question,
                 {
-                    fontSize: "22px",
+                    fontSize: "24px",
                     color: "#000000",
                     fontStyle: "bold",
                     wordWrap: { width: 420 }
@@ -60,7 +60,7 @@ export default class NotebookViewer {
 
             container.add(title);
 
-            currentY += 40;
+            currentY += title.height + 15;
 
             question.options.forEach(option => {
 
@@ -72,7 +72,7 @@ export default class NotebookViewer {
                     currentY,
                     `${selected ? "●" : "○"} ${option}`,
                     {
-                        fontSize: "20px",
+                        fontSize: "18px",
                         color: selected ? "#008800" : "#0066cc"
                     }
                 )
@@ -88,11 +88,11 @@ export default class NotebookViewer {
 
                 container.add(optionText);
 
-                currentY += 32;
+                currentY += optionText.height + 10;
 
             });
 
-            currentY += 30;
+            currentY += 25;
 
         }
 

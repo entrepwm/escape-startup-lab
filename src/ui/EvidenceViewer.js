@@ -62,6 +62,10 @@ export default class EvidenceViewer {
 
     }
 
+    // =====================================================
+    // Create Back Button
+    // =====================================================
+
     createBackButton() {
 
         const back = this.scene.add.text(
@@ -72,11 +76,9 @@ export default class EvidenceViewer {
             "← Back",
 
             {
-
                 fontSize: "22px",
                 color: "#0066cc",
                 fontStyle: "bold"
-
             }
 
         )
@@ -104,7 +106,6 @@ export default class EvidenceViewer {
 
     }
 
-
     // =====================================================
     // Open Evidence Folder
     // =====================================================
@@ -128,9 +129,7 @@ export default class EvidenceViewer {
     openEvidence(id) {
 
         const evidence = this.evidenceList.find(
-
             file => file.id === id
-
         );
 
         if (!evidence) {
@@ -141,39 +140,35 @@ export default class EvidenceViewer {
 
         }
 
-        this.window.setTitle(evidence.title);
-
+        // Create evidence content
         const container = this.scene.add.container(0, 0);
 
         const text = this.scene.add.text(
-
             0,
             0,
-
-            evidence.content,
-
+            evidence.content || "No evidence content available.",
             {
-
                 fontSize: "20px",
-
                 color: "#000000",
-
                 wordWrap: {
-
                     width: 420
-
                 }
-
             }
-
         );
 
         container.add(text);
 
+        // Add back button
         container.add(this.createBackButton());
 
+        // IMPORTANT:
+        // Actually OPEN the popup window.
+        this.window.open({
+            title: evidence.title
+        });
+
+        // Put the evidence inside the popup.
         this.window.setContent(container);
-        
 
     }
 

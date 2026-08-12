@@ -1,14 +1,20 @@
 import Phaser from "phaser";
 
-import DesktopLayout from "../ui/DesktopLayout";
+import AssessmentTerminal from "../ui/AssessmentTerminal";
 import Window from "../ui/Window";
+
+import RoomView from "../ui/RoomView";
+
 import EvidenceViewer from "../ui/EvidenceViewer";
 import NotebookViewer from "../ui/NotebookViewer";
-import ROOM1_NOTEBOOK from "../data/room1Notebook";
-import ROOM1_EVIDENCE from "../data/room1Evidence";
 import AssessmentViewer from "../ui/AssessmentViewer";
-import ROOM1_ASSESSMENT from "../data/room1Assessment";
+
 import ScoreManager from "../core/ScoreManager";
+
+import ROOM1_OBJECTS from "../data/room1Objects";
+import ROOM1_EVIDENCE from "../data/room1Evidence";
+import ROOM1_NOTEBOOK from "../data/room1Notebook";
+import ROOM1_ASSESSMENT from "../data/room1Assessment";
 import ROOM1_ANSWER from "../data/room1Answer";
 
 export default class Room1Scene extends Phaser.Scene {
@@ -19,26 +25,40 @@ export default class Room1Scene extends Phaser.Scene {
 
     }
 
+    // =====================================================
+    // CREATE
+    // =====================================================
+
     create() {
 
         this.createSystems();
 
-        this.createDesktop();
+        this.createRoomObjects();
 
         this.registerEvents();
+
+        this.initializeUI();
 
     }
 
     // =====================================================
-    // CREATE SYSTEMS
+    // SYSTEMS
     // =====================================================
 
     createSystems() {
 
-        this.desktop = new DesktopLayout(this);
+        // Main UI
+        this.terminal = new AssessmentTerminal(this);
 
+        // Popup window
         this.window = new Window(this);
 
+        // Game systems
+        this.scoreManager = new ScoreManager(
+            ROOM1_ANSWER
+        );
+
+        // Viewers
         this.evidenceViewer = new EvidenceViewer(
 
             this,
@@ -55,8 +75,6 @@ export default class Room1Scene extends Phaser.Scene {
 
         );
 
-        this.scoreManager = new ScoreManager(ROOM1_ANSWER);
-
         this.assessmentViewer = new AssessmentViewer(
 
             this,
@@ -66,55 +84,40 @@ export default class Room1Scene extends Phaser.Scene {
 
         );
 
-        
+        // Room View
+        this.roomView = this.terminal.getRoomView();
 
     }
 
     // =====================================================
-    // DESKTOP ICONS
+    // INITIAL UI
     // =====================================================
 
-    createDesktop() {
+    initializeUI() {
 
-        this.desktop.addIcon({
+        this.terminal.setRoom("Idea Lab");
 
-            id: "evidence",
+        this.terminal.setDialogue(
 
-            label: "Evidence",
+            "Welcome, Candidate.\nInvestigate every object before completing your assessment."
 
-            icon: "📂",
+        );
 
-            x: 80,
+        this.terminal.setScore(0);
 
-            y: 120
+        this.terminal.setTime("15:00");
 
-        });
+    }
 
-        this.desktop.addIcon({
+    // =====================================================
+    // ROOM OBJECTS
+    // =====================================================
 
-            id: "notebook",
+    createRoomObjects() {
 
-            label: "Notebook",
+        ROOM1_OBJECTS.forEach(object => {
 
-            icon: "📓",
-
-            x: 80,
-
-            y: 240
-
-        });
-
-        this.desktop.addIcon({
-
-            id: "assessment",
-
-            label: "Assessment",
-
-            icon: "📋",
-
-            x: 80,
-
-            y: 360
+            this.roomView.addObject(object);
 
         });
 
@@ -126,15 +129,13 @@ export default class Room1Scene extends Phaser.Scene {
 
     registerEvents() {
 
-        this.desktop.onIconClick((id) => {
+        // -------------------------------
+        // Sidebar Buttons
+        // -------------------------------
+
+        this.terminal.onButtonClick((id) => {
 
             switch (id) {
-
-                case "evidence":
-
-                    this.evidenceViewer.openFolder();
-
-                    break;
 
                 case "notebook":
 
@@ -148,11 +149,79 @@ export default class Room1Scene extends Phaser.Scene {
 
                     break;
 
+                case "hint":
+
+                    this.window.open({
+
+                        title: "Hint"
+
+                    });
+
+                    this.window.setContent(
+
+                        "Remember to compare customer opinions with operational evidence."
+
+                    );
+
+                    break;
+
+                case "progress":
+
+                    this.window.open({
+
+                        title: "Progress"
+
+                    });
+
+                    this.window.setContent(
+
+                        "Room 1 of 4"
+
+                    );
+
+                    break;
+
                 default:
 
-                    console.warn(`Unknown icon: ${id}`);
+                    console.warn(`Unknown sidebar button: ${id}`);
 
             }
+
+        });
+
+        // -------------------------------
+        // Room Objects
+        // -------------------------------
+
+        this.roomView.onObjectClick((id) => {
+
+            const object = ROOM1_OBJECTS.find(
+                obj => obj.id === id
+            );
+
+            if (!object) {
+
+                console.warn(`Unknown room object: ${id}`);
+
+                return;
+
+            }
+
+            console.log(`Room object clicked: ${object.id}`);
+
+            if (!object.evidence) {
+
+                console.warn(
+                    `No evidence assigned to room object: ${object.id}`
+                );
+
+                return;
+
+            }
+
+            this.evidenceViewer.openEvidence(
+                object.evidence
+            );
 
         });
 
