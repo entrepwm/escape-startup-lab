@@ -1,5 +1,27 @@
 const ROOM1_ANSWER = {
 
+    // =====================================================
+    // NOTEBOOK ANSWERS
+    // =====================================================
+
+    notebook: {
+
+        customer_satisfaction: "Mixed",
+
+        food_quality: "Excellent",
+
+        service_speed: "Slow",
+
+        main_problem: "Service Speed",
+
+        confidence: "Very Confident"
+
+    },
+
+    // =====================================================
+    // ASSESSMENT ANSWER
+    // =====================================================
+
     correctRecommendation: "service",
 
     explanation:

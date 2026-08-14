@@ -2,21 +2,38 @@ import Phaser from "phaser";
 
 export default class NotebookViewer {
 
-    constructor(scene, window, notebookData) {
+    constructor(
+        scene,
+        window,
+        notebookData,
+        scoreManager,
+        onSubmit
+    ) {
 
         this.scene = scene;
         this.window = window;
         this.notebookData = notebookData;
+        this.scoreManager = scoreManager;
+        this.onSubmit = onSubmit;
 
+        // Store player answers
         this.answers = {};
+
+        // Current question/page
         this.currentPage = 0;
 
-        // 2 questions per page
-        this.questionsPerPage = 2;
+        // One question per page
+        this.questionsPerPage = 1;
 
     }
 
+    // =====================================================
+    // OPEN NOTEBOOK
+    // =====================================================
+
     open() {
+
+        this.currentPage = 0;
 
         this.window.open({
             title: "Investigation Notebook"
@@ -26,175 +43,537 @@ export default class NotebookViewer {
 
     }
 
+    // =====================================================
+    // RENDER PAGE
+    // =====================================================
+
     renderPage() {
 
+        // Clear previous content
         this.window.clearContent();
 
-        const container = this.scene.add.container(0, 0);
+        // Main content container
+        const container =
+            this.scene.add.container(0, 0);
 
+        // Starting vertical position
         let currentY = 0;
 
-        const start =
-            this.currentPage * this.questionsPerPage;
+        // =====================================================
+        // PAGE CALCULATION
+        // =====================================================
 
-        const end = Math.min(
-            start + this.questionsPerPage,
-            this.notebookData.length
-        );
+        const totalPages =
+            Math.ceil(
+                this.notebookData.length /
+                this.questionsPerPage
+            );
 
-        for (let i = start; i < end; i++) {
+        const startIndex =
+            this.currentPage *
+            this.questionsPerPage;
 
-            const question = this.notebookData[i];
+        const endIndex =
+            Math.min(
+                startIndex + this.questionsPerPage,
+                this.notebookData.length
+            );
 
-            const title = this.scene.add.text(
-                0,
-                currentY,
-                question.question,
-                {
-                    fontSize: "24px",
-                    color: "#000000",
-                    fontStyle: "bold",
-                    wordWrap: { width: 420 }
+        // =====================================================
+        // QUESTION
+        // =====================================================
+
+        for (
+            let i = startIndex;
+            i < endIndex;
+            i++
+        ) {
+
+            const question =
+                this.notebookData[i];
+
+            // -------------------------------------------------
+            // QUESTION TEXT
+            // -------------------------------------------------
+
+            const questionText =
+                this.scene.add.text(
+                    0,
+                    currentY,
+                    question.question,
+                    {
+                        fontSize: "20px",
+                        color: "#000000",
+                        fontStyle: "bold",
+
+                        wordWrap: {
+                            width: 410
+                        },
+
+                        lineSpacing: 2
+                    }
+                );
+
+            container.add(questionText);
+
+            // Move below question
+            currentY +=
+                questionText.height + 18;
+
+            // -------------------------------------------------
+            // OPTIONS
+            // -------------------------------------------------
+
+            question.options.forEach(
+                option => {
+
+                    const selected =
+                        this.answers[question.id] === option;
+
+                    const optionText =
+                        this.scene.add.text(
+                            15,
+                            currentY,
+
+                            selected
+                                ? `● ${option}`
+                                : `○ ${option}`,
+
+                            {
+                                fontSize: "17px",
+
+                                color:
+                                    selected
+                                        ? "#008800"
+                                        : "#0066cc",
+
+                                wordWrap: {
+                                    width: 395
+                                },
+
+                                lineSpacing: 2
+                            }
+                        );
+
+                    // -------------------------------------------------
+                    // INTERACTION
+                    // -------------------------------------------------
+
+                    optionText.setInteractive({
+                        useHandCursor: true
+                    });
+
+                    // -------------------------------------------------
+                    // HOVER
+                    // -------------------------------------------------
+
+                    optionText.on(
+                        "pointerover",
+                        () => {
+
+                            if (!selected) {
+
+                                optionText.setColor(
+                                    "#ff8800"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                    optionText.on(
+                        "pointerout",
+                        () => {
+
+                            optionText.setColor(
+                                selected
+                                    ? "#008800"
+                                    : "#0066cc"
+                            );
+
+                        }
+                    );
+
+                    // -------------------------------------------------
+                    // SELECT
+                    // -------------------------------------------------
+
+                    optionText.on(
+                        "pointerdown",
+                        () => {
+
+                            console.log(
+                                `Answer selected: ${question.id} = ${option}`
+                            );
+
+                            this.answers[
+                                question.id
+                            ] = option;
+
+                            // Re-render page
+                            // so selected option becomes ●
+                            this.renderPage();
+
+                        }
+                    );
+
+                    container.add(optionText);
+
+                    // IMPORTANT:
+                    // Use actual text height.
+                    //
+                    // This automatically accounts for
+                    // options that wrap onto multiple lines.
+
+                    currentY +=
+                        optionText.height + 9;
+
                 }
             );
 
-            container.add(title);
-
-            currentY += title.height + 15;
-
-            question.options.forEach(option => {
-
-                const selected =
-                    this.answers[question.id] === option;
-
-                const optionText = this.scene.add.text(
-                    20,
-                    currentY,
-                    `${selected ? "●" : "○"} ${option}`,
-                    {
-                        fontSize: "18px",
-                        color: selected ? "#008800" : "#0066cc"
-                    }
-                )
-                .setInteractive({ useHandCursor: true });
-
-                optionText.on("pointerdown", () => {
-
-                    this.answers[question.id] = option;
-
-                    this.renderPage();
-
-                });
-
-                container.add(optionText);
-
-                currentY += optionText.height + 10;
-
-            });
-
-            currentY += 25;
-
         }
 
-        //--------------------------------------------------
-        // Navigation Buttons
-        //--------------------------------------------------
+        // =====================================================
+        // PAGE INDICATOR
+        // =====================================================
+
+        currentY += 10;
+
+        const pageIndicator =
+            this.scene.add.text(
+                165,
+                currentY,
+
+                `Page ${this.currentPage + 1} / ${totalPages}`,
+
+                {
+                    fontSize: "15px",
+                    color: "#555555"
+                }
+            );
+
+        container.add(pageIndicator);
+
+        currentY +=
+            pageIndicator.height + 15;
+
+        // =====================================================
+        // NAVIGATION
+        // =====================================================
+
+        const navigationY =
+            currentY;
+
+        // =====================================================
+        // PREVIOUS BUTTON
+        // =====================================================
 
         if (this.currentPage > 0) {
 
-            const back = this.scene.add.text(
+            const previous =
+                this.scene.add.text(
+                    0,
+                    navigationY,
 
-                0,
-                330,
+                    "◀ Previous",
 
-                "◀ Previous",
+                    {
+                        fontSize: "17px",
+                        color: "#0066cc",
+                        fontStyle: "bold"
+                    }
+                );
 
-                {
-                    fontSize: "20px",
-                    color: "#0066cc",
-                    fontStyle: "bold"
-                }
-
-            )
-            .setInteractive({ useHandCursor: true });
-
-            back.on("pointerdown", () => {
-
-                this.currentPage--;
-
-                this.renderPage();
-
+            previous.setInteractive({
+                useHandCursor: true
             });
 
-            container.add(back);
+            previous.on(
+                "pointerover",
+                () => {
+
+                    previous.setColor(
+                        "#ff8800"
+                    );
+
+                }
+            );
+
+            previous.on(
+                "pointerout",
+                () => {
+
+                    previous.setColor(
+                        "#0066cc"
+                    );
+
+                }
+            );
+
+            previous.on(
+                "pointerdown",
+                () => {
+
+                    this.currentPage--;
+
+                    this.renderPage();
+
+                }
+            );
+
+            container.add(previous);
 
         }
 
-        const lastPage = Math.ceil(
-            this.notebookData.length /
-            this.questionsPerPage
-        ) - 1;
+        // =====================================================
+        // NEXT BUTTON
+        // =====================================================
 
-        if (this.currentPage < lastPage) {
+        if (
+            this.currentPage <
+            totalPages - 1
+        ) {
 
-            const next = this.scene.add.text(
+            const next =
+                this.scene.add.text(
+                    320,
+                    navigationY,
 
-                300,
-                330,
+                    "Next ▶",
 
-                "Next ▶",
+                    {
+                        fontSize: "17px",
+                        color: "#0066cc",
+                        fontStyle: "bold"
+                    }
+                );
 
-                {
-                    fontSize: "20px",
-                    color: "#0066cc",
-                    fontStyle: "bold"
-                }
-
-            )
-            .setInteractive({ useHandCursor: true });
-
-            next.on("pointerdown", () => {
-
-                this.currentPage++;
-
-                this.renderPage();
-
+            next.setInteractive({
+                useHandCursor: true
             });
+
+            next.on(
+                "pointerover",
+                () => {
+
+                    next.setColor(
+                        "#ff8800"
+                    );
+
+                }
+            );
+
+            next.on(
+                "pointerout",
+                () => {
+
+                    next.setColor(
+                        "#0066cc"
+                    );
+
+                }
+            );
+
+            next.on(
+                "pointerdown",
+                () => {
+
+                    this.currentPage++;
+
+                    this.renderPage();
+
+                }
+            );
 
             container.add(next);
 
         }
-        else {
 
-            const save = this.scene.add.text(
+        // =====================================================
+        // SUBMIT BUTTON
+        // =====================================================
 
-                250,
-                330,
+        if (
+            this.currentPage ===
+            totalPages - 1
+        ) {
 
-                "💾 Save & Close",
+            const submit =
+                this.scene.add.text(
+                    235,
+                    navigationY,
 
-                {
-                    fontSize: "20px",
-                    color: "#008800",
-                    fontStyle: "bold"
-                }
+                    "✓ Submit Notebook",
 
-            )
-            .setInteractive({ useHandCursor: true });
+                    {
+                        fontSize: "17px",
+                        color: "#ff8800",
+                        fontStyle: "bold"
+                    }
+                );
 
-            save.on("pointerdown", () => {
-
-                console.log(this.answers);
-
-                this.window.close();
-
+            submit.setInteractive({
+                useHandCursor: true
             });
 
-            container.add(save);
+            // -------------------------------------------------
+            // HOVER
+            // -------------------------------------------------
+
+            submit.on(
+                "pointerover",
+                () => {
+
+                    submit.setColor(
+                        "#00aa55"
+                    );
+
+                }
+            );
+
+            submit.on(
+                "pointerout",
+                () => {
+
+                    submit.setColor(
+                        "#ff8800"
+                    );
+
+                }
+            );
+
+            // -------------------------------------------------
+            // SUBMIT
+            // -------------------------------------------------
+
+            submit.on(
+                "pointerdown",
+                () => {
+
+                    console.log(
+                        "SUBMIT NOTEBOOK CLICKED"
+                    );
+
+                    this.submitNotebook();
+
+                }
+            );
+
+            container.add(submit);
 
         }
 
-        this.window.setContent(container);
+        // =====================================================
+        // SET WINDOW CONTENT
+        // =====================================================
+
+        this.window.setContent(
+            container
+        );
+
+    }
+
+    // =====================================================
+    // SUBMIT NOTEBOOK
+    // =====================================================
+
+    submitNotebook() {
+
+        console.log(
+            "Notebook answers:",
+            this.answers
+        );
+
+        // =====================================================
+        // CHECK ALL QUESTIONS
+        // =====================================================
+
+        const unanswered =
+            this.notebookData.filter(
+                question =>
+                    !this.answers[question.id]
+            );
+
+        // =====================================================
+        // INCOMPLETE
+        // =====================================================
+
+        if (
+            unanswered.length > 0
+        ) {
+
+            console.warn(
+                "Notebook incomplete."
+            );
+
+            const message =
+                this.scene.add.text(
+                    0,
+                    0,
+
+                    "Please answer all questions before submitting.",
+
+                    {
+                        fontSize: "18px",
+                        color: "#cc0000",
+
+                        wordWrap: {
+                            width: 410
+                        },
+
+                        lineSpacing: 2
+                    }
+                );
+
+            this.window.setContent(
+                message
+            );
+
+            return;
+
+        }
+
+        // =====================================================
+        // CALCULATE SCORE
+        // =====================================================
+
+        let points = 0;
+
+        if (
+            this.scoreManager
+        ) {
+
+            points =
+                this.scoreManager.calculateNotebookScore(
+                    this.answers
+                );
+
+        }
+
+        console.log(
+            `Notebook score: ${points}`
+        );
+
+        // =====================================================
+        // CLOSE NOTEBOOK
+        // =====================================================
+
+        this.window.close();
+
+        // =====================================================
+        // NOTIFY ROOM 1
+        // =====================================================
+
+        if (
+            this.onSubmit
+        ) {
+
+            this.onSubmit(
+                points
+            );
+
+        }
 
     }
 

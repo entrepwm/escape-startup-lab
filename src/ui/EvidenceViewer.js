@@ -158,9 +158,6 @@ export default class EvidenceViewer {
 
         container.add(text);
 
-        // Add back button
-        container.add(this.createBackButton());
-
         // IMPORTANT:
         // Actually OPEN the popup window.
         this.window.open({

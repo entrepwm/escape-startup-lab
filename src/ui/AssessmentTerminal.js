@@ -289,6 +289,43 @@ export default class AssessmentTerminal {
 
     }
 
+    setButtonEnabled(id, enabled) {
+
+        const button = this.buttons[id];
+
+        if (!button) {
+
+            console.warn(
+                `Button '${id}' not found.`
+            );
+
+            return;
+
+        }
+
+        if (enabled) {
+
+            button.setAlpha(1);
+
+            button.setInteractive({
+                useHandCursor: true
+            });
+
+            button.setColor("#ffffff");
+
+        }   
+        else {
+
+            button.setAlpha(0.4);
+
+            button.disableInteractive();
+
+            button.setColor("#888888");
+
+        }
+
+    }
+
     setScore(score) {
 
         this.scoreText.setText(`Score: ${score}`);

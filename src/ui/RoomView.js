@@ -14,6 +14,9 @@ export default class RoomView {
         this.objects = [];
         this.callback = null;
 
+        // Track investigated objects
+        this.investigatedObjects = new Set();
+
         this.create();
 
     }
@@ -36,10 +39,7 @@ export default class RoomView {
 
         );
 
-        this.background.setStrokeStyle(
-            2,
-            0xbbbbbb
-        );
+        this.background.setStrokeStyle(2, 0xbbbbbb);
 
     }
 
@@ -64,10 +64,6 @@ export default class RoomView {
 
         );
 
-        // =================================================
-        // EMOJI
-        // =================================================
-
         const emoji = this.scene.add.text(
 
             0,
@@ -79,15 +75,7 @@ export default class RoomView {
                 fontSize: "42px"
             }
 
-        )
-        .setOrigin(0.5)
-        .setInteractive({
-            useHandCursor: true
-        });
-
-        // =================================================
-        // LABEL
-        // =================================================
+        ).setOrigin(0.5);
 
         const title = this.scene.add.text(
 
@@ -98,48 +86,64 @@ export default class RoomView {
 
             {
                 fontSize: "18px",
-                color: "#000000",
-                fontStyle: "bold"
+                color: "#000000"
             }
 
-        )
-        .setOrigin(0.5);
+        ).setOrigin(0.5);
 
-        container.add([
-            emoji,
-            title
-        ]);
+        container.add([emoji, title]);
 
-        // =================================================
+        // =====================================================
+        // CLICK AREA
+        // =====================================================
+
+        const hitbox = this.scene.add.rectangle(
+
+            0,
+            15,
+
+            100,
+            90,
+
+            0xffffff,
+            0
+
+        ).setInteractive({
+
+            useHandCursor: true
+
+        });
+
+        container.add(hitbox);
+
+        container.sendToBack(hitbox);
+
+        // =====================================================
         // HOVER
-        // =================================================
+        // =====================================================
 
-        emoji.on("pointerover", () => {
+        hitbox.on("pointerover", () => {
 
             container.setScale(1.08);
 
-            title.setColor("#ff8800");
-
         });
 
-        emoji.on("pointerout", () => {
+        hitbox.on("pointerout", () => {
 
             container.setScale(1);
 
-            title.setColor("#000000");
-
         });
 
-        // =================================================
+        // =====================================================
         // CLICK
-        // =================================================
+        // =====================================================
 
-        emoji.on("pointerdown", () => {
+        hitbox.on("pointerdown", () => {
 
-            console.log(
-                `Room object clicked: ${id}`
-            );
+            // Mark as investigated
+            this.markInvestigated(id);
 
+            // Notify Scene
             if (this.callback) {
 
                 this.callback(id);
@@ -148,23 +152,93 @@ export default class RoomView {
 
         });
 
-        // =================================================
-        // STORE OBJECT
-        // =================================================
-
+        // Store object information
         this.objects.push({
 
             id,
             container,
             emoji,
-            title
+            title,
+            hitbox
 
         });
 
     }
 
     // =====================================================
-    // ROOM OBJECT CLICK EVENT
+    // MARK OBJECT AS INVESTIGATED
+    // =====================================================
+
+    markInvestigated(id) {
+
+        if (this.investigatedObjects.has(id)) {
+
+            return;
+
+        }
+
+        this.investigatedObjects.add(id);
+
+        console.log(
+            `Object investigated: ${id}`
+        );
+
+        const object = this.objects.find(
+
+            obj => obj.id === id
+
+        );
+
+        if (!object) {
+
+            return;
+
+        }
+
+        // Visual indication
+        object.title.setColor("#00aa66");
+
+    }
+
+    // =====================================================
+    // CHECK IF OBJECT WAS INVESTIGATED
+    // =====================================================
+
+    isInvestigated(id) {
+
+        return this.investigatedObjects.has(id);
+
+    }
+
+    // =====================================================
+    // GET INVESTIGATED OBJECTS
+    // =====================================================
+
+    getInvestigatedObjects() {
+
+        return Array.from(
+            this.investigatedObjects
+        );
+
+    }
+
+    // =====================================================
+    // CHECK IF ALL OBJECTS WERE INVESTIGATED
+    // =====================================================
+
+    allObjectsInvestigated() {
+
+        return this.objects.every(
+
+            object =>
+                this.investigatedObjects.has(object.id)
+
+        );
+
+    }
+
+    // =====================================================
+    // EVENT
     // =====================================================
 
     onObjectClick(callback) {
