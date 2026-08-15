@@ -1,102 +1,94 @@
 const ROOM1_NOTEBOOK = [
 
-    // =====================================================
-    // QUESTION 1
-    // =====================================================
-
     {
         id: "customer_satisfaction",
 
         question:
             "How would you describe overall customer satisfaction?",
 
+        type: "radio",
+
         options: [
-            "Very Positive",
             "Mostly Positive",
             "Mixed",
-            "Mostly Negative",
-            "Very Negative"
-        ]
+            "Mostly Negative"
+        ],
+
+        correctAnswer: "Mixed"
     },
 
-    // =====================================================
-    // QUESTION 2
-    // =====================================================
 
     {
         id: "food_quality",
 
         question:
-            "How would you rate the restaurant's food quality?",
+            "How is the food quality?",
+
+        type: "radio",
 
         options: [
-            "Poor",
-            "Below Average",
+            "Excellent",
             "Average",
-            "Good",
-            "Excellent"
-        ]
+            "Poor"
+        ],
+
+        correctAnswer: "Excellent"
     },
 
-    // =====================================================
-    // QUESTION 3
-    // =====================================================
 
     {
         id: "service_speed",
 
         question:
-            "How would you describe the restaurant's service speed?",
+            "How is the service speed?",
+
+        type: "radio",
 
         options: [
-            "Very Fast",
             "Fast",
             "Average",
-            "Slow",
-            "Very Slow"
-        ]
+            "Slow"
+        ],
+
+        correctAnswer: "Slow"
     },
 
-    // =====================================================
-    // QUESTION 4
-    // =====================================================
 
     {
         id: "main_problem",
 
         question:
-            "What appears to be the restaurant's main operational problem?",
+            "What appears to be the restaurant's biggest issue?",
+
+        type: "radio",
 
         options: [
-            "Marketing",
             "Food Quality",
             "Service Speed",
-            "Staffing",
-            "Equipment"
-        ]
+            "Marketing",
+            "Kitchen Hygiene"
+        ],
+
+        correctAnswer: "Service Speed"
     },
 
-    // =====================================================
-    // QUESTION 5
-    // =====================================================
 
     {
-        id: "unsupported_conclusion",
+        id: "customer_priority",
 
         question:
-            "Which conclusion is NOT supported by the evidence you investigated?",
+            "Based on the evidence, what should the restaurant prioritize first?",
+
+        type: "radio",
 
         options: [
-            "Customers are generally satisfied with the food",
+            "Improve Food Quality",
+            "Improve Service Speed",
+            "Increase Advertising",
+            "Expand the Restaurant"
+        ],
 
-            "Waiting time is a recurring customer concern",
-
-            "Service speed needs attention",
-
-            "Marketing is definitely the restaurant's biggest problem",
-
-            "Operational improvements may improve customer satisfaction"
-        ]
+        correctAnswer: "Improve Service Speed"
     }
 
 ];

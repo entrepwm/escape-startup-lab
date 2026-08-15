@@ -7,7 +7,7 @@ import Phaser from "phaser";
 import BootScene from "./scenes/BootScene";
 import MainMenuScene from "./scenes/MainMenuScene";
 import IntroScene from "./scenes/IntroScene";
-
+import PreloadScene from "./scenes/PreloadScene";
 import Room1Scene from "./scenes/Room1Scene";
 import Room2Scene from "./scenes/Room2Scene";
 
@@ -15,7 +15,7 @@ import Room2Scene from "./scenes/Room2Scene";
 // CORE SYSTEMS
 // =====================================================
 
-import ScoreManager from "./core/ScoreManager";
+import ScoreManager from "./managers/ScoreManager";
 
 
 // =====================================================
@@ -50,6 +50,8 @@ const config = {
     scene: [
 
         BootScene,
+
+        PreloadScene,
 
         MainMenuScene,
 

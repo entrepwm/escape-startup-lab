@@ -10,6 +10,7 @@ export default class EvidenceViewer {
 
     }
 
+
     // =====================================================
     // Create Clickable Folder List
     // =====================================================
@@ -21,20 +22,19 @@ export default class EvidenceViewer {
         this.evidenceList.forEach((file, index) => {
 
             const item = this.scene.add.text(
-
                 0,
                 index * 40,
-
                 `${file.icon} ${file.title}`,
-
                 {
                     fontSize: "22px",
                     color: "#0066cc",
                     fontStyle: "bold"
                 }
-
             )
-            .setInteractive({ useHandCursor: true });
+            .setInteractive({
+                useHandCursor: true
+            });
+
 
             item.on("pointerover", () => {
 
@@ -42,11 +42,13 @@ export default class EvidenceViewer {
 
             });
 
+
             item.on("pointerout", () => {
 
                 item.setColor("#0066cc");
 
             });
+
 
             item.on("pointerdown", () => {
 
@@ -54,57 +56,16 @@ export default class EvidenceViewer {
 
             });
 
+
             container.add(item);
 
         });
+
 
         return container;
 
     }
 
-    // =====================================================
-    // Create Back Button
-    // =====================================================
-
-    createBackButton() {
-
-        const back = this.scene.add.text(
-
-            0,
-            250,
-
-            "← Back",
-
-            {
-                fontSize: "22px",
-                color: "#0066cc",
-                fontStyle: "bold"
-            }
-
-        )
-        .setInteractive({ useHandCursor: true });
-
-        back.on("pointerover", () => {
-
-            back.setColor("#ff8800");
-
-        });
-
-        back.on("pointerout", () => {
-
-            back.setColor("#0066cc");
-
-        });
-
-        back.on("pointerdown", () => {
-
-            this.openFolder();
-
-        });
-
-        return back;
-
-    }
 
     // =====================================================
     // Open Evidence Folder
@@ -112,15 +73,88 @@ export default class EvidenceViewer {
 
     openFolder() {
 
-        const folderList = this.createFolderList();
+        const folderList =
+            this.createFolderList();
+
 
         this.window.open({
+
             title: "Evidence Folder"
+
         });
 
-        this.window.setContent(folderList);
+
+        this.window.setContent(
+            folderList
+        );
 
     }
+
+
+    // =====================================================
+    // Calculate Font Size
+    // =====================================================
+
+    calculateFontSize(
+        text,
+        width,
+        maxHeight
+    ) {
+
+        let fontSize = 20;
+
+
+        while (fontSize >= 12) {
+
+            const testText =
+                this.scene.add.text(
+                    0,
+                    0,
+                    text,
+                    {
+                        fontSize:
+                            `${fontSize}px`,
+
+                        color:
+                            "#000000",
+
+                        fontFamily:
+                            "monospace",
+
+                        wordWrap: {
+                            width:
+                                width
+                        },
+
+                        lineSpacing:
+                            3
+                    }
+                );
+
+
+            const height =
+                testText.getBounds().height;
+
+
+            testText.destroy();
+
+
+            if (height <= maxHeight) {
+
+                return fontSize;
+
+            }
+
+
+            fontSize--;
+
+        }
+
+
+        return 12;
+
+    }
+
 
     // =====================================================
     // Open Individual Evidence
@@ -128,44 +162,116 @@ export default class EvidenceViewer {
 
     openEvidence(id) {
 
-        const evidence = this.evidenceList.find(
-            file => file.id === id
-        );
+        const evidence =
+            this.evidenceList.find(
+                file => file.id === id
+            );
+
 
         if (!evidence) {
 
-            console.warn(`Evidence '${id}' not found.`);
+            console.warn(
+                `Evidence '${id}' not found.`
+            );
 
             return;
 
         }
 
-        // Create evidence content
-        const container = this.scene.add.container(0, 0);
 
-        const text = this.scene.add.text(
-            0,
-            0,
-            evidence.content || "No evidence content available.",
-            {
-                fontSize: "20px",
-                color: "#000000",
-                wordWrap: {
-                    width: 420
+        // =================================================
+        // Evidence Content
+        // =================================================
+
+        const content =
+            evidence.content ||
+            "No evidence content available.";
+
+
+        // =================================================
+        // Open Window
+        // =================================================
+
+        this.window.open({
+
+            title:
+                evidence.title
+
+        });
+
+
+        // =================================================
+        // Content Container
+        // =================================================
+
+        const container =
+            this.scene.add.container(
+                0,
+                0
+            );
+
+
+        // =================================================
+        // CONTENT DIMENSIONS
+        // =================================================
+
+        const contentWidth = 420;
+
+        const maxContentHeight = 300;
+
+
+        // =================================================
+        // AUTOMATIC FONT SIZE
+        // =================================================
+
+        const fontSize =
+            this.calculateFontSize(
+                content,
+                contentWidth,
+                maxContentHeight
+            );
+
+
+        // =================================================
+        // Evidence Text
+        // =================================================
+
+        const text =
+            this.scene.add.text(
+                0,
+                0,
+                content,
+                {
+                    fontSize:
+                        `${fontSize}px`,
+
+                    color:
+                        "#000000",
+
+                    fontFamily:
+                        "monospace",
+
+                    wordWrap: {
+                        width:
+                            contentWidth
+                    },
+
+                    lineSpacing:
+                        3
                 }
-            }
-        );
+            );
+
 
         container.add(text);
 
-        // IMPORTANT:
-        // Actually OPEN the popup window.
-        this.window.open({
-            title: evidence.title
-        });
 
-        // Put the evidence inside the popup.
-        this.window.setContent(container);
+        // =================================================
+        // SET WINDOW CONTENT
+        // =================================================
+
+        this.window.setContent(
+            container
+        );
 
     }
 

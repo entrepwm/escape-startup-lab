@@ -25,13 +25,23 @@ export default class NotebookViewer {
         // One question per page
         this.questionsPerPage = 1;
 
+        // Prevent double submission
+        this.submitted = false;
+
     }
+
 
     // =====================================================
     // OPEN NOTEBOOK
     // =====================================================
 
     open() {
+
+        // Don't reset answers if notebook has already been submitted
+        if (this.submitted) {
+            console.log("Notebook already submitted.");
+            return;
+        }
 
         this.currentPage = 0;
 
@@ -43,6 +53,7 @@ export default class NotebookViewer {
 
     }
 
+
     // =====================================================
     // RENDER PAGE
     // =====================================================
@@ -52,12 +63,12 @@ export default class NotebookViewer {
         // Clear previous content
         this.window.clearContent();
 
-        // Main content container
+        // Main container
         const container =
             this.scene.add.container(0, 0);
 
-        // Starting vertical position
         let currentY = 0;
+
 
         // =====================================================
         // PAGE CALCULATION
@@ -75,12 +86,14 @@ export default class NotebookViewer {
 
         const endIndex =
             Math.min(
-                startIndex + this.questionsPerPage,
+                startIndex +
+                this.questionsPerPage,
                 this.notebookData.length
             );
 
+
         // =====================================================
-        // QUESTION
+        // QUESTIONS
         // =====================================================
 
         for (
@@ -92,9 +105,10 @@ export default class NotebookViewer {
             const question =
                 this.notebookData[i];
 
-            // -------------------------------------------------
+
+            // =================================================
             // QUESTION TEXT
-            // -------------------------------------------------
+            // =================================================
 
             const questionText =
                 this.scene.add.text(
@@ -116,129 +130,129 @@ export default class NotebookViewer {
 
             container.add(questionText);
 
-            // Move below question
+
             currentY +=
                 questionText.height + 18;
 
-            // -------------------------------------------------
+
+            // =================================================
             // OPTIONS
-            // -------------------------------------------------
+            // =================================================
 
-            question.options.forEach(
-                option => {
+            question.options.forEach(option => {
 
-                    const selected =
-                        this.answers[question.id] === option;
+                const selected =
+                    this.answers[question.id] === option;
 
-                    const optionText =
-                        this.scene.add.text(
-                            15,
-                            currentY,
 
-                            selected
-                                ? `● ${option}`
-                                : `○ ${option}`,
+                const optionText =
+                    this.scene.add.text(
+                        15,
+                        currentY,
 
-                            {
-                                fontSize: "17px",
+                        selected
+                            ? `● ${option}`
+                            : `○ ${option}`,
 
-                                color:
-                                    selected
-                                        ? "#008800"
-                                        : "#0066cc",
+                        {
+                            fontSize: "17px",
 
-                                wordWrap: {
-                                    width: 395
-                                },
-
-                                lineSpacing: 2
-                            }
-                        );
-
-                    // -------------------------------------------------
-                    // INTERACTION
-                    // -------------------------------------------------
-
-                    optionText.setInteractive({
-                        useHandCursor: true
-                    });
-
-                    // -------------------------------------------------
-                    // HOVER
-                    // -------------------------------------------------
-
-                    optionText.on(
-                        "pointerover",
-                        () => {
-
-                            if (!selected) {
-
-                                optionText.setColor(
-                                    "#ff8800"
-                                );
-
-                            }
-
-                        }
-                    );
-
-                    optionText.on(
-                        "pointerout",
-                        () => {
-
-                            optionText.setColor(
+                            color:
                                 selected
                                     ? "#008800"
-                                    : "#0066cc"
-                            );
+                                    : "#0066cc",
 
+                            wordWrap: {
+                                width: 395
+                            },
+
+                            lineSpacing: 2
                         }
                     );
 
-                    // -------------------------------------------------
-                    // SELECT
-                    // -------------------------------------------------
 
-                    optionText.on(
-                        "pointerdown",
-                        () => {
+                optionText.setInteractive({
+                    useHandCursor: true
+                });
 
-                            console.log(
-                                `Answer selected: ${question.id} = ${option}`
+
+                // =================================================
+                // HOVER
+                // =================================================
+
+                optionText.on(
+                    "pointerover",
+                    () => {
+
+                        if (!selected) {
+
+                            optionText.setColor(
+                                "#ff8800"
                             );
 
-                            this.answers[
-                                question.id
-                            ] = option;
-
-                            // Re-render page
-                            // so selected option becomes ●
-                            this.renderPage();
-
                         }
-                    );
 
-                    container.add(optionText);
+                    }
+                );
 
-                    // IMPORTANT:
-                    // Use actual text height.
-                    //
-                    // This automatically accounts for
-                    // options that wrap onto multiple lines.
 
-                    currentY +=
-                        optionText.height + 9;
+                optionText.on(
+                    "pointerout",
+                    () => {
 
-                }
-            );
+                        optionText.setColor(
+                            selected
+                                ? "#008800"
+                                : "#0066cc"
+                        );
+
+                    }
+                );
+
+
+                // =================================================
+                // SELECT
+                // =================================================
+
+                optionText.on(
+                    "pointerdown",
+                    () => {
+
+                        console.log(
+                            `Answer selected: ${question.id} = ${option}`
+                        );
+
+
+                        this.answers[
+                            question.id
+                        ] = option;
+
+
+                        // Re-render
+                        this.renderPage();
+
+                    }
+                );
+
+
+                container.add(optionText);
+
+
+                // Account for wrapped text
+                currentY +=
+                    optionText.height + 9;
+
+            });
 
         }
+
 
         // =====================================================
         // PAGE INDICATOR
         // =====================================================
 
         currentY += 10;
+
 
         const pageIndicator =
             this.scene.add.text(
@@ -253,10 +267,13 @@ export default class NotebookViewer {
                 }
             );
 
+
         container.add(pageIndicator);
+
 
         currentY +=
             pageIndicator.height + 15;
+
 
         // =====================================================
         // NAVIGATION
@@ -265,8 +282,9 @@ export default class NotebookViewer {
         const navigationY =
             currentY;
 
+
         // =====================================================
-        // PREVIOUS BUTTON
+        // PREVIOUS
         // =====================================================
 
         if (this.currentPage > 0) {
@@ -275,9 +293,7 @@ export default class NotebookViewer {
                 this.scene.add.text(
                     0,
                     navigationY,
-
                     "◀ Previous",
-
                     {
                         fontSize: "17px",
                         color: "#0066cc",
@@ -285,9 +301,11 @@ export default class NotebookViewer {
                     }
                 );
 
+
             previous.setInteractive({
                 useHandCursor: true
             });
+
 
             previous.on(
                 "pointerover",
@@ -300,6 +318,7 @@ export default class NotebookViewer {
                 }
             );
 
+
             previous.on(
                 "pointerout",
                 () => {
@@ -310,6 +329,7 @@ export default class NotebookViewer {
 
                 }
             );
+
 
             previous.on(
                 "pointerdown",
@@ -322,12 +342,14 @@ export default class NotebookViewer {
                 }
             );
 
+
             container.add(previous);
 
         }
 
+
         // =====================================================
-        // NEXT BUTTON
+        // NEXT
         // =====================================================
 
         if (
@@ -339,9 +361,7 @@ export default class NotebookViewer {
                 this.scene.add.text(
                     320,
                     navigationY,
-
                     "Next ▶",
-
                     {
                         fontSize: "17px",
                         color: "#0066cc",
@@ -349,9 +369,11 @@ export default class NotebookViewer {
                     }
                 );
 
+
             next.setInteractive({
                 useHandCursor: true
             });
+
 
             next.on(
                 "pointerover",
@@ -364,6 +386,7 @@ export default class NotebookViewer {
                 }
             );
 
+
             next.on(
                 "pointerout",
                 () => {
@@ -374,6 +397,7 @@ export default class NotebookViewer {
 
                 }
             );
+
 
             next.on(
                 "pointerdown",
@@ -386,9 +410,11 @@ export default class NotebookViewer {
                 }
             );
 
+
             container.add(next);
 
         }
+
 
         // =====================================================
         // SUBMIT BUTTON
@@ -403,9 +429,7 @@ export default class NotebookViewer {
                 this.scene.add.text(
                     235,
                     navigationY,
-
                     "✓ Submit Notebook",
-
                     {
                         fontSize: "17px",
                         color: "#ff8800",
@@ -413,13 +437,11 @@ export default class NotebookViewer {
                     }
                 );
 
+
             submit.setInteractive({
                 useHandCursor: true
             });
 
-            // -------------------------------------------------
-            // HOVER
-            // -------------------------------------------------
 
             submit.on(
                 "pointerover",
@@ -432,6 +454,7 @@ export default class NotebookViewer {
                 }
             );
 
+
             submit.on(
                 "pointerout",
                 () => {
@@ -443,9 +466,6 @@ export default class NotebookViewer {
                 }
             );
 
-            // -------------------------------------------------
-            // SUBMIT
-            // -------------------------------------------------
 
             submit.on(
                 "pointerdown",
@@ -460,9 +480,11 @@ export default class NotebookViewer {
                 }
             );
 
+
             container.add(submit);
 
         }
+
 
         // =====================================================
         // SET WINDOW CONTENT
@@ -474,19 +496,97 @@ export default class NotebookViewer {
 
     }
 
+
+    // =====================================================
+    // GET CORRECT ANSWERS
+    // =====================================================
+
+    getCorrectAnswers() {
+
+        const correctAnswers = {};
+
+        this.notebookData.forEach(question => {
+
+            /*
+             * Supports:
+             *
+             * correctAnswer
+             * answer
+             * correct
+             *
+             * This makes the NotebookViewer
+             * compatible with different room data.
+             */
+
+            if (
+                question.correctAnswer !== undefined
+            ) {
+
+                correctAnswers[
+                    question.id
+                ] = question.correctAnswer;
+
+            }
+
+            else if (
+                question.answer !== undefined
+            ) {
+
+                correctAnswers[
+                    question.id
+                ] = question.answer;
+
+            }
+
+            else if (
+                question.correct !== undefined
+            ) {
+
+                correctAnswers[
+                    question.id
+                ] = question.correct;
+
+            }
+
+        });
+
+
+        console.log(
+            "Correct notebook answers:",
+            correctAnswers
+        );
+
+
+        return correctAnswers;
+
+    }
+
+
     // =====================================================
     // SUBMIT NOTEBOOK
     // =====================================================
 
     submitNotebook() {
 
+        if (this.submitted) {
+
+            console.warn(
+                "Notebook has already been submitted."
+            );
+
+            return;
+
+        }
+
+
         console.log(
             "Notebook answers:",
             this.answers
         );
 
+
         // =====================================================
-        // CHECK ALL QUESTIONS
+        // CHECK ALL QUESTIONS ANSWERED
         // =====================================================
 
         const unanswered =
@@ -495,9 +595,6 @@ export default class NotebookViewer {
                     !this.answers[question.id]
             );
 
-        // =====================================================
-        // INCOMPLETE
-        // =====================================================
 
         if (
             unanswered.length > 0
@@ -506,6 +603,7 @@ export default class NotebookViewer {
             console.warn(
                 "Notebook incomplete."
             );
+
 
             const message =
                 this.scene.add.text(
@@ -526,13 +624,69 @@ export default class NotebookViewer {
                     }
                 );
 
+
             this.window.setContent(
                 message
             );
 
+
             return;
 
         }
+
+
+        // =====================================================
+        // GET CORRECT ANSWERS
+        // =====================================================
+
+        const correctAnswers =
+            this.getCorrectAnswers();
+
+
+        // =====================================================
+        // SAFETY CHECK
+        // =====================================================
+
+        if (
+            Object.keys(correctAnswers).length !==
+            this.notebookData.length
+        ) {
+
+            console.error(
+                "Notebook correct answers are missing!",
+                correctAnswers
+            );
+
+
+            const message =
+                this.scene.add.text(
+                    0,
+                    0,
+
+                    "Error: Notebook answer configuration is incomplete.",
+
+                    {
+                        fontSize: "18px",
+                        color: "#cc0000",
+
+                        wordWrap: {
+                            width: 410
+                        },
+
+                        lineSpacing: 2
+                    }
+                );
+
+
+            this.window.setContent(
+                message
+            );
+
+
+            return;
+
+        }
+
 
         // =====================================================
         // CALCULATE SCORE
@@ -540,20 +694,36 @@ export default class NotebookViewer {
 
         let points = 0;
 
+
         if (
             this.scoreManager
         ) {
 
             points =
                 this.scoreManager.calculateNotebookScore(
-                    this.answers
+                    this.answers,
+                    correctAnswers
                 );
 
         }
 
+
         console.log(
-            `Notebook score: ${points}`
+            `Notebook score: +${points}`
         );
+
+
+        console.log(
+            `Total game score: ${this.scoreManager.getScore()}`
+        );
+
+
+        // =====================================================
+        // MARK SUBMITTED
+        // =====================================================
+
+        this.submitted = true;
+
 
         // =====================================================
         // CLOSE NOTEBOOK
@@ -561,8 +731,9 @@ export default class NotebookViewer {
 
         this.window.close();
 
+
         // =====================================================
-        // NOTIFY ROOM 1
+        // NOTIFY ROOM
         // =====================================================
 
         if (

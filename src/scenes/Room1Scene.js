@@ -91,7 +91,6 @@ export default class Room1Scene extends Phaser.Scene {
             this.window,
             ROOM1_NOTEBOOK,
             this.scoreManager,
-            ROOM1_NOTEBOOK_ANSWERS,
             (points) => {
 
                 this.terminal.setScore(

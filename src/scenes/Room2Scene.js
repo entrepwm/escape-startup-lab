@@ -8,8 +8,6 @@ import EvidenceViewer from "../ui/EvidenceViewer";
 import NotebookViewer from "../ui/NotebookViewer";
 import AssessmentViewer from "../ui/AssessmentViewer";
 
-import ScoreManager from "../managers/ScoreManager";
-
 import ROOM2_OBJECTS from "../data/room2Objects";
 import ROOM2_EVIDENCE from "../data/room2Evidence";
 import ROOM2_NOTEBOOK from "../data/room2Notebook";
@@ -23,6 +21,7 @@ export default class Room2Scene extends Phaser.Scene {
         super("Room2Scene");
 
     }
+
 
     // =====================================================
     // CREATE
@@ -40,89 +39,130 @@ export default class Room2Scene extends Phaser.Scene {
 
     }
 
+
     // =====================================================
     // CREATE SYSTEMS
     // =====================================================
 
     createSystems() {
 
-        // Main assessment terminal
-        this.terminal = new AssessmentTerminal(this);
+        // =================================================
+        // SCORE MANAGER
+        // =================================================
 
-        // Popup window
-        this.window = new Window(this);
-
-        // Score system
         this.scoreManager = this.game.scoreManager;
+
+        if (!this.scoreManager) {
+
+            console.error(
+                "ScoreManager not found in Room2Scene."
+            );
+
+            return;
+
+        }
+
+
+        // =================================================
+        // SET CURRENT ROOM
+        // =================================================
 
         this.scoreManager.setRoom(2);
 
+
+        // =================================================
+        // ASSESSMENT CONFIGURATION
+        // =================================================
+
         this.scoreManager.setAssessment(
+
             ROOM2_ANSWER.correctRecommendation,
+
             ROOM2_ANSWER.explanation
-        );
-
-        // =================================================
-        // Evidence Viewer
-        // =================================================
-
-        this.evidenceViewer = new EvidenceViewer(
-
-            this,
-            this.window,
-            ROOM2_EVIDENCE
 
         );
 
-        // =================================================
-        // Notebook Viewer
-        // =================================================
-
-        this.notebookViewer = new NotebookViewer(
-
-            this,
-            this.window,
-            ROOM2_NOTEBOOK,
-            this.scoreManager,
-
-            (points) => {
-
-                console.log(
-                    `Room 2 Notebook completed. +${points} points`
-                );
-
-                this.terminal.setScore(
-                    this.scoreManager.getScore()
-                );
-
-                this.unlockAssessment();
-
-            }
-
-        );
 
         // =================================================
-        // Assessment Viewer
+        // MAIN TERMINAL
         // =================================================
 
-        this.assessmentViewer = new AssessmentViewer(
+        this.terminal =
+            new AssessmentTerminal(this);
 
-            this,
-            this.window,
-            ROOM2_ASSESSMENT,
-            this.scoreManager
-
-        );
-
-        // Tell ScoreManager which answer is correct
-        this.scoreManager.correctRecommendation =
-            ROOM2_ANSWER.correctRecommendation;
-
-        this.scoreManager.assessmentExplanation =
-            ROOM2_ANSWER.explanation;
 
         // =================================================
-        // Room View
+        // POPUP WINDOW
+        // =================================================
+
+        this.window =
+            new Window(this);
+
+
+        // =================================================
+        // EVIDENCE VIEWER
+        // =================================================
+
+        this.evidenceViewer =
+            new EvidenceViewer(
+
+                this,
+                this.window,
+                ROOM2_EVIDENCE
+
+            );
+
+
+        // =================================================
+        // NOTEBOOK VIEWER
+        // =================================================
+
+        this.notebookViewer =
+            new NotebookViewer(
+
+                this,
+                this.window,
+                ROOM2_NOTEBOOK,
+                this.scoreManager,
+
+                (points) => {
+
+                    console.log(
+                        `Room 2 Notebook completed. +${points} points`
+                    );
+
+
+                    // Update HUD with current total score
+                    this.terminal.setScore(
+                        this.scoreManager.getScore()
+                    );
+
+
+                    // Unlock assessment
+                    this.unlockAssessment();
+
+                }
+
+            );
+
+
+        // =================================================
+        // ASSESSMENT VIEWER
+        // =================================================
+
+        this.assessmentViewer =
+            new AssessmentViewer(
+
+                this,
+                this.window,
+                ROOM2_ASSESSMENT,
+                this.scoreManager
+
+            );
+
+
+        // =================================================
+        // ROOM VIEW
         // =================================================
 
         this.roomView =
@@ -130,27 +170,50 @@ export default class Room2Scene extends Phaser.Scene {
 
     }
 
+
     // =====================================================
     // INITIAL UI
     // =====================================================
 
     initializeUI() {
 
-        this.terminal.setRoom("Customer Hub");
+        // Room title
+        this.terminal.setRoom(
+            "Customer Hub"
+        );
 
+
+        // Room dialogue
         this.terminal.setDialogue(
 
             "Welcome to Room 2.\n" +
             "Investigate the customer experience carefully. " +
-            "Not every business assumption is supported by the evidence."
+            "Not every business assumption is supported by the " +
+            "evidence."
 
         );
 
-        this.terminal.setScore(0);
 
-        this.terminal.setTime("15:00");
+        // =================================================
+        // IMPORTANT:
+        // DO NOT RESET SCORE TO ZERO
+        // =================================================
 
-        // Assessment starts locked
+        this.terminal.setScore(
+            this.scoreManager.getScore()
+        );
+
+
+        // Room timer
+        this.terminal.setTime(
+            "15:00"
+        );
+
+
+        // =================================================
+        // ASSESSMENT STARTS LOCKED
+        // =================================================
+
         this.terminal.setButtonEnabled(
             "assessment",
             false
@@ -158,19 +221,34 @@ export default class Room2Scene extends Phaser.Scene {
 
     }
 
+
     // =====================================================
     // CREATE ROOM OBJECTS
     // =====================================================
 
     createRoomObjects() {
 
+        if (!this.roomView) {
+
+            console.error(
+                "RoomView not initialized."
+            );
+
+            return;
+
+        }
+
+
         ROOM2_OBJECTS.forEach(object => {
 
-            this.roomView.addObject(object);
+            this.roomView.addObject(
+                object
+            );
 
         });
 
     }
+
 
     // =====================================================
     // UNLOCK ASSESSMENT
@@ -182,12 +260,14 @@ export default class Room2Scene extends Phaser.Scene {
             "Room 2 Assessment unlocked!"
         );
 
+
         this.terminal.setButtonEnabled(
             "assessment",
             true
         );
 
     }
+
 
     // =====================================================
     // EVENTS
@@ -203,9 +283,10 @@ export default class Room2Scene extends Phaser.Scene {
 
             switch (id) {
 
-                // -----------------------------------------
+
+                // =========================================
                 // NOTEBOOK
-                // -----------------------------------------
+                // =========================================
 
                 case "notebook":
 
@@ -214,13 +295,16 @@ export default class Room2Scene extends Phaser.Scene {
                     break;
 
 
-                // -----------------------------------------
+                // =========================================
                 // ASSESSMENT
-                // -----------------------------------------
+                // =========================================
 
                 case "assessment":
 
-                    // Notebook must be submitted first
+                    // -------------------------------------
+                    // Notebook must be submitted
+                    // -------------------------------------
+
                     if (
                         !this.scoreManager.isNotebookSubmitted()
                     ) {
@@ -243,7 +327,11 @@ export default class Room2Scene extends Phaser.Scene {
 
                     }
 
+
+                    // -------------------------------------
                     // All room objects must be investigated
+                    // -------------------------------------
+
                     if (
                         !this.roomView.allObjectsInvestigated()
                     ) {
@@ -267,15 +355,19 @@ export default class Room2Scene extends Phaser.Scene {
 
                     }
 
+
+                    // -------------------------------------
                     // Everything completed
+                    // -------------------------------------
+
                     this.assessmentViewer.open();
 
                     break;
 
 
-                // -----------------------------------------
+                // =========================================
                 // HINT
-                // -----------------------------------------
+                // =========================================
 
                 case "hint":
 
@@ -296,9 +388,9 @@ export default class Room2Scene extends Phaser.Scene {
                     break;
 
 
-                // -----------------------------------------
+                // =========================================
                 // PROGRESS
-                // -----------------------------------------
+                // =========================================
 
                 case "progress":
 
@@ -318,16 +410,14 @@ export default class Room2Scene extends Phaser.Scene {
                     break;
 
 
-                // -----------------------------------------
-                // UNKNOWN
-                // -----------------------------------------
+                // =========================================
+                // UNKNOWN BUTTON
+                // =========================================
 
                 default:
 
                     console.warn(
-
                         `Unknown sidebar button: ${id}`
-
                     );
 
             }
@@ -346,15 +436,17 @@ export default class Room2Scene extends Phaser.Scene {
                     obj => obj.id === id
                 );
 
+
             if (!object) {
 
                 console.warn(
-                    `Unknown room object: ${id}`
+                    `Unknown Room 2 object: ${id}`
                 );
 
                 return;
 
             }
+
 
             console.log(
                 `Room 2 object clicked: ${object.id}`
@@ -379,7 +471,7 @@ export default class Room2Scene extends Phaser.Scene {
 
 
             // ---------------------------------------------
-            // Open Evidence Popup
+            // Open Evidence
             // ---------------------------------------------
 
             this.evidenceViewer.openEvidence(

@@ -17,7 +17,9 @@ const ROOM2_NOTEBOOK = [
             "Mostly Average",
             "Generally Good",
             "Very Poor"
-        ]
+        ],
+
+        correctAnswer: "Generally Good"
     },
 
 
@@ -38,7 +40,9 @@ const ROOM2_NOTEBOOK = [
             "72%",
             "82%",
             "92%"
-        ]
+        ],
+
+        correctAnswer: "82%"
     },
 
 
@@ -59,7 +63,9 @@ const ROOM2_NOTEBOOK = [
             "Slow service speed",
             "Unfriendly employees",
             "High prices"
-        ]
+        ],
+
+        correctAnswer: "Slow service speed"
     },
 
 
@@ -80,7 +86,10 @@ const ROOM2_NOTEBOOK = [
             "Customers think the food is consistently poor",
             "Customers generally like the food but complain about waiting time",
             "Customers believe the restaurant is too expensive"
-        ]
+        ],
+
+        correctAnswer:
+            "Customers generally like the food but complain about waiting time"
     },
 
 
@@ -101,7 +110,10 @@ const ROOM2_NOTEBOOK = [
             "Weekday lunch",
             "Friday evening during peak hours",
             "Weekend morning"
-        ]
+        ],
+
+        correctAnswer:
+            "Friday evening during peak hours"
     },
 
 
@@ -122,7 +134,10 @@ const ROOM2_NOTEBOOK = [
             "Long waiting times are particularly problematic during busy periods",
             "The restaurant needs more advertising",
             "Customers are primarily concerned about pricing"
-        ]
+        ],
+
+        correctAnswer:
+            "Long waiting times are particularly problematic during busy periods"
     },
 
 
@@ -143,7 +158,10 @@ const ROOM2_NOTEBOOK = [
             "Reject it immediately because managers are always biased",
             "Compare it with customer and operational evidence",
             "Ignore all internal opinions"
-        ]
+        ],
+
+        correctAnswer:
+            "Compare it with customer and operational evidence"
     },
 
 
@@ -164,7 +182,10 @@ const ROOM2_NOTEBOOK = [
             "Waiting time should be ignored because discounts attract customers",
             "The proposed solution may not address the main problem identified by the evidence",
             "Customer feedback should always be ignored"
-        ]
+        ],
+
+        correctAnswer:
+            "The proposed solution may not address the main problem identified by the evidence"
     },
 
 
@@ -185,7 +206,10 @@ const ROOM2_NOTEBOOK = [
             "Restaurant atmosphere",
             "Service speed during peak periods",
             "Advertising budget"
-        ]
+        ],
+
+        correctAnswer:
+            "Service speed during peak periods"
     },
 
 
@@ -206,7 +230,10 @@ const ROOM2_NOTEBOOK = [
             "Increase advertising to attract more customers",
             "Improve service capacity and reduce waiting time during peak periods",
             "Replace the restaurant's menu entirely"
-        ]
+        ],
+
+        correctAnswer:
+            "Improve service capacity and reduce waiting time during peak periods"
     }
 
 ];
