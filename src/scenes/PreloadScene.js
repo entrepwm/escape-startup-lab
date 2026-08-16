@@ -53,20 +53,26 @@ export default class PreloadScene extends Phaser.Scene {
         // AUDIO
         // =================================================
 
+        const BASE =
+            import.meta.env.BASE_URL;
+
+
         this.load.audio(
             "opening-music",
-            "/assets/audio/opening-music.mp3"
-        )
+            `${BASE}assets/audio/opening-music.mp3`
+        );
+
 
         this.load.audio(
             "startup-lab-loop",
-            "/assets/audio/startup-lab-loop.mp3"
-        )
+            `${BASE}assets/audio/startup-lab-loop.mp3`
+        );
+
 
         this.load.audio(
             "finalscene-music",
-            "/assets/audio/finalscene-music.mp3"
-        )
+            `${BASE}assets/audio/finalscene-music.mp3`
+        );
 
         // =================================================
         // EVA POSES
