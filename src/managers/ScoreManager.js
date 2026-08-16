@@ -17,17 +17,34 @@ export default class ScoreManager {
 
 
         // =====================================================
+        // ROOM SCORE BREAKDOWN
+        // =====================================================
+
+        this.roomScores = {
+
+            1: {
+                notebook: 0,
+                assessment: 0
+            },
+
+            2: {
+                notebook: 0,
+                assessment: 0
+            },
+
+            3: {
+                notebook: 0,
+                assessment: 0
+            }
+
+        };
+
+
+        // =====================================================
         // NOTEBOOK STATUS
         // =====================================================
 
         this.notebookSubmitted = false;
-
-
-        // =====================================================
-        // NOTEBOOK CORRECT ANSWERS
-        // =====================================================
-
-        this.notebookCorrectAnswers = {};
 
 
         // =====================================================
@@ -61,17 +78,6 @@ export default class ScoreManager {
 
     addPoints(points) {
 
-        if (typeof points !== "number") {
-
-            console.warn(
-                "addPoints() received a non-number:",
-                points
-            );
-
-            return this.score;
-
-        }
-
         this.score += points;
 
         console.log(
@@ -92,6 +98,7 @@ export default class ScoreManager {
         this.currentRoom = roomNumber;
 
         // Reset room-specific progress
+
         this.notebookSubmitted = false;
 
         this.assessmentSubmitted = false;
@@ -99,12 +106,6 @@ export default class ScoreManager {
         this.correctRecommendation = null;
 
         this.assessmentExplanation = "";
-
-        this.notebookCorrectAnswers = {};
-
-        console.log(
-            `ScoreManager switched to Room ${roomNumber}`
-        );
 
     }
 
@@ -117,33 +118,56 @@ export default class ScoreManager {
 
 
     // =====================================================
-    // NOTEBOOK CONFIGURATION
+    // ROOM SCORE BREAKDOWN
     // =====================================================
 
-    setNotebookCorrectAnswers(correctAnswers) {
+    getRoomScore(roomNumber) {
 
-        if (
-            !correctAnswers ||
-            typeof correctAnswers !== "object"
-        ) {
+        if (!this.roomScores[roomNumber]) {
 
-            console.warn(
-                "Invalid notebook correct answers."
-            );
-
-            this.notebookCorrectAnswers = {};
-
-            return;
+            return {
+                notebook: 0,
+                assessment: 0
+            };
 
         }
 
-        this.notebookCorrectAnswers = {
-            ...correctAnswers
-        };
+        return this.roomScores[roomNumber];
 
-        console.log(
-            "Notebook correct answers configured:",
-            this.notebookCorrectAnswers
+    }
+
+
+    getNotebookScore(roomNumber) {
+
+        if (!this.roomScores[roomNumber]) {
+            return 0;
+        }
+
+        return this.roomScores[roomNumber].notebook;
+
+    }
+
+
+    getAssessmentScore(roomNumber) {
+
+        if (!this.roomScores[roomNumber]) {
+            return 0;
+        }
+
+        return this.roomScores[roomNumber].assessment;
+
+    }
+
+
+    getTotalRoomScore(roomNumber) {
+
+        if (!this.roomScores[roomNumber]) {
+            return 0;
+        }
+
+        return (
+            this.roomScores[roomNumber].notebook +
+            this.roomScores[roomNumber].assessment
         );
 
     }
@@ -155,105 +179,18 @@ export default class ScoreManager {
 
     calculateNotebookScore(
         answers,
-        correctAnswers = null
+        correctAnswers
     ) {
-
-        // -----------------------------------------------------
-        // Safety check
-        // -----------------------------------------------------
-
-        if (
-            !answers ||
-            typeof answers !== "object"
-        ) {
-
-            console.error(
-                "Notebook scoring failed: answers are missing."
-            );
-
-            return 0;
-
-        }
-
-
-        // -----------------------------------------------------
-        // Determine correct answers
-        //
-        // Priority:
-        // 1. correctAnswers passed directly
-        // 2. answers configured previously through
-        //    setNotebookCorrectAnswers()
-        // -----------------------------------------------------
-
-        let answerKey = correctAnswers;
-
-        if (
-            !answerKey ||
-            typeof answerKey !== "object"
-        ) {
-
-            answerKey = this.notebookCorrectAnswers;
-
-        }
-
-
-        // -----------------------------------------------------
-        // If there are no correct answers configured,
-        // do NOT crash the game.
-        // -----------------------------------------------------
-
-        if (
-            !answerKey ||
-            typeof answerKey !== "object" ||
-            Object.keys(answerKey).length === 0
-        ) {
-
-            console.warn(
-                "No notebook correct answers configured."
-            );
-
-            console.warn(
-                "Answers received:",
-                answers
-            );
-
-            // Still mark notebook as submitted so the game
-            // does not become permanently locked.
-
-            this.notebookSubmitted = true;
-
-            return 0;
-
-        }
-
-
-        // -----------------------------------------------------
-        // Calculate score
-        // -----------------------------------------------------
 
         let points = 0;
 
-        const questionIds =
-            Object.keys(answerKey);
 
-
-        questionIds.forEach(
+        Object.keys(correctAnswers).forEach(
             questionId => {
 
-                const playerAnswer =
-                    answers[questionId];
-
-                const correctAnswer =
-                    answerKey[questionId];
-
-
-                // -------------------------------------------------
-                // Normal answer comparison
-                // -------------------------------------------------
-
                 if (
-                    playerAnswer ===
-                    correctAnswer
+                    answers[questionId] ===
+                    correctAnswers[questionId]
                 ) {
 
                     points += 10;
@@ -264,30 +201,27 @@ export default class ScoreManager {
         );
 
 
-        // -----------------------------------------------------
-        // Add points to total score
-        // -----------------------------------------------------
+        // Add to total score
 
         this.score += points;
 
 
-        // -----------------------------------------------------
-        // Mark notebook as submitted
-        // -----------------------------------------------------
+        // Record score for current room
+
+        if (this.roomScores[this.currentRoom]) {
+
+            this.roomScores[
+                this.currentRoom
+            ].notebook = points;
+
+        }
+
 
         this.notebookSubmitted = true;
 
 
-        // -----------------------------------------------------
-        // Console information
-        // -----------------------------------------------------
-
         console.log(
-            `Notebook score: +${points}`
-        );
-
-        console.log(
-            `Questions evaluated: ${questionIds.length}`
+            `Room ${this.currentRoom} Notebook score: +${points}`
         );
 
         console.log(
@@ -300,24 +234,9 @@ export default class ScoreManager {
     }
 
 
-    // =====================================================
-    // NOTEBOOK STATUS
-    // =====================================================
-
     isNotebookSubmitted() {
 
         return this.notebookSubmitted;
-
-    }
-
-
-    // =====================================================
-    // FORCE NOTEBOOK SUBMISSION
-    // =====================================================
-
-    markNotebookSubmitted() {
-
-        this.notebookSubmitted = true;
 
     }
 
@@ -337,11 +256,6 @@ export default class ScoreManager {
         this.assessmentExplanation =
             explanation;
 
-        console.log(
-            "Assessment configured:",
-            correctRecommendation
-        );
-
     }
 
 
@@ -350,10 +264,6 @@ export default class ScoreManager {
     // =====================================================
 
     evaluate(answer) {
-
-        // -----------------------------------------------------
-        // Safety check
-        // -----------------------------------------------------
 
         if (!this.correctRecommendation) {
 
@@ -375,10 +285,6 @@ export default class ScoreManager {
         }
 
 
-        // -----------------------------------------------------
-        // Check answer
-        // -----------------------------------------------------
-
         const correct =
             answer ===
             this.correctRecommendation;
@@ -386,10 +292,6 @@ export default class ScoreManager {
 
         let points = 0;
 
-
-        // -----------------------------------------------------
-        // Award points
-        // -----------------------------------------------------
 
         if (correct) {
 
@@ -400,19 +302,22 @@ export default class ScoreManager {
         }
 
 
-        // -----------------------------------------------------
-        // Mark assessment submitted
-        // -----------------------------------------------------
+        // Record assessment score
+
+        if (this.roomScores[this.currentRoom]) {
+
+            this.roomScores[
+                this.currentRoom
+            ].assessment = points;
+
+        }
+
 
         this.assessmentSubmitted = true;
 
 
-        // -----------------------------------------------------
-        // Console information
-        // -----------------------------------------------------
-
         console.log(
-            `Assessment answer: ${answer}`
+            `Room ${this.currentRoom} Assessment answer: ${answer}`
         );
 
         console.log(
@@ -428,10 +333,6 @@ export default class ScoreManager {
         );
 
 
-        // -----------------------------------------------------
-        // Return result
-        // -----------------------------------------------------
-
         return {
 
             correct,
@@ -446,10 +347,6 @@ export default class ScoreManager {
     }
 
 
-    // =====================================================
-    // ASSESSMENT STATUS
-    // =====================================================
-
     isAssessmentSubmitted() {
 
         return this.assessmentSubmitted;
@@ -457,13 +354,55 @@ export default class ScoreManager {
     }
 
 
-    // =====================================================
-    // FORCE ASSESSMENT SUBMISSION
-    // =====================================================
-
     markAssessmentSubmitted() {
 
         this.assessmentSubmitted = true;
+
+    }
+
+
+    // =====================================================
+    // RESET GAME
+    // =====================================================
+
+    reset() {
+
+        this.score = 0;
+
+        this.currentRoom = 1;
+
+        this.notebookSubmitted = false;
+
+        this.assessmentSubmitted = false;
+
+        this.correctRecommendation = null;
+
+        this.assessmentExplanation = "";
+
+
+        this.roomScores = {
+
+            1: {
+                notebook: 0,
+                assessment: 0
+            },
+
+            2: {
+                notebook: 0,
+                assessment: 0
+            },
+
+            3: {
+                notebook: 0,
+                assessment: 0
+            }
+
+        };
+
+
+        console.log(
+            "ScoreManager reset."
+        );
 
     }
 

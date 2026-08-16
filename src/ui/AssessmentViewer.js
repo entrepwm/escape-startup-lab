@@ -13,6 +13,15 @@ export default class AssessmentViewer {
         this.container = null;
         this.submitted = false;
 
+        // =====================================================
+        // PAGINATION
+        // =====================================================
+
+        this.currentPage = 0;
+
+        // Number of options displayed per page
+        this.optionsPerPage = 2;
+
     }
 
 
@@ -22,11 +31,25 @@ export default class AssessmentViewer {
 
     open() {
 
-        // Reset selection when opening a fresh assessment
         this.selectedAnswer = null;
         this.submitted = false;
+        this.currentPage = 0;
 
         this.renderAssessment();
+
+    }
+
+
+    // =====================================================
+    // GET TOTAL PAGES
+    // =====================================================
+
+    getTotalPages() {
+
+        return Math.ceil(
+            this.assessmentData.length /
+            this.optionsPerPage
+        );
 
     }
 
@@ -37,7 +60,6 @@ export default class AssessmentViewer {
 
     renderAssessment() {
 
-        // Destroy previous content if it exists
         if (this.container) {
 
             this.container.destroy(true);
@@ -50,85 +72,166 @@ export default class AssessmentViewer {
             this.scene.add.container(0, 0);
 
 
-        let currentY = 0;
-
-
         // =====================================================
         // TITLE
         // =====================================================
 
-        const title = this.scene.add.text(
+        const title =
+            this.scene.add.text(
 
-            0,
-            currentY,
+                0,
+                0,
 
-            "Choose ONE recommendation for the restaurant.",
+                "Choose ONE recommendation for the restaurant.",
 
-            {
+                {
 
-                fontSize: "22px",
-                color: "#000000",
-                fontStyle: "bold",
+                    fontSize: "20px",
+                    color: "#000000",
+                    fontStyle: "bold",
 
-                wordWrap: {
-                    width: 420
+                    wordWrap: {
+                        width: 390
+                    },
+
+                    lineSpacing: 4
+
                 }
 
-            }
+            );
 
-        );
 
         this.container.add(title);
 
 
-        currentY += 65;
+        // =====================================================
+        // PAGE INDICATOR
+        // =====================================================
+
+        const totalPages =
+            this.getTotalPages();
+
+
+        const pageText =
+            this.scene.add.text(
+
+                0,
+                title.height + 18,
+
+                `Page ${this.currentPage + 1} of ${totalPages}`,
+
+                {
+
+                    fontSize: "16px",
+                    color: "#666666",
+                    fontStyle: "bold"
+
+                }
+
+            );
+
+
+        this.container.add(pageText);
 
 
         // =====================================================
         // OPTIONS
         // =====================================================
 
-        this.assessmentData.forEach(option => {
+        const startIndex =
+            this.currentPage *
+            this.optionsPerPage;
+
+
+        const endIndex =
+            Math.min(
+
+                startIndex +
+                this.optionsPerPage,
+
+                this.assessmentData.length
+
+            );
+
+
+        const pageOptions =
+            this.assessmentData.slice(
+                startIndex,
+                endIndex
+            );
+
+
+        let currentY =
+            pageText.y +
+            pageText.height +
+            25;
+
+
+        pageOptions.forEach(option => {
+
+            const optionContainer =
+                this.scene.add.container(
+                    0,
+                    currentY
+                );
+
 
             const isSelected =
                 this.selectedAnswer === option.id;
 
 
-            const optionText = isSelected
-                ? `● ${option.text}`
-                : `○ ${option.text}`;
+            const radio =
+                isSelected
+                    ? "●"
+                    : "○";
 
 
-            const text = this.scene.add.text(
+            const optionText =
+                `${radio} ${option.text}`;
 
-                20,
-                currentY,
 
-                optionText,
+            const text =
+                this.scene.add.text(
 
-                {
+                    10,
+                    0,
 
-                    fontSize: "20px",
-                    color: "#0066cc",
+                    optionText,
 
-                    wordWrap: {
-                        width: 380
+                    {
+
+                        fontSize: "18px",
+                        color: "#0066cc",
+
+                        wordWrap: {
+                            width: 380
+                        },
+
+                        lineSpacing: 4
+
                     }
 
-                }
-
-            )
-            .setInteractive({
-                useHandCursor: true
-            });
+                )
+                .setInteractive({
+                    useHandCursor: true
+                });
 
 
-            // Hover
+            // =================================================
+            // HOVER
+            // =================================================
+
             text.on(
                 "pointerover",
                 () => {
 
-                    text.setColor("#ff8800");
+                    if (!this.submitted) {
+
+                        text.setColor(
+                            "#ff8800"
+                        );
+
+                    }
 
                 }
             );
@@ -138,13 +241,22 @@ export default class AssessmentViewer {
                 "pointerout",
                 () => {
 
-                    text.setColor("#0066cc");
+                    if (!this.submitted) {
+
+                        text.setColor(
+                            "#0066cc"
+                        );
+
+                    }
 
                 }
             );
 
 
-            // Select answer
+            // =================================================
+            // SELECT
+            // =================================================
+
             text.on(
                 "pointerdown",
                 () => {
@@ -158,81 +270,268 @@ export default class AssessmentViewer {
                         option.id;
 
 
-                    // Re-render to show selected radio button
                     this.renderAssessment();
 
                 }
             );
 
 
-            this.container.add(text);
+            optionContainer.add(text);
+
+            this.container.add(
+                optionContainer
+            );
 
 
-            currentY += 42;
+            // =================================================
+            // DYNAMIC SPACING
+            // =================================================
+
+            currentY +=
+                text.height +
+                30;
 
         });
 
 
-        currentY += 25;
+        // =====================================================
+        // NAVIGATION
+        // =====================================================
+
+        const navigationY =
+            currentY + 20;
 
 
         // =====================================================
-        // SUBMIT BUTTON
+        // PREVIOUS
         // =====================================================
 
-        const submitButton =
-            this.scene.add.text(
+        if (this.currentPage > 0) {
 
-                0,
-                currentY,
+            const previousButton =
+                this.scene.add.text(
 
-                "✅ Submit Assessment",
+                    0,
+                    navigationY,
 
-                {
+                    "← Previous",
 
-                    fontSize: "22px",
-                    color: "#008800",
-                    fontStyle: "bold"
+                    {
+
+                        fontSize: "18px",
+                        color: "#0066cc",
+                        fontStyle: "bold"
+
+                    }
+
+                )
+                .setInteractive({
+                    useHandCursor: true
+                });
+
+
+            previousButton.on(
+                "pointerover",
+                () => {
+
+                    previousButton.setColor(
+                        "#ff8800"
+                    );
 
                 }
-
-            )
-            .setInteractive({
-                useHandCursor: true
-            });
+            );
 
 
-        submitButton.on(
-            "pointerover",
-            () => {
+            previousButton.on(
+                "pointerout",
+                () => {
 
-                submitButton.setColor("#ff8800");
+                    previousButton.setColor(
+                        "#0066cc"
+                    );
 
-            }
-        );
-
-
-        submitButton.on(
-            "pointerout",
-            () => {
-
-                submitButton.setColor("#008800");
-
-            }
-        );
+                }
+            );
 
 
-        submitButton.on(
-            "pointerdown",
-            () => {
+            previousButton.on(
+                "pointerdown",
+                () => {
 
-                this.submitAssessment();
+                    if (this.currentPage > 0) {
 
-            }
-        );
+                        this.currentPage--;
+
+                        this.renderAssessment();
+
+                    }
+
+                }
+            );
 
 
-        this.container.add(submitButton);
+            this.container.add(
+                previousButton
+            );
+
+        }
+
+
+        // =====================================================
+        // NEXT
+        // =====================================================
+
+        if (
+            this.currentPage <
+            totalPages - 1
+        ) {
+
+            const nextButton =
+                this.scene.add.text(
+
+                    260,
+                    navigationY,
+
+                    "Next →",
+
+                    {
+
+                        fontSize: "18px",
+                        color: "#0066cc",
+                        fontStyle: "bold"
+
+                    }
+
+                )
+                .setInteractive({
+                    useHandCursor: true
+                });
+
+
+            nextButton.on(
+                "pointerover",
+                () => {
+
+                    nextButton.setColor(
+                        "#ff8800"
+                    );
+
+                }
+            );
+
+
+            nextButton.on(
+                "pointerout",
+                () => {
+
+                    nextButton.setColor(
+                        "#0066cc"
+                    );
+
+                }
+            );
+
+
+            nextButton.on(
+                "pointerdown",
+                () => {
+
+                    if (
+                        this.currentPage <
+                        totalPages - 1
+                    ) {
+
+                        this.currentPage++;
+
+                        this.renderAssessment();
+
+                    }
+
+                }
+            );
+
+
+            this.container.add(
+                nextButton
+            );
+
+        }
+
+
+        // =====================================================
+        // SUBMIT
+        // =====================================================
+
+        if (
+            this.currentPage ===
+            totalPages - 1
+        ) {
+
+            const submitY =
+                navigationY + 50;
+
+
+            const submitButton =
+                this.scene.add.text(
+
+                    0,
+                    submitY,
+
+                    "✅ Submit Assessment",
+
+                    {
+
+                        fontSize: "20px",
+                        color: "#008800",
+                        fontStyle: "bold"
+
+                    }
+
+                )
+                .setInteractive({
+                    useHandCursor: true
+                });
+
+
+            submitButton.on(
+                "pointerover",
+                () => {
+
+                    submitButton.setColor(
+                        "#ff8800"
+                    );
+
+                }
+            );
+
+
+            submitButton.on(
+                "pointerout",
+                () => {
+
+                    submitButton.setColor(
+                        "#008800"
+                    );
+
+                }
+            );
+
+
+            submitButton.on(
+                "pointerdown",
+                () => {
+
+                    this.submitAssessment();
+
+                }
+            );
+
+
+            this.container.add(
+                submitButton
+            );
+
+        }
 
 
         // =====================================================
@@ -259,13 +558,11 @@ export default class AssessmentViewer {
 
     submitAssessment() {
 
-        // Prevent duplicate submission
         if (this.submitted) {
             return;
         }
 
 
-        // Require answer
         if (!this.selectedAnswer) {
 
             alert(
@@ -282,10 +579,6 @@ export default class AssessmentViewer {
             this.selectedAnswer
         );
 
-
-        // =====================================================
-        // EVALUATE
-        // =====================================================
 
         let result;
 
@@ -324,10 +617,6 @@ export default class AssessmentViewer {
         );
 
 
-        // =====================================================
-        // SHOW RESULT
-        // =====================================================
-
         this.showResult(result);
 
     }
@@ -339,7 +628,6 @@ export default class AssessmentViewer {
 
     showResult(result) {
 
-        // Destroy assessment UI
         if (this.container) {
 
             this.container.destroy(true);
@@ -352,68 +640,88 @@ export default class AssessmentViewer {
             this.scene.add.container(0, 0);
 
 
-        let currentY = 0;
-
-
         // =====================================================
-        // RESULT TITLE
+        // TITLE
         // =====================================================
 
-        const title = this.scene.add.text(
+        const title =
+            this.scene.add.text(
 
-            0,
-            currentY,
+                0,
+                0,
 
-            result.correct
-                ? "✅ Correct!"
-                : "❌ Incorrect",
+                result.correct
+                    ? "✅ Correct!"
+                    : "❌ Incorrect",
 
-            {
+                {
 
-                fontSize: "26px",
-                color: "#000000",
-                fontStyle: "bold"
+                    fontSize: "25px",
+                    color: "#000000",
+                    fontStyle: "bold"
 
-            }
+                }
 
-        );
+            );
 
 
         resultContainer.add(title);
-
-
-        currentY += 50;
 
 
         // =====================================================
         // SCORE
         // =====================================================
 
-        const score = this.scene.add.text(
+        const score =
+            this.scene.add.text(
 
-            0,
-            currentY,
+                0,
+                50,
 
-            `Score: +${result.score}`,
+                `Score: +${result.score}`,
 
-            {
+                {
 
-                fontSize: "22px",
-                color: result.correct
-                    ? "#008800"
-                    : "#880000",
+                    fontSize: "20px",
 
-                fontStyle: "bold"
+                    color:
+                        result.correct
+                            ? "#008800"
+                            : "#880000",
 
-            }
+                    fontStyle: "bold"
 
-        );
+                }
+
+            );
 
 
         resultContainer.add(score);
 
 
-        currentY += 50;
+        // =====================================================
+        // TOTAL SCORE
+        // =====================================================
+
+        const totalScore =
+            this.scene.add.text(
+
+                0,
+                85,
+
+                `Total Score: ${this.scoreManager.getScore()}`,
+
+                {
+
+                    fontSize: "18px",
+                    color: "#000000"
+
+                }
+
+            );
+
+
+        resultContainer.add(totalScore);
 
 
         // =====================================================
@@ -424,46 +732,52 @@ export default class AssessmentViewer {
             this.scene.add.text(
 
                 0,
-                currentY,
+                130,
 
                 result.explanation || "",
 
                 {
 
-                    fontSize: "20px",
+                    fontSize: "17px",
                     color: "#000000",
 
                     wordWrap: {
-                        width: 420
-                    }
+                        width: 390
+                    },
+
+                    lineSpacing: 4
 
                 }
 
             );
 
 
-        resultContainer.add(explanation);
-
-
-        currentY +=
-            explanation.height + 40;
+        resultContainer.add(
+            explanation
+        );
 
 
         // =====================================================
-        // CONTINUE BUTTON
+        // CONTINUE
         // =====================================================
+
+        const continueButtonY =
+            130 +
+            explanation.height +
+            30;
+
 
         const continueButton =
             this.scene.add.text(
 
                 0,
-                currentY,
+                continueButtonY,
 
-                "Continue",
+                "Continue →",
 
                 {
 
-                    fontSize: "22px",
+                    fontSize: "20px",
                     color: "#0066cc",
                     fontStyle: "bold"
 
@@ -517,7 +831,7 @@ export default class AssessmentViewer {
 
 
         // =====================================================
-        // DISPLAY RESULT
+        // DISPLAY
         // =====================================================
 
         this.container =
@@ -542,9 +856,7 @@ export default class AssessmentViewer {
     // CONTINUE TO NEXT ROOM
     // =====================================================
 
-    continueToNextRoom(
-        resultContainer
-    ) {
+    continueToNextRoom(resultContainer) {
 
         console.log(
             "Assessment completed."
@@ -557,13 +869,19 @@ export default class AssessmentViewer {
         );
 
 
-        // Prevent multiple clicks
+        // =====================================================
+        // PREVENT MULTIPLE CLICKS
+        // =====================================================
+
         if (!this.submitted) {
             return;
         }
 
 
-        // Destroy result UI
+        // =====================================================
+        // CLEAN UP
+        // =====================================================
+
         if (resultContainer) {
 
             resultContainer.destroy(true);
@@ -574,42 +892,97 @@ export default class AssessmentViewer {
         this.container = null;
 
 
-        // Close window
         this.window.close();
 
 
         // =====================================================
-        // MOVE TO ROOM 2
+        // DETERMINE CURRENT ROOM
         // =====================================================
 
-        console.log(
-            "Moving from Room 1 → Room 2"
-        );
-
-
-        // Tell ScoreManager that we are now
-        // entering Room 2.
-        //
-        // IMPORTANT:
-        // This keeps the existing ScoreManager,
-        // so the total score is NOT reset.
-
-        this.scoreManager.setRoom(2);
+        const currentRoom =
+            this.scoreManager.getRoom();
 
 
         console.log(
             "Current room:",
+            currentRoom
+        );
+
+
+        // =====================================================
+        // ROOM 3 = END OF GAME
+        // =====================================================
+
+        if (currentRoom >= 3) {
+
+            console.log(
+                "All rooms completed."
+            );
+
+
+            console.log(
+                "Final score:",
+                this.scoreManager.getScore()
+            );
+
+
+            // Go to Final Results instead of alert
+            this.scene.scene.start(
+                "FinalResultsScene"
+            );
+
+            return;
+
+        }
+
+
+        // =====================================================
+        // DETERMINE NEXT ROOM
+        // =====================================================
+
+        const nextRoom =
+            currentRoom + 1;
+
+
+        const nextScene =
+            `Room${nextRoom}Scene`;
+
+
+        console.log(
+            `Moving from Room ${currentRoom} → Room ${nextRoom}`
+        );
+
+
+        // =====================================================
+        // UPDATE SCORE MANAGER
+        // =====================================================
+
+        this.scoreManager.setRoom(
+            nextRoom
+        );
+
+
+        console.log(
+            "New room:",
             this.scoreManager.getRoom()
         );
 
 
-        // Start Room 2
+        // =====================================================
+        // START NEXT ROOM
+        // =====================================================
+
         this.scene.scene.start(
-            "Room2Scene",
+
+            nextScene,
+
             {
+
                 scoreManager:
                     this.scoreManager
+
             }
+
         );
 
     }
