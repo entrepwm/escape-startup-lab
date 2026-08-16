@@ -1,24 +1,53 @@
 import Phaser from "phaser";
 
+
 export default class EvidenceViewer {
 
-    constructor(scene, window, evidenceList) {
+    constructor(
+        scene,
+        window,
+        evidenceList
+    ) {
 
-        this.scene = scene;
-        this.window = window;
-        this.evidenceList = evidenceList;
+        this.scene =
+            scene;
+
+        this.window =
+            window;
+
+        this.evidenceList =
+            evidenceList;
+
 
         // =====================================================
-        // PAGINATION
+        // PAGINATION STATE
         // =====================================================
 
-        this.currentEvidence = null;
+        this.currentEvidence =
+            null;
 
-        this.pages = [];
+        this.pages =
+            [];
 
-        this.currentPage = 0;
+        this.currentPage =
+            0;
 
-        this.pageContainer = null;
+        this.pageContainer =
+            null;
+
+
+        // =====================================================
+        // LAYOUT
+        // =====================================================
+
+        this.contentWidth =
+            620;
+
+        this.contentHeight =
+            285;
+
+        this.footerY =
+            365;
 
     }
 
@@ -30,58 +59,202 @@ export default class EvidenceViewer {
     createFolderList() {
 
         const container =
-            this.scene.add.container(0, 0);
+            this.scene.add.container(
+                0,
+                0
+            );
 
+
+        // =================================================
+        // HEADER
+        // =================================================
+
+        const heading =
+            this.scene.add.text(
+
+                0,
+                0,
+
+                "AVAILABLE EVIDENCE",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "14px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#5b6570"
+
+                }
+
+            );
+
+
+        container.add(
+            heading
+        );
+
+
+        // =================================================
+        // FILE CARDS
+        // =================================================
 
         this.evidenceList.forEach(
             (file, index) => {
 
-                const item =
+                const y =
+                    38 + index * 58;
+
+
+                const card =
+                    this.scene.add.rectangle(
+
+                        this.contentWidth / 2,
+                        y + 20,
+
+                        this.contentWidth,
+                        46,
+
+                        0xf6f8fa
+
+                    );
+
+
+                card.setStrokeStyle(
+                    1,
+                    0xd1d9e0
+                );
+
+
+                card.setInteractive({
+
+                    useHandCursor:
+                        true
+
+                });
+
+
+                const title =
                     this.scene.add.text(
 
-                        0,
-                        index * 40,
+                        18,
+                        y + 8,
 
-                        `${file.icon} ${file.title}`,
+                        `${file.icon || "◆"}  ${file.title}`,
 
                         {
 
-                            fontSize: "22px",
-                            color: "#0066cc",
-                            fontStyle: "bold"
+                            fontFamily:
+                                "monospace",
+
+                            fontSize:
+                                "16px",
+
+                            fontStyle:
+                                "bold",
+
+                            color:
+                                "#243447"
 
                         }
 
-                    )
-                    .setInteractive({
-                        useHandCursor: true
-                    });
+                    );
 
 
-                // Hover
-                item.on(
+                const subtitle =
+                    this.scene.add.text(
+
+                        18,
+                        y + 29,
+
+                        "Open evidence file",
+
+                        {
+
+                            fontFamily:
+                                "monospace",
+
+                            fontSize:
+                                "11px",
+
+                            color:
+                                "#7a8794"
+
+                        }
+
+                    );
+
+
+                // =========================================
+                // HOVER
+                // =========================================
+
+                card.on(
+
                     "pointerover",
+
                     () => {
 
-                        item.setColor("#ff8800");
+                        card.setFillStyle(
+                            0xeaf4ff
+                        );
+
+
+                        card.setStrokeStyle(
+                            1,
+                            0x1683e8
+                        );
+
+
+                        title.setColor(
+                            "#1683e8"
+                        );
 
                     }
+
                 );
 
 
-                item.on(
+                card.on(
+
                     "pointerout",
+
                     () => {
 
-                        item.setColor("#0066cc");
+                        card.setFillStyle(
+                            0xf6f8fa
+                        );
+
+
+                        card.setStrokeStyle(
+                            1,
+                            0xd1d9e0
+                        );
+
+
+                        title.setColor(
+                            "#243447"
+                        );
 
                     }
+
                 );
 
 
-                // Open evidence
-                item.on(
+                // =========================================
+                // OPEN
+                // =========================================
+
+                card.on(
+
                     "pointerdown",
+
                     () => {
 
                         this.openEvidence(
@@ -89,10 +262,15 @@ export default class EvidenceViewer {
                         );
 
                     }
+
                 );
 
 
-                container.add(item);
+                container.add([
+                    card,
+                    title,
+                    subtitle
+                ]);
 
             }
         );
@@ -115,7 +293,8 @@ export default class EvidenceViewer {
 
         this.window.open({
 
-            title: "Evidence Folder"
+            title:
+                "Evidence Files"
 
         });
 
@@ -135,11 +314,16 @@ export default class EvidenceViewer {
 
         const evidence =
             this.evidenceList.find(
-                file => file.id === id
+
+                file =>
+                    file.id === id
+
             );
 
 
-        if (!evidence) {
+        if (
+            !evidence
+        ) {
 
             console.warn(
                 `Evidence '${id}' not found.`
@@ -159,34 +343,38 @@ export default class EvidenceViewer {
             evidence;
 
 
-        // =====================================================
-        // SPLIT CONTENT INTO PAGES
-        // =====================================================
+        // =================================================
+        // BUILD PAGES
+        // =================================================
 
         this.pages =
             this.createPages(
+
                 evidence.content ||
                 "No evidence content available."
+
             );
 
 
-        this.currentPage = 0;
+        this.currentPage =
+            0;
 
 
-        // =====================================================
+        // =================================================
         // OPEN WINDOW
-        // =====================================================
+        // =================================================
 
         this.window.open({
 
-            title: evidence.title
+            title:
+                evidence.title
 
         });
 
 
-        // =====================================================
-        // SHOW FIRST PAGE
-        // =====================================================
+        // =================================================
+        // RENDER FIRST PAGE
+        // =================================================
 
         this.renderPage();
 
@@ -199,32 +387,29 @@ export default class EvidenceViewer {
 
     createPages(content) {
 
-        const pages = [];
+        const pages =
+            [];
 
 
-        // -----------------------------------------------------
-        // SETTINGS
-        // -----------------------------------------------------
-
-        const textWidth = 420;
-
-        const maxHeight = 330;
+        const textWidth =
+            this.contentWidth - 44;
 
 
-        // -----------------------------------------------------
-        // Split content into paragraphs
-        // -----------------------------------------------------
+        const maxHeight =
+            245;
+
 
         const paragraphs =
             content.split("\n");
 
 
-        let currentText = "";
+        let currentText =
+            "";
 
 
-        // -----------------------------------------------------
-        // Temporary text object used for measurement
-        // -----------------------------------------------------
+        // =================================================
+        // TEMPORARY MEASUREMENT TEXT
+        // =================================================
 
         const measureText =
             this.scene.add.text(
@@ -236,12 +421,19 @@ export default class EvidenceViewer {
 
                 {
 
-                    fontSize: "20px",
-                    color: "#000000",
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "17px",
+
+                    lineSpacing:
+                        4,
 
                     wordWrap: {
 
-                        width: textWidth
+                        width:
+                            textWidth
 
                     }
 
@@ -250,9 +442,9 @@ export default class EvidenceViewer {
             );
 
 
-        // -----------------------------------------------------
-        // Build pages
-        // -----------------------------------------------------
+        // =================================================
+        // BUILD PAGES
+        // =================================================
 
         paragraphs.forEach(
             paragraph => {
@@ -273,10 +465,6 @@ export default class EvidenceViewer {
                 const height =
                     measureText.height;
 
-
-                // -------------------------------------------------
-                // If adding this paragraph makes the page too tall
-                // -------------------------------------------------
 
                 if (
                     height > maxHeight &&
@@ -304,9 +492,9 @@ export default class EvidenceViewer {
         );
 
 
-        // -----------------------------------------------------
-        // Add remaining text
-        // -----------------------------------------------------
+        // =================================================
+        // ADD REMAINING TEXT
+        // =================================================
 
         if (
             currentText.trim() !== ""
@@ -319,18 +507,16 @@ export default class EvidenceViewer {
         }
 
 
-        // -----------------------------------------------------
-        // Destroy measurement object
-        // -----------------------------------------------------
-
         measureText.destroy();
 
 
-        // -----------------------------------------------------
-        // Safety fallback
-        // -----------------------------------------------------
+        // =================================================
+        // FALLBACK
+        // =================================================
 
-        if (pages.length === 0) {
+        if (
+            pages.length === 0
+        ) {
 
             pages.push(
                 "No evidence content available."
@@ -355,24 +541,28 @@ export default class EvidenceViewer {
 
     renderPage() {
 
-        // -----------------------------------------------------
-        // Destroy previous page
-        // -----------------------------------------------------
+        // =================================================
+        // DESTROY PREVIOUS PAGE
+        // =================================================
 
-        if (this.pageContainer) {
+        if (
+            this.pageContainer
+        ) {
 
             this.pageContainer.destroy(
                 true
             );
 
-            this.pageContainer = null;
+
+            this.pageContainer =
+                null;
 
         }
 
 
-        // -----------------------------------------------------
-        // Main container
-        // -----------------------------------------------------
+        // =================================================
+        // MAIN CONTAINER
+        // =================================================
 
         this.pageContainer =
             this.scene.add.container(
@@ -381,15 +571,159 @@ export default class EvidenceViewer {
             );
 
 
-        // =====================================================
+        // =================================================
+        // HEADER CARD
+        // =================================================
+
+        const headerCard =
+            this.scene.add.rectangle(
+
+                this.contentWidth / 2,
+                34,
+
+                this.contentWidth,
+                68,
+
+                0x17263b
+
+            );
+
+
+        headerCard.setStrokeStyle(
+            1,
+            0x24b8ff
+        );
+
+
+        this.pageContainer.add(
+            headerCard
+        );
+
+
+        // =================================================
+        // EVIDENCE TYPE
+        // =================================================
+
+        const evidenceType =
+            this.getEvidenceType(
+                this.currentEvidence
+            );
+
+
+        const typeText =
+            this.scene.add.text(
+
+                18,
+                12,
+
+                evidenceType,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "11px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#67d6ff"
+
+                }
+
+            );
+
+
+        this.pageContainer.add(
+            typeText
+        );
+
+
+        // =================================================
+        // EVIDENCE TITLE
+        // =================================================
+
+        const title =
+            this.scene.add.text(
+
+                18,
+                31,
+
+                this.currentEvidence?.title ||
+                "Evidence",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "19px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#ffffff",
+
+                    wordWrap: {
+
+                        width:
+                            this.contentWidth - 36
+
+                    }
+
+                }
+
+            );
+
+
+        this.pageContainer.add(
+            title
+        );
+
+
+        // =================================================
+        // CONTENT CARD
+        // =================================================
+
+        const contentCard =
+            this.scene.add.rectangle(
+
+                this.contentWidth / 2,
+                220,
+
+                this.contentWidth,
+                this.contentHeight,
+
+                0xfbfaf7
+
+            );
+
+
+        contentCard.setStrokeStyle(
+            1,
+            0xd6d6d1
+        );
+
+
+        this.pageContainer.add(
+            contentCard
+        );
+
+
+        // =================================================
         // EVIDENCE TEXT
-        // =====================================================
+        // =================================================
 
         const text =
             this.scene.add.text(
 
-                0,
-                0,
+                22,
+                92,
 
                 this.pages[
                     this.currentPage
@@ -397,12 +731,22 @@ export default class EvidenceViewer {
 
                 {
 
-                    fontSize: "20px",
-                    color: "#000000",
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "17px",
+
+                    color:
+                        "#20252a",
+
+                    lineSpacing:
+                        5,
 
                     wordWrap: {
 
-                        width: 420
+                        width:
+                            this.contentWidth - 44
 
                     }
 
@@ -416,105 +760,60 @@ export default class EvidenceViewer {
         );
 
 
-        // =====================================================
-        // PAGE NUMBER
-        // =====================================================
+        // =================================================
+        // FOOTER DIVIDER
+        // =================================================
 
-        if (
-            this.pages.length > 1
-        ) {
+        const divider =
+            this.scene.add.rectangle(
 
-            const pageNumber =
-                this.scene.add.text(
+                this.contentWidth / 2,
+                this.footerY - 12,
 
-                    0,
-                    350,
+                this.contentWidth,
+                1,
 
-                    `Page ${
-                        this.currentPage + 1
-                    } / ${
-                        this.pages.length
-                    }`,
+                0xd0d6dc
 
-                    {
-
-                        fontSize: "16px",
-                        color: "#666666",
-                        fontStyle: "bold"
-
-                    }
-
-                );
-
-
-            this.pageContainer.add(
-                pageNumber
             );
 
-        }
+
+        this.pageContainer.add(
+            divider
+        );
 
 
-        // =====================================================
-        // PREVIOUS BUTTON
-        // =====================================================
+        // =================================================
+        // PREVIOUS
+        // =================================================
 
         if (
             this.currentPage > 0
         ) {
 
             const previous =
-                this.scene.add.text(
+                this.createNavigationButton(
 
                     0,
-                    380,
+                    this.footerY,
 
-                    "← Previous",
+                    "◀ Previous",
 
-                    {
+                    0
 
-                        fontSize: "20px",
-                        color: "#0066cc",
-                        fontStyle: "bold"
-
-                    }
-
-                )
-                .setInteractive({
-                    useHandCursor: true
-                });
+                );
 
 
             previous.on(
-                "pointerover",
-                () => {
 
-                    previous.setColor(
-                        "#ff8800"
-                    );
-
-                }
-            );
-
-
-            previous.on(
-                "pointerout",
-                () => {
-
-                    previous.setColor(
-                        "#0066cc"
-                    );
-
-                }
-            );
-
-
-            previous.on(
                 "pointerdown",
+
                 () => {
 
                     this.previousPage();
 
                 }
+
             );
 
 
@@ -525,9 +824,49 @@ export default class EvidenceViewer {
         }
 
 
-        // =====================================================
-        // NEXT BUTTON
-        // =====================================================
+        // =================================================
+        // PAGE INDICATOR
+        // =================================================
+
+        const pageNumber =
+            this.scene.add.text(
+
+                this.contentWidth / 2,
+                this.footerY,
+
+                `Page ${this.currentPage + 1} of ${this.pages.length}`,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "13px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#6a737d"
+
+                }
+
+            )
+            .setOrigin(
+                0.5,
+                0
+            );
+
+
+        this.pageContainer.add(
+            pageNumber
+        );
+
+
+        // =================================================
+        // NEXT
+        // =================================================
 
         if (
             this.currentPage <
@@ -535,58 +874,28 @@ export default class EvidenceViewer {
         ) {
 
             const next =
-                this.scene.add.text(
+                this.createNavigationButton(
 
-                    285,
-                    380,
+                    this.contentWidth,
+                    this.footerY,
 
-                    "Next Page →",
+                    "Next ▶",
 
-                    {
+                    1
 
-                        fontSize: "20px",
-                        color: "#0066cc",
-                        fontStyle: "bold"
-
-                    }
-
-                )
-                .setInteractive({
-                    useHandCursor: true
-                });
+                );
 
 
             next.on(
-                "pointerover",
-                () => {
 
-                    next.setColor(
-                        "#ff8800"
-                    );
-
-                }
-            );
-
-
-            next.on(
-                "pointerout",
-                () => {
-
-                    next.setColor(
-                        "#0066cc"
-                    );
-
-                }
-            );
-
-
-            next.on(
                 "pointerdown",
+
                 () => {
 
                     this.nextPage();
 
                 }
+
             );
 
 
@@ -597,13 +906,249 @@ export default class EvidenceViewer {
         }
 
 
-        // =====================================================
+        // =================================================
+        // SINGLE PAGE LABEL
+        // =================================================
+
+        if (
+            this.pages.length === 1
+        ) {
+
+            pageNumber.setText(
+                "Single-page evidence"
+            );
+
+        }
+
+
+        // =================================================
         // SET WINDOW CONTENT
-        // =====================================================
+        // =================================================
 
         this.window.setContent(
             this.pageContainer
         );
+
+    }
+
+
+    // =====================================================
+    // CREATE NAVIGATION BUTTON
+    // =====================================================
+
+    createNavigationButton(
+        x,
+        y,
+        label,
+        originX
+    ) {
+
+        const button =
+            this.scene.add.text(
+
+                x,
+                y,
+
+                label,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "15px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#1683e8"
+
+                }
+
+            )
+            .setOrigin(
+                originX,
+                0
+            )
+            .setInteractive({
+
+                useHandCursor:
+                    true
+
+            });
+
+
+        button.on(
+
+            "pointerover",
+
+            () => {
+
+                button.setColor(
+                    "#ff8a00"
+                );
+
+            }
+
+        );
+
+
+        button.on(
+
+            "pointerout",
+
+            () => {
+
+                button.setColor(
+                    "#1683e8"
+                );
+
+            }
+
+        );
+
+
+        return button;
+
+    }
+
+
+    // =====================================================
+    // EVIDENCE TYPE
+    // =====================================================
+
+    getEvidenceType(evidence) {
+
+        if (
+            !evidence
+        ) {
+
+            return "EVIDENCE FILE";
+
+        }
+
+
+        const combined =
+            `${evidence.id || ""} ${evidence.title || ""}`
+                .toLowerCase();
+
+
+        if (
+            combined.includes("review")
+        ) {
+
+            return "CUSTOMER FEEDBACK";
+
+        }
+
+
+        if (
+            combined.includes("survey")
+        ) {
+
+            return "CUSTOMER SURVEY";
+
+        }
+
+
+        if (
+            combined.includes("interview")
+        ) {
+
+            return "INTERVIEW RECORD";
+
+        }
+
+
+        if (
+            combined.includes("sales") ||
+            combined.includes("dashboard")
+        ) {
+
+            return "PERFORMANCE DATA";
+
+        }
+
+
+        if (
+            combined.includes("budget") ||
+            combined.includes("financial") ||
+            combined.includes("investment")
+        ) {
+
+            return "FINANCIAL RECORD";
+
+        }
+
+
+        if (
+            combined.includes("technology")
+        ) {
+
+            return "TECHNOLOGY REPORT";
+
+        }
+
+
+        if (
+            combined.includes("operations")
+        ) {
+
+            return "OPERATIONS REPORT";
+
+        }
+
+
+        if (
+            combined.includes("hr") ||
+            combined.includes("staff")
+        ) {
+
+            return "PEOPLE & ORGANIZATION";
+
+        }
+
+
+        if (
+            combined.includes("strategy")
+        ) {
+
+            return "STRATEGIC ANALYSIS";
+
+        }
+
+
+        if (
+            combined.includes("manager")
+        ) {
+
+            return "MANAGEMENT INTERVIEW";
+
+        }
+
+
+        if (
+            combined.includes("cashier") ||
+            combined.includes("transaction")
+        ) {
+
+            return "TRANSACTION RECORD";
+
+        }
+
+
+        if (
+            combined.includes("kitchen")
+        ) {
+
+            return "OPERATIONS EVIDENCE";
+
+        }
+
+
+        return "EVIDENCE FILE";
 
     }
 
@@ -628,11 +1173,13 @@ export default class EvidenceViewer {
 
 
         console.log(
+
             `Evidence page: ${
                 this.currentPage + 1
             } / ${
                 this.pages.length
             }`
+
         );
 
 
@@ -660,11 +1207,13 @@ export default class EvidenceViewer {
 
 
         console.log(
+
             `Evidence page: ${
                 this.currentPage + 1
             } / ${
                 this.pages.length
             }`
+
         );
 
 

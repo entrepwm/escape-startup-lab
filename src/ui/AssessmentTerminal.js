@@ -7,7 +7,8 @@ export default class AssessmentTerminal {
 
     constructor(scene) {
 
-        this.scene = scene;
+        this.scene =
+            scene;
 
         this.width =
             scene.scale.width;
@@ -15,11 +16,31 @@ export default class AssessmentTerminal {
         this.height =
             scene.scale.height;
 
-        this.buttons = {};
+        this.buttons =
+            {};
 
-        this.callback = null;
+        this.callback =
+            null;
+
 
         this.draw();
+
+
+        // =====================================================
+        // CLEAN UP RESIZE LISTENER
+        // =====================================================
+
+        this.scene.events.once(
+
+            Phaser.Scenes.Events.SHUTDOWN,
+
+            () => {
+
+                this.destroy();
+
+            }
+
+        );
 
     }
 
@@ -38,19 +59,19 @@ export default class AssessmentTerminal {
 
 
         // =====================================================
-        // LAYOUT CONSTANTS
+        // LAYOUT
         // =====================================================
 
-        const topBarHeight =
+        this.topBarHeight =
             60;
 
-        const bottomBarHeight =
+        this.bottomBarHeight =
             90;
 
-        const sidebarWidth =
+        this.sidebarWidth =
             w * 0.22;
 
-        const padding =
+        this.padding =
             20;
 
 
@@ -58,94 +79,156 @@ export default class AssessmentTerminal {
         // BACKGROUND
         // =====================================================
 
-        this.scene.add.rectangle(
+        this.background =
+            this.scene.add.rectangle(
 
-            w / 2,
-            h / 2,
+                w / 2,
+                h / 2,
 
-            w,
-            h,
+                w,
+                h,
 
-            0x36415d
+                0x36415d
 
-        );
+            );
 
 
         // =====================================================
         // TOP BAR
         // =====================================================
 
-        this.scene.add.rectangle(
+        this.topBar =
+            this.scene.add.rectangle(
 
-            w / 2,
+                w / 2,
+                this.topBarHeight / 2,
 
-            topBarHeight / 2,
+                w,
+                this.topBarHeight,
 
-            w,
+                0x1d2638
 
-            topBarHeight,
-
-            0x1d2638
-
-        );
+            );
 
 
         // =====================================================
         // TERMINAL TITLE
         // =====================================================
 
-        this.scene.add.text(
-
-            padding,
-
-            16,
-
-            "Startup Lab Assessment Terminal",
-
-            {
-
-                fontSize:
-                    "26px",
-
-                fontFamily:
-                    "monospace",
-
-                color:
-                    "#ffffff",
-
-                fontStyle:
-                    "bold"
-
-            }
-
-        );
-
-
-        // =====================================================
-        // SCORE
-        // =====================================================
-
-        this.scoreText =
+        this.terminalTitle =
             this.scene.add.text(
 
-                w - 220,
-
+                this.padding,
                 16,
 
-                "Score: 0",
+                "Startup Lab Assessment Terminal",
 
                 {
 
                     fontSize:
-                        "22px",
+                        "26px",
 
                     fontFamily:
                         "monospace",
 
                     color:
-                        "#ffffff"
+                        "#ffffff",
+
+                    fontStyle:
+                        "bold"
 
                 }
+
+            );
+
+
+        // =====================================================
+        // SCORE HUD
+        // =====================================================
+
+        /*
+         * Fixed score slot.
+         *
+         * We separate the label and number so a score such as
+         * 1100 cannot grow into the timer.
+         */
+
+
+        this.scoreLabel =
+            this.scene.add.text(
+
+                w - 300,
+                17,
+
+                "SCORE",
+
+                {
+
+                    fontSize:
+                        "12px",
+
+                    fontFamily:
+                        "monospace",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#91a5bd"
+
+                }
+
+            );
+
+
+        this.scoreText =
+            this.scene.add.text(
+
+                w - 195,
+                15,
+
+                "0",
+
+                {
+
+                    fontSize:
+                        "23px",
+
+                    fontFamily:
+                        "monospace",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#ffffff",
+
+                    align:
+                        "right"
+
+                }
+
+            )
+            .setOrigin(
+                1,
+                0
+            );
+
+
+        // =====================================================
+        // SCORE / TIMER DIVIDER
+        // =====================================================
+
+        this.hudDivider =
+            this.scene.add.rectangle(
+
+                w - 165,
+                30,
+
+                1,
+                30,
+
+                0x596a82
 
             );
 
@@ -154,28 +237,47 @@ export default class AssessmentTerminal {
         // TIMER
         // =====================================================
 
+        /*
+         * IMPORTANT:
+         *
+         * AssessmentTerminal does NOT own the countdown.
+         *
+         * ScoreManager owns the remaining time.
+         * Room1Scene / Room2Scene / Room3Scene update it.
+         * This object only displays the formatted value.
+         */
+
         this.timeText =
             this.scene.add.text(
 
-                w - 95,
+                w - 20,
+                15,
 
-                16,
-
-                "15:00",
+                "20:00",
 
                 {
 
                     fontSize:
-                        "22px",
+                        "23px",
 
                     fontFamily:
                         "monospace",
 
+                    fontStyle:
+                        "bold",
+
                     color:
-                        "#ffffff"
+                        "#ffffff",
+
+                    align:
+                        "right"
 
                 }
 
+            )
+            .setOrigin(
+                1,
+                0
             );
 
 
@@ -186,24 +288,25 @@ export default class AssessmentTerminal {
         const sidebarHeight =
 
             h -
-            topBarHeight -
-            bottomBarHeight;
+            this.topBarHeight -
+            this.bottomBarHeight;
 
 
-        this.scene.add.rectangle(
+        this.sidebar =
+            this.scene.add.rectangle(
 
-            sidebarWidth / 2,
+                this.sidebarWidth / 2,
 
-            topBarHeight +
-            sidebarHeight / 2,
+                this.topBarHeight +
+                sidebarHeight / 2,
 
-            sidebarWidth,
+                this.sidebarWidth,
 
-            sidebarHeight,
+                sidebarHeight,
 
-            0x2d364c
+                0x2d364c
 
-        );
+            );
 
 
         const buttonStart =
@@ -282,29 +385,29 @@ export default class AssessmentTerminal {
 
         const roomX =
 
-            sidebarWidth +
-            padding;
+            this.sidebarWidth +
+            this.padding;
 
 
         const roomY =
 
-            topBarHeight +
-            padding;
+            this.topBarHeight +
+            this.padding;
 
 
         const roomWidth =
 
             w -
-            sidebarWidth -
-            padding * 2;
+            this.sidebarWidth -
+            this.padding * 2;
 
 
         const roomHeight =
 
             h -
-            topBarHeight -
-            bottomBarHeight -
-            padding * 2;
+            this.topBarHeight -
+            this.bottomBarHeight -
+            this.padding * 2;
 
 
         this.roomView =
@@ -333,7 +436,6 @@ export default class AssessmentTerminal {
             this.scene.add.text(
 
                 roomX + 30,
-
                 roomY + 22,
 
                 "MISSION 01: PROBLEM DISCOVERY",
@@ -390,7 +492,6 @@ export default class AssessmentTerminal {
             this.scene.add.text(
 
                 roomX + 32,
-
                 roomY + 52,
 
                 "RESTAURANT",
@@ -443,20 +544,21 @@ export default class AssessmentTerminal {
         // BOTTOM DIALOGUE BAR
         // =====================================================
 
-        this.scene.add.rectangle(
+        this.bottomBar =
+            this.scene.add.rectangle(
 
-            w / 2,
+                w / 2,
 
-            h -
-            bottomBarHeight / 2,
+                h -
+                this.bottomBarHeight / 2,
 
-            w,
+                w,
 
-            bottomBarHeight,
+                this.bottomBarHeight,
 
-            0x1d2638
+                0x1d2638
 
-        );
+            );
 
 
         // =====================================================
@@ -466,7 +568,7 @@ export default class AssessmentTerminal {
         this.dialogueText =
             this.scene.add.text(
 
-                padding,
+                this.padding,
 
                 h - 65,
 
@@ -486,7 +588,7 @@ export default class AssessmentTerminal {
                     wordWrap: {
 
                         width:
-                            w - 260
+                            w - 300
 
                     }
 
@@ -502,7 +604,7 @@ export default class AssessmentTerminal {
         this.continueButton =
             this.scene.add.text(
 
-                w - 170,
+                w - 15,
 
                 h - 60,
 
@@ -525,6 +627,10 @@ export default class AssessmentTerminal {
                 }
 
             )
+            .setOrigin(
+                1,
+                0
+            )
             .setInteractive({
 
                 useHandCursor:
@@ -533,21 +639,12 @@ export default class AssessmentTerminal {
             });
 
 
-        // =====================================================
-        // STORE CONTINUE BUTTON
-        // =====================================================
-
-        /*
-         * This lets setButtonEnabled("continue", ...)
-         * work the same way as the sidebar buttons.
-         */
-
         this.buttons.continue =
             this.continueButton;
 
 
         // =====================================================
-        // CONTINUE — HOVER IN
+        // CONTINUE HOVER
         // =====================================================
 
         this.continueButton.on(
@@ -561,17 +658,13 @@ export default class AssessmentTerminal {
                         "#7dffb5"
                     )
                     .setScale(
-                        1.05
+                        1.04
                     );
 
             }
 
         );
 
-
-        // =====================================================
-        // CONTINUE — HOVER OUT
-        // =====================================================
 
         this.continueButton.on(
 
@@ -593,7 +686,7 @@ export default class AssessmentTerminal {
 
 
         // =====================================================
-        // CONTINUE — CLICK
+        // CONTINUE CLICK
         // =====================================================
 
         this.continueButton.on(
@@ -607,7 +700,9 @@ export default class AssessmentTerminal {
                 );
 
 
-                if (this.callback) {
+                if (
+                    this.callback
+                ) {
 
                     this.callback(
                         "continue"
@@ -619,11 +714,26 @@ export default class AssessmentTerminal {
 
         );
 
+
+        // =====================================================
+        // RESPONSIVE RESIZE
+        // =====================================================
+
+        this.scene.scale.on(
+
+            "resize",
+
+            this.handleResize,
+
+            this
+
+        );
+
     }
 
 
     // =====================================================
-    // SIDEBAR BUTTON
+    // CREATE SIDEBAR BUTTON
     // =====================================================
 
     createButton(
@@ -636,7 +746,6 @@ export default class AssessmentTerminal {
             this.scene.add.text(
 
                 25,
-
                 y,
 
                 label,
@@ -666,15 +775,25 @@ export default class AssessmentTerminal {
             });
 
 
-        // =====================================================
+        // =================================================
         // HOVER IN
-        // =====================================================
+        // =================================================
 
         button.on(
 
             "pointerover",
 
             () => {
+
+                if (
+                    !button.input ||
+                    !button.input.enabled
+                ) {
+
+                    return;
+
+                }
+
 
                 button.setColor(
                     "#ffd54f"
@@ -695,15 +814,25 @@ export default class AssessmentTerminal {
         );
 
 
-        // =====================================================
+        // =================================================
         // HOVER OUT
-        // =====================================================
+        // =================================================
 
         button.on(
 
             "pointerout",
 
             () => {
+
+                if (
+                    !button.input ||
+                    !button.input.enabled
+                ) {
+
+                    return;
+
+                }
+
 
                 button.setColor(
                     "#ffffff"
@@ -724,9 +853,9 @@ export default class AssessmentTerminal {
         );
 
 
-        // =====================================================
+        // =================================================
         // CLICK
-        // =====================================================
+        // =================================================
 
         button.on(
 
@@ -749,11 +878,9 @@ export default class AssessmentTerminal {
         );
 
 
-        // =====================================================
-        // STORE BUTTON
-        // =====================================================
-
-        this.buttons[id] =
+        this.buttons[
+            id
+        ] =
             button;
 
     }
@@ -763,7 +890,9 @@ export default class AssessmentTerminal {
     // BUTTON CALLBACK
     // =====================================================
 
-    onButtonClick(callback) {
+    onButtonClick(
+        callback
+    ) {
 
         this.callback =
             callback;
@@ -775,11 +904,19 @@ export default class AssessmentTerminal {
     // SET DIALOGUE
     // =====================================================
 
-    setDialogue(text) {
+    setDialogue(
+        text
+    ) {
 
-        this.dialogueText.setText(
-            text
-        );
+        if (
+            this.dialogueText
+        ) {
+
+            this.dialogueText.setText(
+                text
+            );
+
+        }
 
     }
 
@@ -794,10 +931,14 @@ export default class AssessmentTerminal {
     ) {
 
         const button =
-            this.buttons[id];
+            this.buttons[
+                id
+            ];
 
 
-        if (!button) {
+        if (
+            !button
+        ) {
 
             console.warn(
                 `Button '${id}' not found.`
@@ -808,11 +949,9 @@ export default class AssessmentTerminal {
         }
 
 
-        // =================================================
-        // ENABLE
-        // =================================================
-
-        if (enabled) {
+        if (
+            enabled
+        ) {
 
             button.setAlpha(
                 1
@@ -827,9 +966,9 @@ export default class AssessmentTerminal {
             });
 
 
-            // Continue has its own green color.
             if (
-                id === "continue"
+                id ===
+                "continue"
             ) {
 
                 button.setColor(
@@ -847,11 +986,6 @@ export default class AssessmentTerminal {
             }
 
         }
-
-
-        // =================================================
-        // DISABLE
-        // =================================================
 
         else {
 
@@ -876,13 +1010,67 @@ export default class AssessmentTerminal {
     // SET SCORE
     // =====================================================
 
-    setScore(score) {
+    setScore(
+        score
+    ) {
+
+        if (
+            !this.scoreText
+        ) {
+
+            return;
+
+        }
+
+
+        const safeScore =
+            Number(
+                score
+            ) || 0;
+
 
         this.scoreText.setText(
-
-            `Score: ${score}`
-
+            String(
+                safeScore
+            )
         );
+
+
+        // =================================================
+        // SMALL FEEDBACK ANIMATION
+        // =================================================
+
+        this.scene.tweens.killTweensOf(
+            this.scoreText
+        );
+
+
+        this.scoreText.setScale(
+            1
+        );
+
+
+        this.scene.tweens.add({
+
+            targets:
+                this.scoreText,
+
+            scaleX:
+                1.08,
+
+            scaleY:
+                1.08,
+
+            duration:
+                90,
+
+            yoyo:
+                true,
+
+            ease:
+                "Sine.Out"
+
+        });
 
     }
 
@@ -891,17 +1079,9 @@ export default class AssessmentTerminal {
     // SET ROOM TITLE
     // =====================================================
 
-    setRoom(roomName) {
-
-        /*
-         * Example:
-         *
-         * MISSION 01: PROBLEM DISCOVERY
-         * RESTAURANT
-         *
-         * The first line becomes the main title.
-         * The second line becomes the subtitle.
-         */
+    setRoom(
+        roomName
+    ) {
 
         const lines =
 
@@ -946,14 +1126,192 @@ export default class AssessmentTerminal {
 
 
     // =====================================================
-    // SET TIMER
+    // SET TIMER DISPLAY
     // =====================================================
 
-    setTime(time) {
+    /*
+     * DISPLAY ONLY.
+     *
+     * Do not create a Phaser timer here.
+     *
+     * ScoreManager owns the global remaining time.
+     */
+
+    setTime(
+        time
+    ) {
+
+        if (
+            !this.timeText
+        ) {
+
+            return;
+
+        }
+
 
         this.timeText.setText(
-            time
+            String(
+                time
+            )
         );
+
+    }
+
+
+    // =====================================================
+    // OPTIONAL TIMER COLOR HELPER
+    // =====================================================
+
+    setTimeWarningLevel(
+        level = "normal"
+    ) {
+
+        if (
+            !this.timeText
+        ) {
+
+            return;
+
+        }
+
+
+        switch (
+            level
+        ) {
+
+            case "danger":
+
+                this.timeText.setColor(
+                    "#ff5c5c"
+                );
+
+                break;
+
+
+            case "warning":
+
+                this.timeText.setColor(
+                    "#ffd166"
+                );
+
+                break;
+
+
+            default:
+
+                this.timeText.setColor(
+                    "#ffffff"
+                );
+
+                break;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // HANDLE RESIZE
+    // =====================================================
+
+    handleResize(
+        gameSize
+    ) {
+
+        const w =
+            gameSize.width;
+
+
+        this.width =
+            w;
+
+
+        // =================================================
+        // SCORE LABEL
+        // =================================================
+
+        if (
+            this.scoreLabel
+        ) {
+
+            this.scoreLabel.setPosition(
+
+                w - 300,
+                17
+
+            );
+
+        }
+
+
+        // =================================================
+        // SCORE VALUE
+        // =================================================
+
+        if (
+            this.scoreText
+        ) {
+
+            this.scoreText.setPosition(
+
+                w - 195,
+                15
+
+            );
+
+        }
+
+
+        // =================================================
+        // DIVIDER
+        // =================================================
+
+        if (
+            this.hudDivider
+        ) {
+
+            this.hudDivider.setPosition(
+
+                w - 165,
+                30
+
+            );
+
+        }
+
+
+        // =================================================
+        // TIMER
+        // =================================================
+
+        if (
+            this.timeText
+        ) {
+
+            this.timeText.setPosition(
+
+                w - 20,
+                15
+
+            );
+
+        }
+
+
+        // =================================================
+        // CONTINUE BUTTON
+        // =================================================
+
+        if (
+            this.continueButton
+        ) {
+
+            this.continueButton.setX(
+                w - 15
+            );
+
+        }
 
     }
 
@@ -965,6 +1323,25 @@ export default class AssessmentTerminal {
     getRoomView() {
 
         return this.roomView;
+
+    }
+
+
+    // =====================================================
+    // DESTROY
+    // =====================================================
+
+    destroy() {
+
+        this.scene.scale.off(
+
+            "resize",
+
+            this.handleResize,
+
+            this
+
+        );
 
     }
 

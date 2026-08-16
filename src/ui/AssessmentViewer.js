@@ -1,39 +1,110 @@
 import Phaser from "phaser";
 
+
 export default class AssessmentViewer {
 
-    constructor(scene, window, assessmentData, scoreManager) {
+    constructor(
+        scene,
+        window,
+        assessmentData,
+        scoreManager
+    ) {
 
-        this.scene = scene;
-        this.window = window;
-        this.assessmentData = assessmentData;
-        this.scoreManager = scoreManager;
+        this.scene =
+            scene;
 
-        this.selectedAnswer = null;
-        this.container = null;
-        this.submitted = false;
+        this.window =
+            window;
+
+        this.assessmentData =
+            assessmentData;
+
+        this.scoreManager =
+            scoreManager;
+
 
         // =====================================================
-        // PAGINATION
+        // ASSESSMENT STATE
         // =====================================================
 
-        this.currentPage = 0;
+        this.selectedAnswer =
+            null;
 
-        // Number of options displayed per page
-        this.optionsPerPage = 2;
+        this.container =
+            null;
+
+        this.submitted =
+            false;
+
+
+        // =====================================================
+        // ASSESSMENT PAGINATION
+        // =====================================================
+
+        this.currentPage =
+            0;
+
+        this.optionsPerPage =
+            2;
+
+
+        // =====================================================
+        // RESULT PAGINATION
+        // =====================================================
+
+        this.resultPages =
+            [];
+
+        this.resultPage =
+            0;
+
+        this.currentResult =
+            null;
+
+
+        // =====================================================
+        // LAYOUT
+        // =====================================================
+
+        this.contentWidth =
+            620;
+
+
+        this.footerY =
+            392;
 
     }
 
 
     // =====================================================
-    // OPEN ASSESSMENT
+    // OPEN
     // =====================================================
 
     open() {
 
-        this.selectedAnswer = null;
-        this.submitted = false;
-        this.currentPage = 0;
+        this.selectedAnswer =
+            null;
+
+
+        this.submitted =
+            false;
+
+
+        this.currentPage =
+            0;
+
+
+        this.resultPages =
+            [];
+
+
+        this.resultPage =
+            0;
+
+
+        this.currentResult =
+            null;
+
 
         this.renderAssessment();
 
@@ -41,14 +112,16 @@ export default class AssessmentViewer {
 
 
     // =====================================================
-    // GET TOTAL PAGES
+    // TOTAL ASSESSMENT PAGES
     // =====================================================
 
     getTotalPages() {
 
         return Math.ceil(
+
             this.assessmentData.length /
             this.optionsPerPage
+
         );
 
     }
@@ -60,85 +133,173 @@ export default class AssessmentViewer {
 
     renderAssessment() {
 
-        if (this.container) {
-
-            this.container.destroy(true);
-            this.container = null;
-
-        }
+        this.destroyCurrentContainer();
 
 
         this.container =
-            this.scene.add.container(0, 0);
+            this.scene.add.container(
+                0,
+                0
+            );
 
 
-        // =====================================================
+        // =================================================
+        // HEADER
+        // =================================================
+
+        const header =
+            this.scene.add.rectangle(
+
+                this.contentWidth / 2,
+                35,
+
+                this.contentWidth,
+                70,
+
+                0x17263b
+
+            );
+
+
+        header.setStrokeStyle(
+            1,
+            0x24b8ff
+        );
+
+
+        this.container.add(
+            header
+        );
+
+
+        // =================================================
+        // EYEBROW
+        // =================================================
+
+        const eyebrow =
+            this.scene.add.text(
+
+                18,
+                12,
+
+                "FINAL ASSESSMENT",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "11px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#67d6ff"
+
+                }
+
+            );
+
+
+        this.container.add(
+            eyebrow
+        );
+
+
+        // =================================================
         // TITLE
-        // =====================================================
+        // =================================================
 
         const title =
             this.scene.add.text(
 
-                0,
-                0,
+                18,
+                32,
 
                 "Choose ONE recommendation for the restaurant.",
 
                 {
 
-                    fontSize: "20px",
-                    color: "#000000",
-                    fontStyle: "bold",
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "18px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#ffffff",
 
                     wordWrap: {
-                        width: 390
-                    },
 
-                    lineSpacing: 4
+                        width:
+                            this.contentWidth - 36
+
+                    }
 
                 }
 
             );
 
 
-        this.container.add(title);
+        this.container.add(
+            title
+        );
 
 
-        // =====================================================
+        // =================================================
         // PAGE INDICATOR
-        // =====================================================
+        // =================================================
 
         const totalPages =
             this.getTotalPages();
 
 
-        const pageText =
+        const pageIndicator =
             this.scene.add.text(
 
-                0,
-                title.height + 18,
+                this.contentWidth / 2,
+                88,
 
                 `Page ${this.currentPage + 1} of ${totalPages}`,
 
                 {
 
-                    fontSize: "16px",
-                    color: "#666666",
-                    fontStyle: "bold"
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "13px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#69737d"
 
                 }
 
+            )
+            .setOrigin(
+                0.5
             );
 
 
-        this.container.add(pageText);
+        this.container.add(
+            pageIndicator
+        );
 
 
-        // =====================================================
-        // OPTIONS
-        // =====================================================
+        // =================================================
+        // CURRENT OPTIONS
+        // =================================================
 
         const startIndex =
+
             this.currentPage *
             this.optionsPerPage;
 
@@ -156,391 +317,210 @@ export default class AssessmentViewer {
 
         const pageOptions =
             this.assessmentData.slice(
+
                 startIndex,
                 endIndex
+
             );
 
 
         let currentY =
-            pageText.y +
-            pageText.height +
-            25;
+            118;
 
 
-        pageOptions.forEach(option => {
+        pageOptions.forEach(
 
-            const optionContainer =
-                this.scene.add.container(
-                    0,
-                    currentY
+            option => {
+
+                const optionCard =
+                    this.createOptionCard(
+
+                        option,
+
+                        currentY
+
+                    );
+
+
+                this.container.add(
+                    optionCard
                 );
 
 
-            const isSelected =
-                this.selectedAnswer === option.id;
+                currentY +=
+                    112;
+
+            }
+
+        );
 
 
-            const radio =
-                isSelected
-                    ? "●"
-                    : "○";
+        // =================================================
+        // FOOTER DIVIDER
+        // =================================================
+
+        const footerDivider =
+            this.scene.add.rectangle(
+
+                this.contentWidth / 2,
+                this.footerY - 16,
+
+                this.contentWidth,
+                1,
+
+                0xd2d7dc
+
+            );
 
 
-            const optionText =
-                `${radio} ${option.text}`;
+        this.container.add(
+            footerDivider
+        );
 
 
-            const text =
-                this.scene.add.text(
+        // =================================================
+        // PREVIOUS
+        // =================================================
 
-                    10,
+        if (
+            this.currentPage > 0
+        ) {
+
+            const previous =
+                this.createTextButton(
+
                     0,
+                    this.footerY,
 
-                    optionText,
+                    "◀ Previous",
 
-                    {
+                    0
 
-                        fontSize: "18px",
-                        color: "#0066cc",
-
-                        wordWrap: {
-                            width: 380
-                        },
-
-                        lineSpacing: 4
-
-                    }
-
-                )
-                .setInteractive({
-                    useHandCursor: true
-                });
+                );
 
 
-            // =================================================
-            // HOVER
-            // =================================================
+            previous.on(
 
-            text.on(
-                "pointerover",
-                () => {
-
-                    if (!this.submitted) {
-
-                        text.setColor(
-                            "#ff8800"
-                        );
-
-                    }
-
-                }
-            );
-
-
-            text.on(
-                "pointerout",
-                () => {
-
-                    if (!this.submitted) {
-
-                        text.setColor(
-                            "#0066cc"
-                        );
-
-                    }
-
-                }
-            );
-
-
-            // =================================================
-            // SELECT
-            // =================================================
-
-            text.on(
                 "pointerdown",
+
                 () => {
 
-                    if (this.submitted) {
-                        return;
-                    }
-
-
-                    this.selectedAnswer =
-                        option.id;
+                    this.currentPage--;
 
 
                     this.renderAssessment();
 
                 }
-            );
 
-
-            optionContainer.add(text);
-
-            this.container.add(
-                optionContainer
-            );
-
-
-            // =================================================
-            // DYNAMIC SPACING
-            // =================================================
-
-            currentY +=
-                text.height +
-                30;
-
-        });
-
-
-        // =====================================================
-        // NAVIGATION
-        // =====================================================
-
-        const navigationY =
-            currentY + 20;
-
-
-        // =====================================================
-        // PREVIOUS
-        // =====================================================
-
-        if (this.currentPage > 0) {
-
-            const previousButton =
-                this.scene.add.text(
-
-                    0,
-                    navigationY,
-
-                    "← Previous",
-
-                    {
-
-                        fontSize: "18px",
-                        color: "#0066cc",
-                        fontStyle: "bold"
-
-                    }
-
-                )
-                .setInteractive({
-                    useHandCursor: true
-                });
-
-
-            previousButton.on(
-                "pointerover",
-                () => {
-
-                    previousButton.setColor(
-                        "#ff8800"
-                    );
-
-                }
-            );
-
-
-            previousButton.on(
-                "pointerout",
-                () => {
-
-                    previousButton.setColor(
-                        "#0066cc"
-                    );
-
-                }
-            );
-
-
-            previousButton.on(
-                "pointerdown",
-                () => {
-
-                    if (this.currentPage > 0) {
-
-                        this.currentPage--;
-
-                        this.renderAssessment();
-
-                    }
-
-                }
             );
 
 
             this.container.add(
-                previousButton
+                previous
             );
 
         }
 
 
-        // =====================================================
+        // =================================================
         // NEXT
-        // =====================================================
+        // =================================================
 
         if (
             this.currentPage <
             totalPages - 1
         ) {
 
-            const nextButton =
-                this.scene.add.text(
+            const next =
+                this.createTextButton(
 
-                    260,
-                    navigationY,
+                    this.contentWidth,
+                    this.footerY,
 
-                    "Next →",
+                    "Next ▶",
 
-                    {
+                    1
 
-                        fontSize: "18px",
-                        color: "#0066cc",
-                        fontStyle: "bold"
-
-                    }
-
-                )
-                .setInteractive({
-                    useHandCursor: true
-                });
+                );
 
 
-            nextButton.on(
-                "pointerover",
-                () => {
+            next.on(
 
-                    nextButton.setColor(
-                        "#ff8800"
-                    );
-
-                }
-            );
-
-
-            nextButton.on(
-                "pointerout",
-                () => {
-
-                    nextButton.setColor(
-                        "#0066cc"
-                    );
-
-                }
-            );
-
-
-            nextButton.on(
                 "pointerdown",
+
                 () => {
 
-                    if (
-                        this.currentPage <
-                        totalPages - 1
-                    ) {
+                    this.currentPage++;
 
-                        this.currentPage++;
 
-                        this.renderAssessment();
-
-                    }
+                    this.renderAssessment();
 
                 }
+
             );
 
 
             this.container.add(
-                nextButton
+                next
             );
 
         }
 
 
-        // =====================================================
+        // =================================================
         // SUBMIT
-        // =====================================================
+        // =================================================
 
         if (
             this.currentPage ===
             totalPages - 1
         ) {
 
-            const submitY =
-                navigationY + 50;
+            const submit =
+                this.createPrimaryButton(
+
+                    this.contentWidth - 120,
+                    this.footerY - 4,
+
+                    240,
+                    46,
+
+                    "SUBMIT ASSESSMENT"
+
+                );
 
 
-            const submitButton =
-                this.scene.add.text(
+            submit.button.on(
 
-                    0,
-                    submitY,
-
-                    "✅ Submit Assessment",
-
-                    {
-
-                        fontSize: "20px",
-                        color: "#008800",
-                        fontStyle: "bold"
-
-                    }
-
-                )
-                .setInteractive({
-                    useHandCursor: true
-                });
-
-
-            submitButton.on(
-                "pointerover",
-                () => {
-
-                    submitButton.setColor(
-                        "#ff8800"
-                    );
-
-                }
-            );
-
-
-            submitButton.on(
-                "pointerout",
-                () => {
-
-                    submitButton.setColor(
-                        "#008800"
-                    );
-
-                }
-            );
-
-
-            submitButton.on(
                 "pointerdown",
+
                 () => {
 
                     this.submitAssessment();
 
                 }
+
             );
 
 
-            this.container.add(
-                submitButton
-            );
+            this.container.add([
+
+                submit.button,
+                submit.label
+
+            ]);
 
         }
 
 
-        // =====================================================
-        // OPEN WINDOW
-        // =====================================================
+        // =================================================
+        // WINDOW
+        // =================================================
 
         this.window.open({
 
-            title: "Final Assessment"
+            title:
+                "Final Assessment"
 
         });
 
@@ -553,21 +533,299 @@ export default class AssessmentViewer {
 
 
     // =====================================================
+    // CREATE OPTION CARD
+    // =====================================================
+
+    createOptionCard(
+        option,
+        y
+    ) {
+
+        const wrapper =
+            this.scene.add.container(
+                0,
+                y
+            );
+
+
+        const isSelected =
+
+            this.selectedAnswer ===
+            option.id;
+
+
+        // =================================================
+        // CARD
+        // =================================================
+
+        const card =
+            this.scene.add.rectangle(
+
+                this.contentWidth / 2,
+                45,
+
+                this.contentWidth,
+                90,
+
+                isSelected
+                    ? 0xeaf4ff
+                    : 0xf8f9fa
+
+            );
+
+
+        card.setStrokeStyle(
+
+            isSelected
+                ? 2
+                : 1,
+
+            isSelected
+                ? 0x1683e8
+                : 0xd3d9de
+
+        );
+
+
+        card.setInteractive({
+
+            useHandCursor:
+                true
+
+        });
+
+
+        wrapper.add(
+            card
+        );
+
+
+        // =================================================
+        // RADIO
+        // =================================================
+
+        const radio =
+            this.scene.add.text(
+
+                18,
+                29,
+
+                isSelected
+                    ? "●"
+                    : "○",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "22px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        isSelected
+                            ? "#1683e8"
+                            : "#74808b"
+
+                }
+
+            );
+
+
+        wrapper.add(
+            radio
+        );
+
+
+        // =================================================
+        // OPTION TEXT
+        // =================================================
+
+        const optionText =
+            this.scene.add.text(
+
+                52,
+                18,
+
+                option.text,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "16px",
+
+                    color:
+                        "#27313a",
+
+                    wordWrap: {
+
+                        width:
+                            this.contentWidth - 76
+
+                    },
+
+                    lineSpacing:
+                        3
+
+                }
+
+            );
+
+
+        wrapper.add(
+            optionText
+        );
+
+
+        // =================================================
+        // HOVER IN
+        // =================================================
+
+        card.on(
+
+            "pointerover",
+
+            () => {
+
+                if (
+                    this.submitted
+                ) {
+
+                    return;
+
+                }
+
+
+                card.setFillStyle(
+                    0xeaf4ff
+                );
+
+
+                card.setStrokeStyle(
+                    2,
+                    0x1683e8
+                );
+
+            }
+
+        );
+
+
+        // =================================================
+        // HOVER OUT
+        // =================================================
+
+        card.on(
+
+            "pointerout",
+
+            () => {
+
+                if (
+                    this.submitted
+                ) {
+
+                    return;
+
+                }
+
+
+                const stillSelected =
+
+                    this.selectedAnswer ===
+                    option.id;
+
+
+                card.setFillStyle(
+
+                    stillSelected
+                        ? 0xeaf4ff
+                        : 0xf8f9fa
+
+                );
+
+
+                card.setStrokeStyle(
+
+                    stillSelected
+                        ? 2
+                        : 1,
+
+                    stillSelected
+                        ? 0x1683e8
+                        : 0xd3d9de
+
+                );
+
+            }
+
+        );
+
+
+        // =================================================
+        // SELECT
+        // =================================================
+
+        card.on(
+
+            "pointerdown",
+
+            () => {
+
+                if (
+                    this.submitted
+                ) {
+
+                    return;
+
+                }
+
+
+                this.selectedAnswer =
+                    option.id;
+
+
+                this.renderAssessment();
+
+            }
+
+        );
+
+
+        return wrapper;
+
+    }
+
+
+    // =====================================================
     // SUBMIT ASSESSMENT
     // =====================================================
 
     submitAssessment() {
 
-        if (this.submitted) {
+        if (
+            this.submitted
+        ) {
+
             return;
+
         }
 
 
-        if (!this.selectedAnswer) {
+        if (
+            !this.selectedAnswer
+        ) {
 
-            alert(
-                "Please choose one recommendation first."
+            this.showInlineMessage(
+                "Choose one recommendation before submitting."
             );
+
 
             return;
 
@@ -575,8 +833,11 @@ export default class AssessmentViewer {
 
 
         console.log(
+
             "Submitting assessment:",
+
             this.selectedAnswer
+
         );
 
 
@@ -592,32 +853,45 @@ export default class AssessmentViewer {
 
         }
 
-        catch (error) {
+        catch (
+            error
+        ) {
 
             console.error(
+
                 "Assessment evaluation failed:",
+
                 error
+
             );
 
-            alert(
-                "There was a problem submitting the assessment."
+
+            this.showInlineMessage(
+                "Assessment could not be submitted."
             );
+
 
             return;
 
         }
 
 
-        this.submitted = true;
+        this.submitted =
+            true;
 
 
         console.log(
+
             "Assessment result:",
+
             result
+
         );
 
 
-        this.showResult(result);
+        this.showResult(
+            result
+        );
 
     }
 
@@ -626,228 +900,1029 @@ export default class AssessmentViewer {
     // SHOW RESULT
     // =====================================================
 
-    showResult(result) {
+    showResult(
+        result
+    ) {
 
-        if (this.container) {
+        this.currentResult =
+            result;
 
-            this.container.destroy(true);
-            this.container = null;
+
+        this.resultPages =
+            this.createResultPages(
+
+                result.explanation ||
+                "No explanation available."
+
+            );
+
+
+        this.resultPage =
+            0;
+
+
+        this.renderResultPage();
+
+    }
+
+
+    // =====================================================
+    // CREATE RESULT PAGES
+    // =====================================================
+
+    createResultPages(
+        content
+    ) {
+
+        const pages =
+            [];
+
+
+        // Slightly smaller than before so the explanation
+        // always fits cleanly inside the new result card.
+        const maxHeight =
+            165;
+
+
+        const textWidth =
+            this.contentWidth - 44;
+
+
+        const paragraphs =
+            String(
+                content
+            ).split(
+                "\n"
+            );
+
+
+        let currentText =
+            "";
+
+
+        const measureText =
+            this.scene.add.text(
+
+                0,
+                0,
+
+                "",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "15px",
+
+                    lineSpacing:
+                        4,
+
+                    wordWrap: {
+
+                        width:
+                            textWidth
+
+                    }
+
+                }
+
+            );
+
+
+        paragraphs.forEach(
+
+            paragraph => {
+
+                const testText =
+
+                    currentText === ""
+                        ? paragraph
+                        : (
+                            currentText +
+                            "\n\n" +
+                            paragraph
+                        );
+
+
+                measureText.setText(
+                    testText
+                );
+
+
+                if (
+                    measureText.height >
+                        maxHeight &&
+                    currentText !== ""
+                ) {
+
+                    pages.push(
+                        currentText
+                    );
+
+
+                    currentText =
+                        paragraph;
+
+                }
+
+                else {
+
+                    currentText =
+                        testText;
+
+                }
+
+            }
+
+        );
+
+
+        if (
+            currentText.trim() !== ""
+        ) {
+
+            pages.push(
+                currentText
+            );
 
         }
 
 
-        const resultContainer =
-            this.scene.add.container(0, 0);
+        measureText.destroy();
 
 
-        // =====================================================
-        // TITLE
-        // =====================================================
+        if (
+            pages.length === 0
+        ) {
 
-        const title =
-            this.scene.add.text(
+            pages.push(
+                "No explanation available."
+            );
 
+        }
+
+
+        return pages;
+
+    }
+
+
+    // =====================================================
+    // RENDER RESULT PAGE
+    // =====================================================
+
+    renderResultPage() {
+
+        this.destroyCurrentContainer();
+
+
+        const result =
+            this.currentResult;
+
+
+        if (
+            !result
+        ) {
+
+            return;
+
+        }
+
+
+        this.container =
+            this.scene.add.container(
                 0,
-                0,
+                0
+            );
+
+
+        // =================================================
+        // RESULT HEADER CARD
+        // =================================================
+
+        const header =
+            this.scene.add.rectangle(
+
+                this.contentWidth / 2,
+                48,
+
+                this.contentWidth,
+                96,
 
                 result.correct
-                    ? "✅ Correct!"
-                    : "❌ Incorrect",
-
-                {
-
-                    fontSize: "25px",
-                    color: "#000000",
-                    fontStyle: "bold"
-
-                }
+                    ? 0xeaf7ef
+                    : 0xffeeee
 
             );
 
 
-        resultContainer.add(title);
+        header.setStrokeStyle(
+
+            2,
+
+            result.correct
+                ? 0x2da766
+                : 0xd35454
+
+        );
 
 
-        // =====================================================
-        // SCORE
-        // =====================================================
+        this.container.add(
+            header
+        );
 
-        const score =
+
+        // =================================================
+        // RESULT STATUS
+        // =================================================
+
+        const status =
             this.scene.add.text(
 
-                0,
-                50,
+                20,
+                17,
 
-                `Score: +${result.score}`,
+                result.correct
+                    ? "✓ CORRECT DECISION"
+                    : "✕ INCORRECT DECISION",
 
                 {
 
-                    fontSize: "20px",
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "20px",
+
+                    fontStyle:
+                        "bold",
 
                     color:
                         result.correct
-                            ? "#008800"
-                            : "#880000",
-
-                    fontStyle: "bold"
+                            ? "#168e52"
+                            : "#b54141"
 
                 }
 
             );
 
 
-        resultContainer.add(score);
+        this.container.add(
+            status
+        );
 
 
-        // =====================================================
+        // =================================================
+        // POINTS
+        // =================================================
+
+        const points =
+            this.scene.add.text(
+
+                20,
+                54,
+
+                `+${result.score} POINTS`,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "16px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#26313b"
+
+                }
+
+            );
+
+
+        this.container.add(
+            points
+        );
+
+
+        // =================================================
         // TOTAL SCORE
-        // =====================================================
+        // =================================================
 
         const totalScore =
             this.scene.add.text(
 
-                0,
-                85,
+                this.contentWidth - 20,
+                54,
 
-                `Total Score: ${this.scoreManager.getScore()}`,
-
-                {
-
-                    fontSize: "18px",
-                    color: "#000000"
-
-                }
-
-            );
-
-
-        resultContainer.add(totalScore);
-
-
-        // =====================================================
-        // EXPLANATION
-        // =====================================================
-
-        const explanation =
-            this.scene.add.text(
-
-                0,
-                130,
-
-                result.explanation || "",
+                `TOTAL ${this.scoreManager.getScore()}`,
 
                 {
 
-                    fontSize: "17px",
-                    color: "#000000",
+                    fontFamily:
+                        "monospace",
 
-                    wordWrap: {
-                        width: 390
-                    },
+                    fontSize:
+                        "16px",
 
-                    lineSpacing: 4
+                    fontStyle:
+                        "bold",
 
-                }
-
-            );
-
-
-        resultContainer.add(
-            explanation
-        );
-
-
-        // =====================================================
-        // CONTINUE
-        // =====================================================
-
-        const continueButtonY =
-            130 +
-            explanation.height +
-            30;
-
-
-        const continueButton =
-            this.scene.add.text(
-
-                0,
-                continueButtonY,
-
-                "Continue →",
-
-                {
-
-                    fontSize: "20px",
-                    color: "#0066cc",
-                    fontStyle: "bold"
+                    color:
+                        "#1683e8"
 
                 }
 
             )
-            .setInteractive({
-                useHandCursor: true
-            });
+            .setOrigin(
+                1,
+                0
+            );
 
 
-        continueButton.on(
-            "pointerover",
-            () => {
+        this.container.add(
+            totalScore
+        );
 
-                continueButton.setColor(
-                    "#ff8800"
+
+        // =================================================
+        // EXPLANATION LAYOUT
+        // =================================================
+
+        /*
+         * Important spacing:
+         *
+         * heading top       = 116
+         * heading height    ≈ 16
+         * card top          = 145
+         *
+         * This leaves clear visual space between the
+         * subtitle and the card border.
+         */
+
+        const explanationHeadingY =
+            116;
+
+
+        const explanationCardTop =
+            145;
+
+
+        const explanationCardHeight =
+            196;
+
+
+        const explanationCardCenterY =
+
+            explanationCardTop +
+            explanationCardHeight / 2;
+
+
+        // =================================================
+        // EXPLANATION HEADING
+        // =================================================
+
+        const explanationHeading =
+            this.scene.add.text(
+
+                0,
+                explanationHeadingY,
+
+                "WHY THIS DECISION MATTERS",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "12px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#5e6974"
+
+                }
+
+            );
+
+
+        this.container.add(
+            explanationHeading
+        );
+
+
+        // =================================================
+        // EXPLANATION CARD
+        // =================================================
+
+        const explanationCard =
+            this.scene.add.rectangle(
+
+                this.contentWidth / 2,
+
+                explanationCardCenterY,
+
+                this.contentWidth,
+
+                explanationCardHeight,
+
+                0xfbfaf7
+
+            );
+
+
+        explanationCard.setStrokeStyle(
+            1,
+            0xd3d8dc
+        );
+
+
+        this.container.add(
+            explanationCard
+        );
+
+
+        // =================================================
+        // EXPLANATION TEXT
+        // =================================================
+
+        const explanation =
+            this.scene.add.text(
+
+                22,
+
+                explanationCardTop + 16,
+
+                this.resultPages[
+                    this.resultPage
+                ],
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "15px",
+
+                    color:
+                        "#293139",
+
+                    lineSpacing:
+                        4,
+
+                    wordWrap: {
+
+                        width:
+                            this.contentWidth - 44
+
+                    }
+
+                }
+
+            );
+
+
+        this.container.add(
+            explanation
+        );
+
+
+        // =================================================
+        // RESULT PAGE INDICATOR
+        // =================================================
+
+        if (
+            this.resultPages.length > 1
+        ) {
+
+            const resultPageIndicator =
+                this.scene.add.text(
+
+                    this.contentWidth / 2,
+                    355,
+
+                    `Explanation ${this.resultPage + 1} of ${this.resultPages.length}`,
+
+                    {
+
+                        fontFamily:
+                            "monospace",
+
+                        fontSize:
+                            "11px",
+
+                        fontStyle:
+                            "bold",
+
+                        color:
+                            "#727c85"
+
+                    }
+
+                )
+                .setOrigin(
+                    0.5
                 );
 
-            }
+
+            this.container.add(
+                resultPageIndicator
+            );
+
+        }
+
+
+        // =================================================
+        // FOOTER DIVIDER
+        // =================================================
+
+        const footerDivider =
+            this.scene.add.rectangle(
+
+                this.contentWidth / 2,
+                this.footerY - 16,
+
+                this.contentWidth,
+                1,
+
+                0xd2d7dc
+
+            );
+
+
+        this.container.add(
+            footerDivider
         );
 
 
-        continueButton.on(
-            "pointerout",
-            () => {
+        // =================================================
+        // PREVIOUS RESULT PAGE
+        // =================================================
 
-                continueButton.setColor(
-                    "#0066cc"
+        if (
+            this.resultPage > 0
+        ) {
+
+            const previous =
+                this.createTextButton(
+
+                    0,
+                    this.footerY,
+
+                    "◀ Previous",
+
+                    0
+
                 );
 
-            }
-        );
+
+            previous.on(
+
+                "pointerdown",
+
+                () => {
+
+                    this.resultPage--;
 
 
-        continueButton.on(
-            "pointerdown",
-            () => {
+                    this.renderResultPage();
 
-                this.continueToNextRoom(
-                    resultContainer
+                }
+
+            );
+
+
+            this.container.add(
+                previous
+            );
+
+        }
+
+
+        // =================================================
+        // NEXT RESULT PAGE
+        // =================================================
+
+        if (
+            this.resultPage <
+            this.resultPages.length - 1
+        ) {
+
+            const next =
+                this.createTextButton(
+
+                    this.contentWidth,
+                    this.footerY,
+
+                    "Next ▶",
+
+                    1
+
                 );
 
-            }
-        );
+
+            next.on(
+
+                "pointerdown",
+
+                () => {
+
+                    this.resultPage++;
 
 
-        resultContainer.add(
-            continueButton
-        );
+                    this.renderResultPage();
+
+                }
+
+            );
 
 
-        // =====================================================
-        // DISPLAY
-        // =====================================================
+            this.container.add(
+                next
+            );
 
-        this.container =
-            resultContainer;
+        }
 
+
+        // =================================================
+        // CONTINUE
+        // =================================================
+
+        else {
+
+            const continueControl =
+                this.createPrimaryButton(
+
+                    this.contentWidth - 115,
+                    this.footerY - 4,
+
+                    230,
+                    46,
+
+                    "CONTINUE  →"
+
+                );
+
+
+            continueControl.button.on(
+
+                "pointerdown",
+
+                () => {
+
+                    this.continueToNextRoom(
+                        this.container
+                    );
+
+                }
+
+            );
+
+
+            this.container.add([
+
+                continueControl.button,
+                continueControl.label
+
+            ]);
+
+        }
+
+
+        // =================================================
+        // WINDOW
+        // =================================================
 
         this.window.open({
 
-            title: "Assessment Result"
+            title:
+                "Assessment Result"
 
         });
 
 
         this.window.setContent(
-            resultContainer
+            this.container
         );
+
+    }
+
+
+    // =====================================================
+    // INLINE MESSAGE
+    // =====================================================
+
+    showInlineMessage(
+        message
+    ) {
+
+        if (
+            !this.container
+        ) {
+
+            return;
+
+        }
+
+
+        const warning =
+            this.scene.add.text(
+
+                this.contentWidth / 2,
+                this.footerY - 45,
+
+                message,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "12px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#c0392b",
+
+                    align:
+                        "center",
+
+                    wordWrap: {
+
+                        width:
+                            430
+
+                    }
+
+                }
+
+            )
+            .setOrigin(
+                0.5
+            );
+
+
+        this.container.add(
+            warning
+        );
+
+
+        this.scene.time.delayedCall(
+
+            1800,
+
+            () => {
+
+                if (
+                    warning &&
+                    warning.active
+                ) {
+
+                    warning.destroy();
+
+                }
+
+            }
+
+        );
+
+    }
+
+
+    // =====================================================
+    // CREATE TEXT BUTTON
+    // =====================================================
+
+    createTextButton(
+        x,
+        y,
+        label,
+        originX
+    ) {
+
+        const button =
+            this.scene.add.text(
+
+                x,
+                y,
+
+                label,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "15px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#1683e8"
+
+                }
+
+            )
+            .setOrigin(
+                originX,
+                0
+            )
+            .setInteractive({
+
+                useHandCursor:
+                    true
+
+            });
+
+
+        button.on(
+
+            "pointerover",
+
+            () => {
+
+                button.setColor(
+                    "#ff8a00"
+                );
+
+            }
+
+        );
+
+
+        button.on(
+
+            "pointerout",
+
+            () => {
+
+                button.setColor(
+                    "#1683e8"
+                );
+
+            }
+
+        );
+
+
+        return button;
+
+    }
+
+
+    // =====================================================
+    // CREATE PRIMARY BUTTON
+    // =====================================================
+
+    createPrimaryButton(
+        x,
+        y,
+        width,
+        height,
+        labelText
+    ) {
+
+        const button =
+            this.scene.add.rectangle(
+
+                x,
+                y,
+
+                width,
+                height,
+
+                0x17263b
+
+            );
+
+
+        button.setStrokeStyle(
+            2,
+            0x24b8ff
+        );
+
+
+        button.setInteractive({
+
+            useHandCursor:
+                true
+
+        });
+
+
+        const label =
+            this.scene.add.text(
+
+                x,
+                y,
+
+                labelText,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "15px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#67d6ff"
+
+                }
+
+            )
+            .setOrigin(
+                0.5
+            );
+
+
+        button.on(
+
+            "pointerover",
+
+            () => {
+
+                button.setFillStyle(
+                    0x203a55
+                );
+
+
+                label.setColor(
+                    "#ffffff"
+                );
+
+            }
+
+        );
+
+
+        button.on(
+
+            "pointerout",
+
+            () => {
+
+                button.setFillStyle(
+                    0x17263b
+                );
+
+
+                label.setColor(
+                    "#67d6ff"
+                );
+
+            }
+
+        );
+
+
+        return {
+
+            button,
+            label
+
+        };
+
+    }
+
+
+    // =====================================================
+    // DESTROY CURRENT CONTAINER
+    // =====================================================
+
+    destroyCurrentContainer() {
+
+        if (
+            this.container
+        ) {
+
+            this.container.destroy(
+                true
+            );
+
+
+            this.container =
+                null;
+
+        }
 
     }
 
@@ -856,7 +1931,9 @@ export default class AssessmentViewer {
     // CONTINUE TO NEXT ROOM
     // =====================================================
 
-    continueToNextRoom(resultContainer) {
+    continueToNextRoom(
+        resultContainer
+    ) {
 
         console.log(
             "Assessment completed."
@@ -864,56 +1941,73 @@ export default class AssessmentViewer {
 
 
         console.log(
+
             "Current score:",
+
             this.scoreManager.getScore()
+
         );
 
 
-        // =====================================================
+        // =================================================
         // PREVENT MULTIPLE CLICKS
-        // =====================================================
+        // =================================================
 
-        if (!this.submitted) {
+        if (
+            !this.submitted
+        ) {
+
             return;
-        }
-
-
-        // =====================================================
-        // CLEAN UP
-        // =====================================================
-
-        if (resultContainer) {
-
-            resultContainer.destroy(true);
 
         }
 
 
-        this.container = null;
+        // =================================================
+        // CLEANUP
+        // =================================================
+
+        if (
+            resultContainer
+        ) {
+
+            resultContainer.destroy(
+                true
+            );
+
+        }
+
+
+        this.container =
+            null;
 
 
         this.window.close();
 
 
-        // =====================================================
-        // DETERMINE CURRENT ROOM
-        // =====================================================
+        // =================================================
+        // CURRENT ROOM
+        // =================================================
 
         const currentRoom =
             this.scoreManager.getRoom();
 
 
         console.log(
+
             "Current room:",
+
             currentRoom
+
         );
 
 
-        // =====================================================
-        // ROOM 3 = END OF GAME
-        // =====================================================
+        // =================================================
+        // ROOM 3 → FINAL RESULTS
+        // =================================================
 
-        if (currentRoom >= 3) {
+        if (
+            currentRoom >= 3
+        ) {
 
             console.log(
                 "All rooms completed."
@@ -921,24 +2015,36 @@ export default class AssessmentViewer {
 
 
             console.log(
+
                 "Final score:",
+
                 this.scoreManager.getScore()
+
             );
 
 
-            // Go to Final Results instead of alert
             this.scene.scene.start(
-                "FinalResultsScene"
+
+                "FinalResultsScene",
+
+                {
+
+                    scoreManager:
+                        this.scoreManager
+
+                }
+
             );
+
 
             return;
 
         }
 
 
-        // =====================================================
-        // DETERMINE NEXT ROOM
-        // =====================================================
+        // =================================================
+        // NEXT ROOM
+        // =================================================
 
         const nextRoom =
             currentRoom + 1;
@@ -949,28 +2055,22 @@ export default class AssessmentViewer {
 
 
         console.log(
+
             `Moving from Room ${currentRoom} → Room ${nextRoom}`
+
         );
 
 
-        // =====================================================
-        // UPDATE SCORE MANAGER
-        // =====================================================
+        /*
+         * setRoom() changes the room-specific assessment /
+         * notebook state but keeps your global score and
+         * 20-minute timer intact.
+         */
 
         this.scoreManager.setRoom(
             nextRoom
         );
 
-
-        console.log(
-            "New room:",
-            this.scoreManager.getRoom()
-        );
-
-
-        // =====================================================
-        // START NEXT ROOM
-        // =====================================================
 
         this.scene.scene.start(
 

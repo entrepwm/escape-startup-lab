@@ -18,6 +18,28 @@ export default class IntroScene extends Phaser.Scene {
     create() {
 
         // =================================================
+        // AUDIO
+        // =================================================
+
+        if (
+            !this.game.openingMusic
+        ) {
+
+            this.game.openingMusic =
+                this.sound.add(
+                    "opening-music",
+                    {
+                        loop: true,
+                        volume: 0.25
+                    }
+                );
+
+            this.game.openingMusic.play();
+
+        }
+
+
+        // =================================================
         // BACKGROUND
         // =================================================
 

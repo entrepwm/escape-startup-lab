@@ -1,289 +1,290 @@
 const ROOM2_NOTEBOOK = [
 
     // =====================================================
-    // Q1 — CUSTOMER INTERVIEWS
+    // Q1 — FOOD QUALITY: AGGREGATING DATA
     // =====================================================
 
     {
-        id: "customer_experience",
+        id: "food_positive_rating",
 
         question:
-            "Based on the customer interviews, what do customers generally think about the restaurant's food?",
+            "In the customer survey, what percentage of respondents rated food quality either 4 or 5 stars?",
 
         type: "radio",
 
         options: [
-            "Mostly Poor",
-            "Mostly Average",
-            "Generally Good",
-            "Very Poor"
+            "72%",
+            "82%",
+            "92%",
+            "98%"
         ],
 
         correctAnswer:
-            "Generally Good"
+            "92%"
     },
 
+
     // =====================================================
-    // Q2 — CUSTOMER SATISFACTION
+    // Q2 — SERVICE SPEED: NEGATIVE RATINGS
     // =====================================================
 
     {
-        id: "survey_satisfaction",
+        id: "service_negative_rating",
 
         question:
-            "According to the customer survey, what percentage of respondents reported being satisfied with their overall experience?",
+            "What percentage of respondents rated service speed only 1 or 2 stars?",
 
         type: "radio",
 
         options: [
+            "25%",
+            "30%",
+            "45%",
+            "50%"
+        ],
+
+        correctAnswer:
+            "50%"
+    },
+
+
+    // =====================================================
+    // Q3 — QUANTITATIVE GAP
+    // =====================================================
+
+    {
+        id: "quality_service_gap",
+
+        question:
+            "Food quality receives 92% positive ratings (4–5 stars), while service speed receives only 25% positive ratings. What is the percentage-point gap between these two measures?",
+
+        type: "radio",
+
+        options: [
+            "50 percentage points",
+            "57 percentage points",
+            "67 percentage points",
+            "75 percentage points"
+        ],
+
+        correctAnswer:
+            "67 percentage points"
+    },
+
+
+    // =====================================================
+    // Q4 — OVERALL SATISFACTION
+    // =====================================================
+
+    {
+        id: "overall_satisfaction",
+
+        question:
+            "According to the customer survey, what proportion of respondents are NOT classified as satisfied overall?",
+
+        type: "radio",
+
+        options: [
+            "15%",
             "24%",
-            "62%",
-            "61%",
-            "85%"
+            "39%",
+            "61%"
         ],
 
         correctAnswer:
-            "62%"
+            "39%"
     },
 
 
     // =====================================================
-    // Q3 — SERVICE PROBLEM
+    // Q5 — TRANSACTION GROWTH
     // =====================================================
 
     {
-        id: "service_problem",
+        id: "weekend_transaction_growth",
 
         question:
-            "Which problem is most strongly supported by the customer survey?",
+            "Average transactions increase from 85 on weekdays to 140 on weekends. Approximately how much higher are weekend transactions compared with weekdays?",
 
         type: "radio",
 
         options: [
-            "Poor food quality",
-            "Slow service speed",
-            "Unfriendly employees",
-            "High prices"
+            "About 35%",
+            "About 50%",
+            "About 65%",
+            "About 85%"
         ],
 
         correctAnswer:
-            "Slow service speed"
+            "About 65%"
     },
 
 
     // =====================================================
-    // Q4 — ONLINE REVIEW PATTERN
+    // Q6 — WAITING-TIME GROWTH
     // =====================================================
 
     {
-        id: "review_pattern",
+        id: "weekend_wait_growth",
 
         question:
-            "What recurring pattern can be identified from the online reviews?",
+            "Average waiting time increases from 18 minutes on weekdays to 41 minutes on weekends. Approximately how much does waiting time increase relative to the weekday level?",
 
         type: "radio",
 
         options: [
-            "Customers dislike the restaurant's atmosphere",
-            "Customers think the food is consistently poor",
-            "Customers generally like the food but complain about waiting time",
-            "Customers believe the restaurant is too expensive"
+            "About 28%",
+            "About 64%",
+            "About 100%",
+            "About 128%"
         ],
 
         correctAnswer:
-            "Customers generally like the food but complain about waiting time"
+            "About 128%"
     },
 
 
     // =====================================================
-    // Q5 — SALES DASHBOARD
+    // Q7 — DEMAND VS. SERVICE CAPACITY
     // =====================================================
 
     {
-        id: "peak_waiting_time",
+        id: "demand_capacity_relationship",
 
         question:
-            "According to the sales dashboard, when is the restaurant's waiting time the highest?",
+            "Weekend transactions are about 65% higher than weekday transactions, but average waiting time is about 128% higher. What is the strongest interpretation of this pattern?",
 
         type: "radio",
 
         options: [
-            "Monday morning",
-            "Weekday lunch",
-            "Friday evening during peak hours",
-            "Weekend morning"
+            "Service capacity appears to be scaling faster than customer demand",
+            "Waiting time is unrelated to transaction volume",
+            "Service capacity appears unable to keep pace with higher demand",
+            "The restaurant should increase demand further before changing operations"
         ],
 
         correctAnswer:
-            "Friday evening during peak hours"
+            "Service capacity appears unable to keep pace with higher demand"
     },
 
 
     // =====================================================
-    // Q6 — CONNECTING MULTIPLE SOURCES
+    // Q8 — PEAK-PERIOD COMPARISON
     // =====================================================
 
     {
-        id: "evidence_connection",
+        id: "peak_wait_comparison",
 
         question:
-            "What conclusion is best supported when customer reviews are compared with the sales dashboard?",
+            "Friday evening peak waiting time is 47 minutes, compared with a weekend average of 41 minutes. Approximately how much higher is the peak waiting time than the weekend average?",
 
         type: "radio",
 
         options: [
-            "Customers mainly dislike the food",
-            "Long waiting times are especially problematic during busy periods",
-            "The restaurant needs more advertising",
-            "Customers are primarily concerned about pricing"
+            "About 6%",
+            "About 15%",
+            "About 26%",
+            "About 41%"
         ],
 
         correctAnswer:
-            "Long waiting times are especially problematic during busy periods"
+            "About 15%"
     },
 
 
     // =====================================================
-    // Q7 — MANAGER CLAIM
+    // Q9 — CUSTOMER SPEND VS. WAITING TIME
     // =====================================================
 
     {
-        id: "manager_claim",
+        id: "spend_wait_comparison",
 
         question:
-            "The manager believes pricing is the restaurant's main problem. What is the best way to evaluate this claim?",
+            "Average customer spend rises from Rp82K on weekdays to Rp91K on weekends, while waiting time rises from 18 to 41 minutes. Which conclusion is best supported by these numbers?",
 
         type: "radio",
 
         options: [
-            "Accept it because the manager has authority",
-            "Reject it because managers may be biased",
-            "Compare it against customer and operational evidence",
-            "Ignore internal opinions entirely"
+            "Higher spending fully compensates customers for much longer waiting times",
+            "Customer spend rises only modestly while waiting time increases dramatically",
+            "Customers spend less whenever the restaurant becomes busier",
+            "The data prove that price is the main source of dissatisfaction"
         ],
 
         correctAnswer:
-            "Compare it against customer and operational evidence"
+            "Customer spend rises only modestly while waiting time increases dramatically"
     },
 
 
     // =====================================================
-    // Q8 — ENTREPRENEURSHIP: ASSUMPTION TESTING
+    // Q10 — MANAGER HYPOTHESIS VS. EVIDENCE
     // =====================================================
 
     {
-        id: "assumption_testing",
+        id: "manager_hypothesis_test",
 
         question:
-            "An entrepreneur believes customers are leaving because prices are too high. What is the strongest next step?",
+            "The manager believes pricing is the main problem and proposes discounts. Which combination of evidence most strongly challenges that hypothesis?",
 
         type: "radio",
 
         options: [
-            "Immediately reduce prices",
-            "Collect evidence to test whether price is actually causing customers to leave",
-            "Increase advertising before investigating further",
-            "Copy a competitor's pricing strategy"
+            "61% overall satisfaction combined with higher weekend spending",
+            "92% positive food-quality ratings, 50% low service-speed ratings, and peak waiting times of 47 minutes",
+            "The restaurant has competitors and customers sometimes visit with friends",
+            "Weekend spending is Rp91K and weekday spending is Rp82K"
         ],
 
         correctAnswer:
-            "Collect evidence to test whether price is actually causing customers to leave"
+            "92% positive food-quality ratings, 50% low service-speed ratings, and peak waiting times of 47 minutes"
     },
 
 
     // =====================================================
-    // Q9 — ENTREPRENEURSHIP: PRODUCT-MARKET FIT
+    // Q11 — ENTREPRENEURSHIP: CONSTRAINT / BOTTLENECK ANALYSIS
     // =====================================================
 
     {
-        id: "product_market_fit",
+        id: "bottleneck_analysis",
 
         question:
-            "Which situation is the strongest indication that a business may be moving toward product-market fit?",
+            "Suppose management can improve only one part of the business immediately. Based on the evidence, which decision best reflects bottleneck-oriented resource allocation?",
 
         type: "radio",
 
         options: [
-            "The founder personally likes the product",
-            "Customers repeatedly choose the offering because it solves an important problem for them",
-            "The business has a visually attractive logo",
-            "The company spends heavily on promotion"
+            "Increase advertising because demand growth should always be prioritized",
+            "Reduce menu prices because lower prices automatically improve customer experience",
+            "Invest in service or operational capacity because waiting time deteriorates sharply as demand rises",
+            "Expand the menu because variety is more strategically important than throughput"
         ],
 
         correctAnswer:
-            "Customers repeatedly choose the offering because it solves an important problem for them"
+            "Invest in service or operational capacity because waiting time deteriorates sharply as demand rises"
     },
 
 
     // =====================================================
-    // Q10 — ENTREPRENEURSHIP: OPPORTUNITY COST
+    // Q12 — ENTREPRENEURSHIP: EVIDENCE-BASED OPPORTUNITY
     // =====================================================
 
     {
-        id: "opportunity_cost",
+        id: "opportunity_evaluation",
 
         question:
-            "A small business can either spend its limited budget on advertising or on improving service capacity. What does opportunity cost mean in this decision?",
+            "Which statement best describes the entrepreneurial opportunity revealed by the Room 2 evidence?",
 
         type: "radio",
 
         options: [
-            "The total amount of money the business owns",
-            "The value of the best alternative the business gives up when choosing one option",
-            "The cost of hiring additional employees",
-            "The amount customers are willing to pay"
+            "The main opportunity is to create demand because current customer interest is too low",
+            "The main opportunity is to improve the restaurant's ability to convert strong product demand into a faster, more reliable customer experience",
+            "The main opportunity is to reposition the restaurant around lower food quality and lower prices",
+            "The main opportunity is to copy competitor promotions without testing customer behavior"
         ],
 
         correctAnswer:
-            "The value of the best alternative the business gives up when choosing one option"
-    },
-
-
-    // =====================================================
-    // Q11 — ENTREPRENEURSHIP: SCALABILITY
-    // =====================================================
-
-    {
-        id: "scalability",
-
-        question:
-            "Which improvement would best support scalability in a restaurant experiencing peak-hour delays?",
-
-        type: "radio",
-
-        options: [
-            "Depend more heavily on one highly skilled employee",
-            "Create repeatable processes that allow the team to handle higher demand efficiently",
-            "Offer more menu items regardless of kitchen capacity",
-            "Increase demand before fixing operational bottlenecks"
-        ],
-
-        correctAnswer:
-            "Create repeatable processes that allow the team to handle higher demand efficiently"
-    },
-
-
-    // =====================================================
-    // Q12 — ENTREPRENEURSHIP: DATA-DRIVEN DECISION MAKING
-    // =====================================================
-
-    {
-        id: "data_driven_decision",
-
-        question:
-            "Which statement best reflects data-driven entrepreneurial decision making?",
-
-        type: "radio",
-
-        options: [
-            "Always follow the largest data source even if it conflicts with the business context",
-            "Use evidence from multiple relevant sources while applying entrepreneurial judgment",
-            "Avoid qualitative information because only numerical data is reliable",
-            "Follow management opinion whenever data is unclear"
-        ],
-
-        correctAnswer:
-            "Use evidence from multiple relevant sources while applying entrepreneurial judgment"
+            "The main opportunity is to improve the restaurant's ability to convert strong product demand into a faster, more reliable customer experience"
     }
 
 ];

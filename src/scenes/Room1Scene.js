@@ -35,6 +35,59 @@ export default class Room1Scene extends Phaser.Scene {
             "Starting Room 1: Mission 01 - Problem Discovery"
         );
 
+        // =================================================
+        // AUDIO
+        // =================================================
+
+        if (
+            this.game.openingMusic
+        ) {
+
+            this.game.openingMusic.stop();
+            this.game.openingMusic.destroy();
+
+            this.game.openingMusic =
+                null;
+
+        }
+
+
+        if (
+            !this.game.gameMusic
+        ) {
+
+            this.game.gameMusic =
+                this.sound.add(
+                    "startup-lab-loop",
+                    {
+                        loop: true,
+                        volume: 0.22
+                    }
+                );
+
+            this.game.gameMusic.play();
+
+        }
+
+        // =================================================
+        // ACHIEVEMENT STATE
+        // =================================================
+
+        this.thoroughInvestigatorEarned =
+            false;
+
+
+        // =================================================
+        // GLOBAL TIMER LOCAL EVENT STATE
+        // =================================================
+
+        this.globalTimerEvent =
+            null;
+
+
+        this.timeExpiredHandled =
+            false;
+
 
         // =================================================
         // SYSTEMS
@@ -43,7 +96,9 @@ export default class Room1Scene extends Phaser.Scene {
         this.createSystems();
 
 
-        if (!this.scoreManager) {
+        if (
+            !this.scoreManager
+        ) {
 
             console.error(
                 "Room 1 could not initialize ScoreManager."
@@ -76,11 +131,35 @@ export default class Room1Scene extends Phaser.Scene {
 
 
         // =================================================
+        // GLOBAL 20-MINUTE TIMER
+        // =================================================
+
+        this.startGlobalGameTimer();
+
+
+        // =================================================
         // CAMERA
         // =================================================
 
         this.cameras.main.fadeIn(
             400
+        );
+
+
+        // =================================================
+        // CLEANUP WHEN LEAVING SCENE
+        // =================================================
+
+        this.events.once(
+
+            Phaser.Scenes.Events.SHUTDOWN,
+
+            () => {
+
+                this.cleanupScene();
+
+            }
+
         );
 
     }
@@ -122,9 +201,12 @@ export default class Room1Scene extends Phaser.Scene {
 
         if (
             globalScoreManager &&
-            typeof globalScoreManager.setRoom === "function" &&
-            typeof globalScoreManager.getScore === "function" &&
-            typeof globalScoreManager.setAssessment === "function"
+            typeof globalScoreManager.setRoom ===
+                "function" &&
+            typeof globalScoreManager.getScore ===
+                "function" &&
+            typeof globalScoreManager.setAssessment ===
+                "function"
         ) {
 
             this.scoreManager =
@@ -211,9 +293,9 @@ export default class Room1Scene extends Phaser.Scene {
                     );
 
 
-                    // -----------------------------------------
+                    // =========================================
                     // UPDATE SCORE HUD
-                    // -----------------------------------------
+                    // =========================================
 
                     this.terminal.setScore(
 
@@ -222,9 +304,9 @@ export default class Room1Scene extends Phaser.Scene {
                     );
 
 
-                    // -----------------------------------------
+                    // =========================================
                     // UNLOCK ASSESSMENT
-                    // -----------------------------------------
+                    // =========================================
 
                     this.unlockAssessment();
 
@@ -259,7 +341,9 @@ export default class Room1Scene extends Phaser.Scene {
             this.terminal.getRoomView();
 
 
-        if (!this.roomView) {
+        if (
+            !this.roomView
+        ) {
 
             console.error(
                 "Room 1 RoomView could not be created."
@@ -281,7 +365,9 @@ export default class Room1Scene extends Phaser.Scene {
         // =================================================
 
         this.terminal.setRoom(
+
             "MISSION 01: PROBLEM DISCOVERY\nRESTAURANT"
+
         );
 
 
@@ -292,13 +378,14 @@ export default class Room1Scene extends Phaser.Scene {
         this.terminal.setDialogue(
 
             "Welcome, Candidate.\n" +
-            "Investigate every object before completing your assessment."
+            "Complete your Investigation Notebook to unlock the Assessment.\n" +
+            "Evidence is optional, but thorough investigation may earn additional recognition."
 
         );
 
 
         // =================================================
-        // CURRENT GLOBAL SCORE
+        // CURRENT SCORE
         // =================================================
 
         this.terminal.setScore(
@@ -309,12 +396,17 @@ export default class Room1Scene extends Phaser.Scene {
 
 
         // =================================================
-        // TIMER
+        // INITIAL GLOBAL TIMER DISPLAY
         // =================================================
 
-        this.terminal.setTime(
-            "15:00"
-        );
+        /*
+         * Do NOT hard-code 15:00 here.
+         *
+         * The timer now comes from ScoreManager and lasts
+         * 20 minutes across all three rooms.
+         */
+
+        this.updateGlobalTimerDisplay();
 
 
         // =================================================
@@ -338,7 +430,9 @@ export default class Room1Scene extends Phaser.Scene {
 
     createRoomObjects() {
 
-        if (!this.roomView) {
+        if (
+            !this.roomView
+        ) {
 
             console.error(
                 "Cannot create Room 1 objects because RoomView is missing."
@@ -358,6 +452,358 @@ export default class Room1Scene extends Phaser.Scene {
 
             }
         );
+
+    }
+
+
+    // =====================================================
+    // GLOBAL GAME TIMER
+    // =====================================================
+
+    startGlobalGameTimer() {
+
+        if (
+            !this.scoreManager ||
+            typeof this.scoreManager.startGameTimer !==
+                "function"
+        ) {
+
+            console.error(
+                "Global timer methods are missing from ScoreManager."
+            );
+
+            return;
+
+        }
+
+
+        // =================================================
+        // START ONLY ONCE
+        // =================================================
+
+        this.scoreManager.startGameTimer();
+
+
+        // =================================================
+        // IF TIMER WAS ALREADY EXPIRED
+        // =================================================
+
+        if (
+            this.scoreManager.isTimerExpired()
+        ) {
+
+            this.handleGlobalTimeExpired();
+
+            return;
+
+        }
+
+
+        // =================================================
+        // INITIAL HUD UPDATE
+        // =================================================
+
+        this.updateGlobalTimerDisplay();
+
+
+        // =================================================
+        // REMOVE POSSIBLE OLD LOCAL EVENT
+        // =================================================
+
+        this.stopLocalTimerEvent();
+
+
+        // =================================================
+        // LOCAL PHASER CLOCK
+        // =================================================
+
+        /*
+         * The Phaser event belongs to this scene.
+         *
+         * The actual remaining seconds live inside
+         * ScoreManager, so changing rooms does not reset
+         * the timer.
+         */
+
+        this.globalTimerEvent =
+            this.time.addEvent({
+
+                delay:
+                    1000,
+
+                loop:
+                    true,
+
+                callback:
+                    () => {
+
+                        // =====================================
+                        // GLOBAL TIMER MAY ALREADY BE FINISHED
+                        // =====================================
+
+                        if (
+                            this.timeExpiredHandled
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        // =====================================
+                        // DECREASE SHARED TIMER
+                        // =====================================
+
+                        this.scoreManager.tickGameTimer();
+
+
+                        // =====================================
+                        // UPDATE TERMINAL DISPLAY
+                        // =====================================
+
+                        this.updateGlobalTimerDisplay();
+
+
+                        // =====================================
+                        // TIME EXPIRED
+                        // =====================================
+
+                        if (
+                            this.scoreManager.isTimerExpired()
+                        ) {
+
+                            this.handleGlobalTimeExpired();
+
+                        }
+
+                    }
+
+            });
+
+    }
+
+
+    // =====================================================
+    // UPDATE GLOBAL TIMER DISPLAY
+    // =====================================================
+
+    updateGlobalTimerDisplay() {
+
+        if (
+            !this.scoreManager ||
+            !this.terminal
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            typeof this.scoreManager.getFormattedTime !==
+                "function"
+        ) {
+
+            return;
+
+        }
+
+
+        const remaining =
+            this.scoreManager.getTimeRemaining();
+
+
+        const formatted =
+            this.scoreManager.getFormattedTime();
+
+
+        // =================================================
+        // DISPLAY ONLY
+        // =================================================
+
+        this.terminal.setTime(
+            formatted
+        );
+
+
+        // =================================================
+        // TIMER COLORS
+        // =================================================
+
+        if (
+            this.terminal.timeText
+        ) {
+
+            // =============================================
+            // FINAL MINUTE
+            // =============================================
+
+            if (
+                remaining <= 60
+            ) {
+
+                this.terminal.timeText.setColor(
+                    "#ff5c5c"
+                );
+
+            }
+
+
+            // =============================================
+            // FINAL THREE MINUTES
+            // =============================================
+
+            else if (
+                remaining <= 180
+            ) {
+
+                this.terminal.timeText.setColor(
+                    "#ffd166"
+                );
+
+            }
+
+
+            // =============================================
+            // NORMAL
+            // =============================================
+
+            else {
+
+                this.terminal.timeText.setColor(
+                    "#ffffff"
+                );
+
+            }
+
+        }
+
+    }
+
+
+    // =====================================================
+    // HANDLE GLOBAL TIME EXPIRED
+    // =====================================================
+
+    handleGlobalTimeExpired() {
+
+        // =================================================
+        // PREVENT MULTIPLE TRANSITIONS
+        // =================================================
+
+        if (
+            this.timeExpiredHandled
+        ) {
+
+            return;
+
+        }
+
+
+        this.timeExpiredHandled =
+            true;
+
+
+        console.log(
+            "20-minute global game timer expired in Room 1."
+        );
+
+
+        // =================================================
+        // STOP LOCAL TIMER EVENT
+        // =================================================
+
+        this.stopLocalTimerEvent();
+
+
+        // =================================================
+        // UPDATE HUD
+        // =================================================
+
+        if (
+            this.terminal
+        ) {
+
+            this.terminal.setTime(
+                "00:00"
+            );
+
+
+            if (
+                this.terminal.timeText
+            ) {
+
+                this.terminal.timeText.setColor(
+                    "#ff5c5c"
+                );
+
+            }
+
+
+            this.terminal.setDialogue(
+
+                "TIME EXPIRED.\n" +
+                "The Founder Assessment has ended."
+
+            );
+
+        }
+
+
+        // =================================================
+        // CLOSE MODAL IF OPEN
+        // =================================================
+
+        if (
+            this.window &&
+            typeof this.window.close ===
+                "function"
+        ) {
+
+            this.window.close();
+
+        }
+
+
+        // =================================================
+        // MOVE DIRECTLY TO FINAL RESULTS
+        // =================================================
+
+        this.scene.start(
+
+            "FinalResultsScene",
+
+            {
+
+                scoreManager:
+                    this.scoreManager
+
+            }
+
+        );
+
+    }
+
+
+    // =====================================================
+    // STOP LOCAL TIMER EVENT
+    // =====================================================
+
+    stopLocalTimerEvent() {
+
+        if (
+            this.globalTimerEvent
+        ) {
+
+            this.globalTimerEvent.remove(
+                false
+            );
+
+
+            this.globalTimerEvent =
+                null;
+
+        }
 
     }
 
@@ -384,8 +830,9 @@ export default class Room1Scene extends Phaser.Scene {
 
         this.terminal.setDialogue(
 
-            "Investigation complete.\n" +
-            "Your final assessment is now available."
+            "Notebook submitted.\n" +
+            "Your final Assessment is now available.\n" +
+            "You may still investigate additional evidence before answering."
 
         );
 
@@ -399,14 +846,30 @@ export default class Room1Scene extends Phaser.Scene {
     registerEvents() {
 
         // =================================================
-        // SIDEBAR BUTTONS
+        // TERMINAL BUTTONS
         // =================================================
 
         this.terminal.onButtonClick(
 
             (id) => {
 
-                switch (id) {
+                // =================================================
+                // IGNORE INPUT AFTER TIME EXPIRES
+                // =================================================
+
+                if (
+                    this.timeExpiredHandled
+                ) {
+
+                    return;
+
+                }
+
+
+                switch (
+                    id
+                ) {
+
 
                     // =====================================
                     // NOTEBOOK
@@ -452,10 +915,9 @@ export default class Room1Scene extends Phaser.Scene {
                         break;
 
 
-
-                    // -----------------------------------------
-                    // TEMP DEV CONTINUE
-                    // -----------------------------------------
+                    // =====================================
+                    // TEMP DEVELOPMENT CONTINUE
+                    // =====================================
 
                     case "continue":
 
@@ -463,17 +925,38 @@ export default class Room1Scene extends Phaser.Scene {
                             "DEV: Skipping Room 1 → Room 2"
                         );
 
-                        this.scoreManager.setRoom(2);
+
+                        // =================================
+                        // STOP ROOM 1 LOCAL CLOCK
+                        // =================================
+
+                        this.stopLocalTimerEvent();
+
+
+                        // =================================
+                        // MOVE TO ROOM 2
+                        // =================================
+
+                        this.scoreManager.setRoom(
+                            2
+                        );
+
 
                         this.scene.start(
+
                             "Room2Scene",
+
                             {
+
                                 scoreManager:
                                     this.scoreManager
+
                             }
+
                         );
 
                         break;
+
 
                     // =====================================
                     // UNKNOWN
@@ -482,7 +965,9 @@ export default class Room1Scene extends Phaser.Scene {
                     default:
 
                         console.warn(
+
                             `Unknown sidebar button: ${id}`
+
                         );
 
                 }
@@ -496,7 +981,9 @@ export default class Room1Scene extends Phaser.Scene {
         // ROOM OBJECT CLICKS
         // =================================================
 
-        if (!this.roomView) {
+        if (
+            !this.roomView
+        ) {
 
             return;
 
@@ -506,6 +993,15 @@ export default class Room1Scene extends Phaser.Scene {
         this.roomView.onObjectClick(
 
             (id) => {
+
+                if (
+                    this.timeExpiredHandled
+                ) {
+
+                    return;
+
+                }
+
 
                 this.handleRoomObjectClick(
                     id
@@ -525,6 +1021,22 @@ export default class Room1Scene extends Phaser.Scene {
     openAssessment() {
 
         // =================================================
+        // TIMER CHECK
+        // =================================================
+
+        if (
+            this.scoreManager.isTimerExpired()
+        ) {
+
+            this.handleGlobalTimeExpired();
+
+            return;
+
+        }
+
+
+        // =================================================
+        // ONLY REQUIREMENT:
         // NOTEBOOK MUST BE SUBMITTED
         // =================================================
 
@@ -543,7 +1055,9 @@ export default class Room1Scene extends Phaser.Scene {
             this.window.setContent(
 
                 "Complete and submit the " +
-                "Investigation Notebook first."
+                "Investigation Notebook first.\n\n" +
+
+                "Evidence investigation is optional."
 
             );
 
@@ -554,35 +1068,23 @@ export default class Room1Scene extends Phaser.Scene {
 
 
         // =================================================
-        // OPTIONAL OBJECT CHECK
+        // NO EVIDENCE LOCK
         // =================================================
 
-        if (
-            this.roomView &&
-            typeof this.roomView.allObjectsInvestigated ===
-                "function" &&
-            !this.roomView.allObjectsInvestigated()
-        ) {
-
-            this.window.open({
-
-                title:
-                    "Assessment Locked"
-
-            });
+        /*
+         * We intentionally DO NOT check:
+         *
+         * this.roomView.allObjectsInvestigated()
+         *
+         * Evidence is optional.
+         */
 
 
-            this.window.setContent(
+        // =================================================
+        // CHECK OPTIONAL ACHIEVEMENT
+        // =================================================
 
-                "Investigate all objects in the room " +
-                "before completing the assessment."
-
-            );
-
-
-            return;
-
-        }
+        this.checkThoroughInvestigator();
 
 
         // =================================================
@@ -590,6 +1092,57 @@ export default class Room1Scene extends Phaser.Scene {
         // =================================================
 
         this.assessmentViewer.open();
+
+    }
+
+
+    // =====================================================
+    // CHECK THOROUGH INVESTIGATOR
+    // =====================================================
+
+    checkThoroughInvestigator() {
+
+        if (
+            !this.roomView ||
+            typeof this.roomView.allObjectsInvestigated !==
+                "function"
+        ) {
+
+            return false;
+
+        }
+
+
+        const allInvestigated =
+            this.roomView
+                .allObjectsInvestigated();
+
+
+        if (
+            allInvestigated &&
+            !this.thoroughInvestigatorEarned
+        ) {
+
+            this.thoroughInvestigatorEarned =
+                true;
+
+
+            console.log(
+                "ACHIEVEMENT UNLOCKED: Thorough Investigator — Room 1"
+            );
+
+
+            this.terminal.setDialogue(
+
+                "Achievement unlocked: Thorough Investigator!\n" +
+                "You examined every available source of evidence."
+
+            );
+
+        }
+
+
+        return this.thoroughInvestigatorEarned;
 
     }
 
@@ -613,7 +1166,10 @@ export default class Room1Scene extends Phaser.Scene {
             "Do not rely on a single source of information.\n\n" +
 
             "Compare customer feedback, operational evidence, " +
-            "and business assumptions before making your recommendation."
+            "and business assumptions before making your recommendation.\n\n" +
+
+            "Remember: evidence investigation is optional, " +
+            "but stronger recommendations usually come from stronger evidence."
 
         );
 
@@ -630,17 +1186,76 @@ export default class Room1Scene extends Phaser.Scene {
             this.scoreManager.getScore();
 
 
+        const timeRemaining =
+            this.scoreManager.getFormattedTime();
+
+
+        // =================================================
+        // NOTEBOOK STATUS
+        // =================================================
+
         const notebookStatus =
             this.scoreManager.isNotebookSubmitted()
                 ? "Completed"
                 : "Not Completed";
 
 
+        // =================================================
+        // ASSESSMENT STATUS
+        // =================================================
+
         const assessmentStatus =
             this.scoreManager.isAssessmentSubmitted()
                 ? "Completed"
-                : "Not Completed";
+                : (
+                    this.scoreManager.isNotebookSubmitted()
+                        ? "Unlocked"
+                        : "Locked"
+                );
 
+
+        // =================================================
+        // EVIDENCE PROGRESS
+        // =================================================
+
+        let investigatedCount =
+            0;
+
+
+        const totalEvidence =
+            ROOM1_OBJECTS.length;
+
+
+        if (
+            this.roomView &&
+            typeof this.roomView.getInvestigatedObjects ===
+                "function"
+        ) {
+
+            investigatedCount =
+                this.roomView
+                    .getInvestigatedObjects()
+                    .length;
+
+        }
+
+
+        // =================================================
+        // ACHIEVEMENT CHECK
+        // =================================================
+
+        this.checkThoroughInvestigator();
+
+
+        const achievementStatus =
+            this.thoroughInvestigatorEarned
+                ? "Unlocked ✓"
+                : `${investigatedCount} / ${totalEvidence}`;
+
+
+        // =================================================
+        // WINDOW
+        // =================================================
 
         this.window.open({
 
@@ -655,9 +1270,17 @@ export default class Room1Scene extends Phaser.Scene {
             "MISSION 01: PROBLEM DISCOVERY\n" +
             "RESTAURANT\n\n" +
 
+            `Time Remaining: ${timeRemaining}\n\n` +
+
             `Notebook: ${notebookStatus}\n` +
 
-            `Assessment: ${assessmentStatus}\n\n` +
+            `Assessment: ${assessmentStatus}\n` +
+
+            `Evidence: ${investigatedCount} / ${totalEvidence}\n\n` +
+
+            "BONUS ACHIEVEMENT\n" +
+
+            `Thorough Investigator: ${achievementStatus}\n\n` +
 
             `Current Score: ${score}`
 
@@ -670,7 +1293,9 @@ export default class Room1Scene extends Phaser.Scene {
     // HANDLE ROOM OBJECT CLICK
     // =====================================================
 
-    handleRoomObjectClick(id) {
+    handleRoomObjectClick(
+        id
+    ) {
 
         const object =
             ROOM1_OBJECTS.find(
@@ -685,11 +1310,16 @@ export default class Room1Scene extends Phaser.Scene {
         // UNKNOWN OBJECT
         // =================================================
 
-        if (!object) {
+        if (
+            !object
+        ) {
 
             console.warn(
+
                 `Unknown Room 1 object: ${id}`
+
             );
+
 
             return;
 
@@ -697,7 +1327,9 @@ export default class Room1Scene extends Phaser.Scene {
 
 
         console.log(
+
             `Room 1 object clicked: ${object.id}`
+
         );
 
 
@@ -705,11 +1337,16 @@ export default class Room1Scene extends Phaser.Scene {
         // CHECK EVIDENCE
         // =================================================
 
-        if (!object.evidence) {
+        if (
+            !object.evidence
+        ) {
 
             console.warn(
+
                 `No evidence assigned to Room 1 object: ${object.id}`
+
             );
+
 
             return;
 
@@ -725,6 +1362,32 @@ export default class Room1Scene extends Phaser.Scene {
             object.evidence
 
         );
+
+
+        // =================================================
+        // CHECK OPTIONAL ACHIEVEMENT
+        // =================================================
+
+        this.checkThoroughInvestigator();
+
+    }
+
+
+    // =====================================================
+    // CLEANUP SCENE
+    // =====================================================
+
+    cleanupScene() {
+
+        // =================================================
+        // IMPORTANT:
+        //
+        // Stop only the Phaser event owned by Room 1.
+        //
+        // DO NOT reset ScoreManager's timer.
+        // =================================================
+
+        this.stopLocalTimerEvent();
 
     }
 

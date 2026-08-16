@@ -3,21 +3,39 @@ export default class ScoreManager {
     constructor() {
 
         // =====================================================
-        // TOTAL GAME SCORE
+        // COMPETITION INFORMATION
         // =====================================================
 
-        this.score = 0;
+        this.teamName =
+            "";
+
+
+        this.runId =
+            this.generateRunId();
+
+
+        this.resultSubmitted =
+            false;
+
+
+        // =====================================================
+        // SCORE
+        // =====================================================
+
+        this.score =
+            0;
 
 
         // =====================================================
         // CURRENT ROOM
         // =====================================================
 
-        this.currentRoom = 1;
+        this.currentRoom =
+            1;
 
 
         // =====================================================
-        // ROOM SCORE BREAKDOWN
+        // ROOM SCORES
         // =====================================================
 
         this.roomScores = {
@@ -41,26 +59,109 @@ export default class ScoreManager {
 
 
         // =====================================================
-        // NOTEBOOK STATUS
+        // ROOM STATE
         // =====================================================
 
-        this.notebookSubmitted = false;
+        this.notebookSubmitted =
+            false;
+
+
+        this.assessmentSubmitted =
+            false;
+
+
+        this.correctRecommendation =
+            null;
+
+
+        this.assessmentExplanation =
+            "";
 
 
         // =====================================================
-        // ASSESSMENT STATUS
+        // GLOBAL 20-MINUTE TIMER
         // =====================================================
 
-        this.assessmentSubmitted = false;
+        this.gameDuration =
+            20 * 60;
 
 
-        // =====================================================
-        // CURRENT ASSESSMENT CONFIG
-        // =====================================================
+        this.timeRemaining =
+            this.gameDuration;
 
-        this.correctRecommendation = null;
 
-        this.assessmentExplanation = "";
+        this.timerStarted =
+            false;
+
+
+        this.timerExpired =
+            false;
+
+    }
+
+
+    // =====================================================
+    // TEAM
+    // =====================================================
+
+    setTeamName(name) {
+
+        this.teamName =
+            String(name || "")
+                .trim()
+                .replace(/\s+/g, " ");
+
+    }
+
+
+    getTeamName() {
+
+        return this.teamName;
+
+    }
+
+
+    // =====================================================
+    // RUN ID
+    // =====================================================
+
+    generateRunId() {
+
+        const random =
+            Math.random()
+                .toString(36)
+                .substring(2, 10);
+
+
+        return (
+            `${Date.now()}-${random}`
+        );
+
+    }
+
+
+    getRunId() {
+
+        return this.runId;
+
+    }
+
+
+    // =====================================================
+    // RESULT SUBMISSION
+    // =====================================================
+
+    hasResultBeenSubmitted() {
+
+        return this.resultSubmitted;
+
+    }
+
+
+    markResultSubmitted() {
+
+        this.resultSubmitted =
+            true;
 
     }
 
@@ -86,13 +187,6 @@ export default class ScoreManager {
             safePoints;
 
 
-        console.log(
-
-            `Added ${safePoints} points. Total: ${this.score}`
-
-        );
-
-
         return this.score;
 
     }
@@ -108,7 +202,6 @@ export default class ScoreManager {
             roomNumber;
 
 
-        // Reset room-specific state
         this.notebookSubmitted =
             false;
 
@@ -124,13 +217,6 @@ export default class ScoreManager {
         this.assessmentExplanation =
             "";
 
-
-        console.log(
-
-            `ScoreManager entered Room ${roomNumber}`
-
-        );
-
     }
 
 
@@ -142,99 +228,54 @@ export default class ScoreManager {
 
 
     // =====================================================
-    // ROOM SCORE BREAKDOWN
+    // ROOM SCORES
     // =====================================================
 
     getRoomScore(roomNumber) {
 
-        if (
-            !this.roomScores[
+        return (
+
+            this.roomScores[
                 roomNumber
-            ]
-        ) {
-
-            return {
-
+            ] || {
                 notebook: 0,
-
                 assessment: 0
+            }
 
-            };
-
-        }
-
-
-        return this.roomScores[
-            roomNumber
-        ];
+        );
 
     }
 
 
     getNotebookScore(roomNumber) {
 
-        if (
-            !this.roomScores[
-                roomNumber
-            ]
-        ) {
-
-            return 0;
-
-        }
-
-
-        return this.roomScores[
+        return this.getRoomScore(
             roomNumber
-        ].notebook;
+        ).notebook;
 
     }
 
 
     getAssessmentScore(roomNumber) {
 
-        if (
-            !this.roomScores[
-                roomNumber
-            ]
-        ) {
-
-            return 0;
-
-        }
-
-
-        return this.roomScores[
+        return this.getRoomScore(
             roomNumber
-        ].assessment;
+        ).assessment;
 
     }
 
 
     getTotalRoomScore(roomNumber) {
 
-        if (
-            !this.roomScores[
-                roomNumber
-            ]
-        ) {
-
-            return 0;
-
-        }
-
-
         const room =
-            this.roomScores[
+            this.getRoomScore(
                 roomNumber
-            ];
+            );
 
 
         return (
-
             room.notebook +
             room.assessment
-
         );
 
     }
@@ -249,17 +290,9 @@ export default class ScoreManager {
         correctAnswers
     ) {
 
-        // Prevent duplicate scoring
         if (
             this.notebookSubmitted
         ) {
-
-            console.warn(
-
-                `Room ${this.currentRoom} notebook already submitted.`
-
-            );
-
 
             return this.getNotebookScore(
                 this.currentRoom
@@ -268,46 +301,36 @@ export default class ScoreManager {
         }
 
 
-        let points = 0;
+        let points =
+            0;
 
 
         Object.keys(
             correctAnswers
         ).forEach(
-
             questionId => {
 
                 if (
-
                     answers[
                         questionId
                     ] ===
                     correctAnswers[
                         questionId
                     ]
-
                 ) {
 
-                    points += 10;
+                    points +=
+                        10;
 
                 }
 
             }
-
         );
 
-
-        // =================================================
-        // ADD TOTAL SCORE
-        // =================================================
 
         this.score +=
             points;
 
-
-        // =================================================
-        // RECORD ROOM SCORE
-        // =================================================
 
         if (
             this.roomScores[
@@ -325,20 +348,6 @@ export default class ScoreManager {
 
         this.notebookSubmitted =
             true;
-
-
-        console.log(
-
-            `Room ${this.currentRoom} Notebook score: +${points}`
-
-        );
-
-
-        console.log(
-
-            `Total score: ${this.score}`
-
-        );
 
 
         return points;
@@ -369,13 +378,6 @@ export default class ScoreManager {
         this.assessmentExplanation =
             explanation || "";
 
-
-        console.log(
-
-            `Assessment configured for Room ${this.currentRoom}`
-
-        );
-
     }
 
 
@@ -385,20 +387,9 @@ export default class ScoreManager {
 
     evaluate(answer) {
 
-        // -------------------------------------------------
-        // Prevent duplicate assessment scoring
-        // -------------------------------------------------
-
         if (
             this.assessmentSubmitted
         ) {
-
-            console.warn(
-
-                `Room ${this.currentRoom} assessment already submitted.`
-
-            );
-
 
             return {
 
@@ -406,7 +397,8 @@ export default class ScoreManager {
                     answer ===
                     this.correctRecommendation,
 
-                score: 0,
+                score:
+                    0,
 
                 explanation:
                     this.assessmentExplanation
@@ -416,26 +408,17 @@ export default class ScoreManager {
         }
 
 
-        // -------------------------------------------------
-        // Validate configuration
-        // -------------------------------------------------
-
         if (
             !this.correctRecommendation
         ) {
 
-            console.warn(
-
-                "No assessment answer configured."
-
-            );
-
-
             return {
 
-                correct: false,
+                correct:
+                    false,
 
-                score: 0,
+                score:
+                    0,
 
                 explanation:
                     "Assessment configuration is missing."
@@ -445,37 +428,27 @@ export default class ScoreManager {
         }
 
 
-        // -------------------------------------------------
-        // Check answer
-        // -------------------------------------------------
-
         const correct =
 
             answer ===
             this.correctRecommendation;
 
 
-        let points = 0;
+        const points =
+            correct
+                ? 50
+                : 0;
 
 
-        // -------------------------------------------------
-        // Award points
-        // -------------------------------------------------
-
-        if (correct) {
-
-            points = 50;
-
+        if (
+            correct
+        ) {
 
             this.score +=
                 points;
 
         }
 
-
-        // -------------------------------------------------
-        // Record room assessment score
-        // -------------------------------------------------
 
         if (
             this.roomScores[
@@ -495,39 +468,12 @@ export default class ScoreManager {
             true;
 
 
-        console.log(
-
-            `Room ${this.currentRoom} Assessment answer: ${answer}`
-
-        );
-
-
-        console.log(
-
-            `Correct: ${correct}`
-
-        );
-
-
-        console.log(
-
-            `Assessment points: +${points}`
-
-        );
-
-
-        console.log(
-
-            `Total score: ${this.score}`
-
-        );
-
-
         return {
 
             correct,
 
-            score: points,
+            score:
+                points,
 
             explanation:
                 this.assessmentExplanation
@@ -553,15 +499,250 @@ export default class ScoreManager {
 
 
     // =====================================================
-    // RESET GAME
+    // GLOBAL TIMER
+    // =====================================================
+
+    startGameTimer() {
+
+        if (
+            this.timerStarted
+        ) {
+
+            return;
+
+        }
+
+
+        this.timerStarted =
+            true;
+
+
+        this.timerExpired =
+            false;
+
+    }
+
+
+    tickGameTimer() {
+
+        if (
+            !this.timerStarted ||
+            this.timerExpired
+        ) {
+
+            return this.timeRemaining;
+
+        }
+
+
+        this.timeRemaining--;
+
+
+        if (
+            this.timeRemaining <= 0
+        ) {
+
+            this.timeRemaining =
+                0;
+
+
+            this.timerExpired =
+                true;
+
+        }
+
+
+        return this.timeRemaining;
+
+    }
+
+
+    getTimeRemaining() {
+
+        return Math.max(
+            0,
+            this.timeRemaining
+        );
+
+    }
+
+
+    getFormattedTime() {
+
+        const remaining =
+            this.getTimeRemaining();
+
+
+        const minutes =
+            Math.floor(
+                remaining / 60
+            );
+
+
+        const seconds =
+            remaining % 60;
+
+
+        return (
+
+            `${String(minutes).padStart(2, "0")}:` +
+            `${String(seconds).padStart(2, "0")}`
+
+        );
+
+    }
+
+
+    isTimerStarted() {
+
+        return this.timerStarted;
+
+    }
+
+
+    isTimerExpired() {
+
+        return this.timerExpired;
+
+    }
+
+
+    getElapsedTime() {
+
+        return (
+
+            this.gameDuration -
+            this.timeRemaining
+
+        );
+
+    }
+
+
+    getFormattedElapsedTime() {
+
+        const elapsed =
+            this.getElapsedTime();
+
+
+        const minutes =
+            Math.floor(
+                elapsed / 60
+            );
+
+
+        const seconds =
+            elapsed % 60;
+
+
+        return (
+
+            `${String(minutes).padStart(2, "0")}:` +
+            `${String(seconds).padStart(2, "0")}`
+
+        );
+
+    }
+
+
+    resetGameTimer() {
+
+        this.timeRemaining =
+            this.gameDuration;
+
+
+        this.timerStarted =
+            false;
+
+
+        this.timerExpired =
+            false;
+
+    }
+
+
+    // =====================================================
+    // COMPETITION RESULT DATA
+    // =====================================================
+
+    getCompetitionResult() {
+
+        return {
+
+            runId:
+                this.runId,
+
+            teamName:
+                this.teamName,
+
+            room1Notebook:
+                this.getNotebookScore(1),
+
+            room1Assessment:
+                this.getAssessmentScore(1),
+
+            room1Total:
+                this.getTotalRoomScore(1),
+
+            room2Notebook:
+                this.getNotebookScore(2),
+
+            room2Assessment:
+                this.getAssessmentScore(2),
+
+            room2Total:
+                this.getTotalRoomScore(2),
+
+            room3Notebook:
+                this.getNotebookScore(3),
+
+            room3Assessment:
+                this.getAssessmentScore(3),
+
+            room3Total:
+                this.getTotalRoomScore(3),
+
+            finalScore:
+                this.getScore(),
+
+            timeRemaining:
+                this.getFormattedTime(),
+
+            elapsedTime:
+                this.getFormattedElapsedTime(),
+
+            timerExpired:
+                this.isTimerExpired()
+
+        };
+
+    }
+
+
+    // =====================================================
+    // RESET FULL GAME
     // =====================================================
 
     reset() {
 
-        this.score = 0;
+        this.teamName =
+            "";
 
 
-        this.currentRoom = 1;
+        this.runId =
+            this.generateRunId();
+
+
+        this.resultSubmitted =
+            false;
+
+
+        this.score =
+            0;
+
+
+        this.currentRoom =
+            1;
 
 
         this.notebookSubmitted =
@@ -598,6 +779,9 @@ export default class ScoreManager {
             }
 
         };
+
+
+        this.resetGameTimer();
 
 
         console.log(

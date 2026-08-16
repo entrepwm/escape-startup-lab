@@ -49,6 +49,24 @@ export default class PreloadScene extends Phaser.Scene {
             "assets/rooms/room3-ceo.png"
         );
 
+        // =================================================
+        // AUDIO
+        // =================================================
+
+        this.load.audio(
+            "opening-music",
+            "/assets/audio/opening-music.mp3"
+        )
+
+        this.load.audio(
+            "startup-lab-loop",
+            "/assets/audio/startup-lab-loop.mp3"
+        )
+
+        this.load.audio(
+            "finalscene-music",
+            "/assets/audio/finalscene-music.mp3"
+        )
 
         // =================================================
         // EVA POSES

@@ -2,19 +2,17 @@ import Phaser from "phaser";
 
 import AssessmentTerminal from "../ui/AssessmentTerminal";
 import Window from "../ui/Window";
-import RoomView from "../ui/RoomView";
 
 import EvidenceViewer from "../ui/EvidenceViewer";
 import NotebookViewer from "../ui/NotebookViewer";
 import AssessmentViewer from "../ui/AssessmentViewer";
-
-import ScoreManager from "../managers/ScoreManager";
 
 import ROOM3_OBJECTS from "../data/room3Objects";
 import ROOM3_EVIDENCE from "../data/room3Evidence";
 import ROOM3_NOTEBOOK from "../data/room3Notebook";
 import ROOM3_ASSESSMENT from "../data/room3Assessment";
 import ROOM3_ANSWER from "../data/room3Answer";
+
 
 export default class Room3Scene extends Phaser.Scene {
 
@@ -31,13 +29,103 @@ export default class Room3Scene extends Phaser.Scene {
 
     create() {
 
+        console.log(
+            "Starting Room 3: Mission 03 - Strategic Decision"
+        );
+
+
+        // =================================================
+        // ACHIEVEMENT STATE
+        // =================================================
+
+        this.thoroughInvestigatorEarned =
+            false;
+
+
+        // =================================================
+        // TIMER LOCAL STATE
+        // =================================================
+
+        this.globalTimerEvent =
+            null;
+
+
+        this.timeExpiredHandled =
+            false;
+
+
+        // =================================================
+        // SYSTEMS
+        // =================================================
+
         this.createSystems();
+
+
+        if (
+            !this.scoreManager
+        ) {
+
+            console.error(
+                "Room 3 could not initialize ScoreManager."
+            );
+
+            return;
+
+        }
+
+
+        // =================================================
+        // ROOM OBJECTS
+        // =================================================
 
         this.createRoomObjects();
 
+
+        // =================================================
+        // EVENTS
+        // =================================================
+
         this.registerEvents();
 
+
+        // =================================================
+        // UI
+        // =================================================
+
         this.initializeUI();
+
+
+        // =================================================
+        // CONTINUE GLOBAL TIMER
+        // =================================================
+
+        this.startGlobalGameTimer();
+
+
+        // =================================================
+        // CAMERA
+        // =================================================
+
+        this.cameras.main.fadeIn(
+            400
+        );
+
+
+        // =================================================
+        // CLEANUP
+        // =================================================
+
+        this.events.once(
+
+            Phaser.Scenes.Events.SHUTDOWN,
+
+            () => {
+
+                this.cleanupScene();
+
+            }
+
+        );
 
     }
 
@@ -48,31 +136,37 @@ export default class Room3Scene extends Phaser.Scene {
 
     createSystems() {
 
-        // -------------------------------------------------
-        // Main Assessment Terminal
-        // -------------------------------------------------
+        // =================================================
+        // MAIN ASSESSMENT TERMINAL
+        // =================================================
 
         this.terminal =
-            new AssessmentTerminal(this);
+            new AssessmentTerminal(
+                this
+            );
 
 
-        // -------------------------------------------------
-        // Popup Window
-        // -------------------------------------------------
+        // =================================================
+        // POPUP WINDOW
+        // =================================================
 
         this.window =
-            new Window(this);
+            new Window(
+                this
+            );
 
 
-        // -------------------------------------------------
+        // =================================================
         // SCORE MANAGER
-        // -------------------------------------------------
+        // =================================================
 
         this.scoreManager =
             this.game.scoreManager;
 
-        // Make sure ScoreManager exists
-        if (!this.scoreManager) {
+
+        if (
+            !this.scoreManager
+        ) {
 
             console.error(
                 "ScoreManager was not found on this.game."
@@ -83,16 +177,25 @@ export default class Room3Scene extends Phaser.Scene {
         }
 
 
-        // -------------------------------------------------
-        // Set Current Room
-        // -------------------------------------------------
+        // =================================================
+        // SET CURRENT ROOM
+        // =================================================
 
-        this.scoreManager.setRoom(3);
+        /*
+         * This only resets room-specific notebook /
+         * assessment state.
+         *
+         * It must NOT reset the global 20-minute timer.
+         */
+
+        this.scoreManager.setRoom(
+            3
+        );
 
 
-        // -------------------------------------------------
-        // Assessment Configuration
-        // -------------------------------------------------
+        // =================================================
+        // ASSESSMENT CONFIGURATION
+        // =================================================
 
         this.scoreManager.setAssessment(
 
@@ -103,9 +206,9 @@ export default class Room3Scene extends Phaser.Scene {
         );
 
 
-        // -------------------------------------------------
-        // Evidence Viewer
-        // -------------------------------------------------
+        // =================================================
+        // EVIDENCE VIEWER
+        // =================================================
 
         this.evidenceViewer =
             new EvidenceViewer(
@@ -119,9 +222,9 @@ export default class Room3Scene extends Phaser.Scene {
             );
 
 
-        // -------------------------------------------------
-        // Notebook Viewer
-        // -------------------------------------------------
+        // =================================================
+        // NOTEBOOK VIEWER
+        // =================================================
 
         this.notebookViewer =
             new NotebookViewer(
@@ -141,7 +244,10 @@ export default class Room3Scene extends Phaser.Scene {
                     );
 
 
-                    // Update score display
+                    // =========================================
+                    // UPDATE SCORE HUD
+                    // =========================================
+
                     this.terminal.setScore(
 
                         this.scoreManager.getScore()
@@ -149,7 +255,10 @@ export default class Room3Scene extends Phaser.Scene {
                     );
 
 
-                    // Unlock assessment
+                    // =========================================
+                    // UNLOCK ASSESSMENT
+                    // =========================================
+
                     this.unlockAssessment();
 
                 }
@@ -157,9 +266,9 @@ export default class Room3Scene extends Phaser.Scene {
             );
 
 
-        // -------------------------------------------------
-        // Assessment Viewer
-        // -------------------------------------------------
+        // =================================================
+        // ASSESSMENT VIEWER
+        // =================================================
 
         this.assessmentViewer =
             new AssessmentViewer(
@@ -175,46 +284,64 @@ export default class Room3Scene extends Phaser.Scene {
             );
 
 
-        // -------------------------------------------------
-        // Room View
-        // -------------------------------------------------
+        // =================================================
+        // ROOM VIEW
+        // =================================================
 
         this.roomView =
             this.terminal.getRoomView();
+
+
+        if (
+            !this.roomView
+        ) {
+
+            console.error(
+                "Room 3 RoomView could not be created."
+            );
+
+        }
 
     }
 
 
     // =====================================================
-    // INITIAL UI
+    // INITIALIZE UI
     // =====================================================
 
     initializeUI() {
 
+        // =================================================
+        // ROOM TITLE
+        // =================================================
+
         this.terminal.setRoom(
+
             "MISSION 03: STRATEGIC DECISION\nCEO OFFICE"
+
         );
 
+
+        // =================================================
+        // ROOM DIALOGUE
+        // =================================================
 
         this.terminal.setDialogue(
 
             "Welcome to Room 3.\n" +
 
-            "The restaurant has identified a serious " +
-            "peak-period capacity problem.\n\n" +
+            "Management has limited resources and cannot implement every possible solution.\n\n" +
 
-            "Management has limited resources and " +
-            "cannot implement every possible solution.\n\n" +
+            "Complete your Investigation Notebook to unlock the Assessment.\n" +
 
-            "Investigate the evidence carefully and " +
-            "determine which investment creates the " +
-            "greatest strategic value."
+            "Evidence is optional, but thorough investigation may earn additional recognition."
 
         );
 
 
-        // IMPORTANT:
-        // Keep the existing total score.
+        // =================================================
+        // KEEP GLOBAL SCORE
+        // =================================================
 
         this.terminal.setScore(
 
@@ -223,12 +350,16 @@ export default class Room3Scene extends Phaser.Scene {
         );
 
 
-        this.terminal.setTime(
-            "15:00"
-        );
+        // =================================================
+        // GLOBAL TIMER DISPLAY
+        // =================================================
+
+        this.updateGlobalTimerDisplay();
 
 
-        // Assessment starts locked
+        // =================================================
+        // ASSESSMENT STARTS LOCKED
+        // =================================================
 
         this.terminal.setButtonEnabled(
 
@@ -247,11 +378,368 @@ export default class Room3Scene extends Phaser.Scene {
 
     createRoomObjects() {
 
-        ROOM3_OBJECTS.forEach(object => {
+        if (
+            !this.roomView
+        ) {
 
-            this.roomView.addObject(object);
+            console.error(
+                "RoomView not initialized."
+            );
 
-        });
+            return;
+
+        }
+
+
+        ROOM3_OBJECTS.forEach(
+            object => {
+
+                this.roomView.addObject(
+                    object
+                );
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // GLOBAL GAME TIMER
+    // =====================================================
+
+    startGlobalGameTimer() {
+
+        if (
+            !this.scoreManager ||
+            typeof this.scoreManager.startGameTimer !==
+                "function"
+        ) {
+
+            console.error(
+                "Global timer methods are missing from ScoreManager."
+            );
+
+            return;
+
+        }
+
+
+        // =================================================
+        // DOES NOT RESET IF ALREADY STARTED
+        // =================================================
+
+        this.scoreManager.startGameTimer();
+
+
+        // =================================================
+        // ALREADY EXPIRED?
+        // =================================================
+
+        if (
+            this.scoreManager.isTimerExpired()
+        ) {
+
+            this.handleGlobalTimeExpired();
+
+            return;
+
+        }
+
+
+        // =================================================
+        // INITIAL DISPLAY
+        // =================================================
+
+        this.updateGlobalTimerDisplay();
+
+
+        // =================================================
+        // REMOVE OLD LOCAL EVENT
+        // =================================================
+
+        this.stopLocalTimerEvent();
+
+
+        // =================================================
+        // ROOM 3 LOCAL PHASER EVENT
+        // =================================================
+
+        this.globalTimerEvent =
+            this.time.addEvent({
+
+                delay:
+                    1000,
+
+                loop:
+                    true,
+
+                callback:
+                    () => {
+
+                        if (
+                            this.timeExpiredHandled
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        // =====================================
+                        // DECREASE GLOBAL SHARED TIME
+                        // =====================================
+
+                        this.scoreManager.tickGameTimer();
+
+
+                        // =====================================
+                        // UPDATE HUD
+                        // =====================================
+
+                        this.updateGlobalTimerDisplay();
+
+
+                        // =====================================
+                        // TIME EXPIRED
+                        // =====================================
+
+                        if (
+                            this.scoreManager.isTimerExpired()
+                        ) {
+
+                            this.handleGlobalTimeExpired();
+
+                        }
+
+                    }
+
+            });
+
+    }
+
+
+    // =====================================================
+    // UPDATE GLOBAL TIMER DISPLAY
+    // =====================================================
+
+    updateGlobalTimerDisplay() {
+
+        if (
+            !this.scoreManager ||
+            !this.terminal
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            typeof this.scoreManager.getFormattedTime !==
+                "function"
+        ) {
+
+            return;
+
+        }
+
+
+        const remaining =
+            this.scoreManager.getTimeRemaining();
+
+
+        const formatted =
+            this.scoreManager.getFormattedTime();
+
+
+        // =================================================
+        // DISPLAY ONLY
+        // =================================================
+
+        this.terminal.setTime(
+            formatted
+        );
+
+
+        // =================================================
+        // COLOR WARNING
+        // =================================================
+
+        if (
+            this.terminal.timeText
+        ) {
+
+            // =============================================
+            // FINAL MINUTE
+            // =============================================
+
+            if (
+                remaining <= 60
+            ) {
+
+                this.terminal.timeText.setColor(
+                    "#ff5c5c"
+                );
+
+            }
+
+
+            // =============================================
+            // FINAL THREE MINUTES
+            // =============================================
+
+            else if (
+                remaining <= 180
+            ) {
+
+                this.terminal.timeText.setColor(
+                    "#ffd166"
+                );
+
+            }
+
+
+            // =============================================
+            // NORMAL
+            // =============================================
+
+            else {
+
+                this.terminal.timeText.setColor(
+                    "#ffffff"
+                );
+
+            }
+
+        }
+
+    }
+
+
+    // =====================================================
+    // HANDLE GLOBAL TIME EXPIRED
+    // =====================================================
+
+    handleGlobalTimeExpired() {
+
+        // =================================================
+        // PREVENT MULTIPLE TRANSITIONS
+        // =================================================
+
+        if (
+            this.timeExpiredHandled
+        ) {
+
+            return;
+
+        }
+
+
+        this.timeExpiredHandled =
+            true;
+
+
+        console.log(
+            "20-minute global game timer expired in Room 3."
+        );
+
+
+        // =================================================
+        // STOP ROOM 3 LOCAL CLOCK
+        // =================================================
+
+        this.stopLocalTimerEvent();
+
+
+        // =================================================
+        // UPDATE TERMINAL
+        // =================================================
+
+        if (
+            this.terminal
+        ) {
+
+            this.terminal.setTime(
+                "00:00"
+            );
+
+
+            if (
+                this.terminal.timeText
+            ) {
+
+                this.terminal.timeText.setColor(
+                    "#ff5c5c"
+                );
+
+            }
+
+
+            this.terminal.setDialogue(
+
+                "TIME EXPIRED.\n" +
+                "The Founder Assessment has ended."
+
+            );
+
+        }
+
+
+        // =================================================
+        // CLOSE OPEN WINDOW
+        // =================================================
+
+        if (
+            this.window &&
+            typeof this.window.close ===
+                "function"
+        ) {
+
+            this.window.close();
+
+        }
+
+
+        // =================================================
+        // FINAL RESULTS
+        // =================================================
+
+        this.scene.start(
+
+            "FinalResultsScene",
+
+            {
+
+                scoreManager:
+                    this.scoreManager
+
+            }
+
+        );
+
+    }
+
+
+    // =====================================================
+    // STOP LOCAL TIMER EVENT
+    // =====================================================
+
+    stopLocalTimerEvent() {
+
+        if (
+            this.globalTimerEvent
+        ) {
+
+            this.globalTimerEvent.remove(
+                false
+            );
+
+
+            this.globalTimerEvent =
+                null;
+
+        }
 
     }
 
@@ -275,243 +763,567 @@ export default class Room3Scene extends Phaser.Scene {
 
         );
 
+
+        this.terminal.setDialogue(
+
+            "Notebook submitted.\n" +
+
+            "Your final Assessment is now available.\n" +
+
+            "You may still investigate additional evidence before making your strategic recommendation."
+
+        );
+
     }
 
 
     // =====================================================
-    // EVENTS
+    // REGISTER EVENTS
     // =====================================================
 
     registerEvents() {
-
 
         // =================================================
         // SIDEBAR BUTTONS
         // =================================================
 
-        this.terminal.onButtonClick((id) => {
+        this.terminal.onButtonClick(
 
-            switch (id) {
+            (id) => {
 
+                // =================================================
+                // BLOCK INPUT AFTER TIME ENDS
+                // =================================================
 
-                // -----------------------------------------
-                // NOTEBOOK
-                // -----------------------------------------
+                if (
+                    this.timeExpiredHandled
+                ) {
 
-                case "notebook":
+                    return;
 
-                    this.notebookViewer.open();
-
-                    break;
-
-
-                // -----------------------------------------
-                // ASSESSMENT
-                // -----------------------------------------
-
-                case "assessment":
+                }
 
 
-                    // -------------------------------------
-                    // Notebook Check
-                    // -------------------------------------
-
-                    if (
-                        !this.scoreManager
-                            .isNotebookSubmitted()
-                    ) {
-
-                        this.window.open({
-
-                            title:
-                                "Assessment Locked"
-
-                        });
+                switch (
+                    id
+                ) {
 
 
-                        this.window.setContent(
+                    // =====================================
+                    // NOTEBOOK
+                    // =====================================
 
-                            "Complete and submit the " +
-                            "Investigation Notebook first."
+                    case "notebook":
 
+                        this.notebookViewer.open();
+
+                        break;
+
+
+                    // =====================================
+                    // ASSESSMENT
+                    // =====================================
+
+                    case "assessment":
+
+                        this.openAssessment();
+
+                        break;
+
+
+                    // =====================================
+                    // HINT
+                    // =====================================
+
+                    case "hint":
+
+                        this.openHint();
+
+                        break;
+
+
+                    // =====================================
+                    // PROGRESS
+                    // =====================================
+
+                    case "progress":
+
+                        this.openProgress();
+
+                        break;
+
+
+                    // =====================================
+                    // CONTINUE / DEV SHORTCUT
+                    // =====================================
+
+                    case "continue":
+
+                        console.log(
+                            "DEV: Continuing Room 3 → Final Results"
                         );
 
 
-                        return;
+                        // =================================
+                        // STOP ROOM 3 LOCAL CLOCK
+                        // =================================
 
-                    }
-
-
-                    // -------------------------------------
-                    // Room Investigation Check
-                    // -------------------------------------
-
-                    if (
-                        !this.roomView
-                            .allObjectsInvestigated()
-                    ) {
-
-                        this.window.open({
-
-                            title:
-                                "Assessment Locked"
-
-                        });
+                        this.stopLocalTimerEvent();
 
 
-                        this.window.setContent(
+                        // =================================
+                        // FINAL RESULTS
+                        // =================================
 
-                            "You must investigate all " +
-                            "objects in the room before " +
-                            "completing the assessment."
+                        this.scene.start(
+
+                            "FinalResultsScene",
+
+                            {
+
+                                scoreManager:
+                                    this.scoreManager
+
+                            }
 
                         );
 
-
-                        return;
-
-                    }
+                        break;
 
 
-                    // -------------------------------------
-                    // Everything Complete
-                    // -------------------------------------
+                    // =====================================
+                    // UNKNOWN BUTTON
+                    // =====================================
 
-                    this.assessmentViewer.open();
+                    default:
 
-                    break;
+                        console.warn(
 
+                            `Unknown sidebar button: ${id}`
 
-                // -----------------------------------------
-                // HINT
-                // -----------------------------------------
+                        );
 
-                case "hint":
-
-                    this.window.open({
-
-                        title: "Hint"
-
-                    });
-
-
-                    this.window.setContent(
-
-                        "Don't automatically choose the " +
-                        "cheapest or most innovative option.\n\n" +
-
-                        "First identify the actual bottleneck, " +
-                        "then compare each solution's impact, " +
-                        "cost, feasibility, and long-term value."
-
-                    );
-
-                    break;
-
-
-                // -----------------------------------------
-                // PROGRESS
-                // -----------------------------------------
-
-                case "progress":
-
-                    this.window.open({
-
-                        title: "Progress"
-
-                    });
-
-
-                    this.window.setContent(
-
-                        "Room 3 of 4\n\n" +
-
-                        "Strategy Lab Investigation"
-
-                    );
-
-                    break;
-
-
-                // -----------------------------------------
-                // UNKNOWN BUTTON
-                // -----------------------------------------
-
-                default:
-
-                    console.warn(
-
-                        `Unknown sidebar button: ${id}`
-
-                    );
+                }
 
             }
 
-        });
+        );
 
 
         // =================================================
         // ROOM OBJECTS
         // =================================================
 
-        this.roomView.onObjectClick((id) => {
+        if (
+            !this.roomView
+        ) {
 
-            const object =
-                ROOM3_OBJECTS.find(
+            return;
 
-                    obj => obj.id === id
+        }
 
+
+        this.roomView.onObjectClick(
+
+            (id) => {
+
+                if (
+                    this.timeExpiredHandled
+                ) {
+
+                    return;
+
+                }
+
+
+                this.handleRoomObjectClick(
+                    id
                 );
-
-
-            if (!object) {
-
-                console.warn(
-
-                    `Unknown Room 3 object: ${id}`
-
-                );
-
-                return;
 
             }
+
+        );
+
+    }
+
+
+    // =====================================================
+    // OPEN ASSESSMENT
+    // =====================================================
+
+    openAssessment() {
+
+        // =================================================
+        // TIMER CHECK
+        // =================================================
+
+        if (
+            this.scoreManager.isTimerExpired()
+        ) {
+
+            this.handleGlobalTimeExpired();
+
+            return;
+
+        }
+
+
+        // =================================================
+        // ONLY REQUIREMENT:
+        // NOTEBOOK MUST BE SUBMITTED
+        // =================================================
+
+        if (
+            !this.scoreManager.isNotebookSubmitted()
+        ) {
+
+            this.window.open({
+
+                title:
+                    "Assessment Locked"
+
+            });
+
+
+            this.window.setContent(
+
+                "Complete and submit the Investigation Notebook first.\n\n" +
+
+                "Evidence investigation is optional."
+
+            );
+
+
+            return;
+
+        }
+
+
+        // =================================================
+        // NO EVIDENCE REQUIREMENT
+        // =================================================
+
+        /*
+         * Evidence remains optional.
+         *
+         * Thorough Investigator is a bonus only.
+         */
+
+
+        // =================================================
+        // CHECK OPTIONAL ACHIEVEMENT
+        // =================================================
+
+        this.checkThoroughInvestigator();
+
+
+        // =================================================
+        // OPEN ASSESSMENT
+        // =================================================
+
+        this.assessmentViewer.open();
+
+    }
+
+
+    // =====================================================
+    // CHECK THOROUGH INVESTIGATOR
+    // =====================================================
+
+    checkThoroughInvestigator() {
+
+        if (
+            !this.roomView ||
+            typeof this.roomView.allObjectsInvestigated !==
+                "function"
+        ) {
+
+            return false;
+
+        }
+
+
+        const allInvestigated =
+            this.roomView
+                .allObjectsInvestigated();
+
+
+        if (
+            allInvestigated &&
+            !this.thoroughInvestigatorEarned
+        ) {
+
+            this.thoroughInvestigatorEarned =
+                true;
 
 
             console.log(
 
-                `Room 3 object clicked: ${object.id}`
+                "ACHIEVEMENT UNLOCKED: " +
+                "Thorough Investigator — Room 3"
 
             );
 
 
-            // ---------------------------------------------
-            // Check Evidence
-            // ---------------------------------------------
+            this.terminal.setDialogue(
 
-            if (!object.evidence) {
+                "Achievement unlocked: Thorough Investigator!\n" +
 
-                console.warn(
-
-                    `No evidence assigned to room object: ${object.id}`
-
-                );
-
-                return;
-
-            }
-
-
-            // ---------------------------------------------
-            // Open Evidence
-            // ---------------------------------------------
-
-            this.evidenceViewer.openEvidence(
-
-                object.evidence
+                "You examined every available strategic evidence source."
 
             );
+
+        }
+
+
+        return this.thoroughInvestigatorEarned;
+
+    }
+
+
+    // =====================================================
+    // OPEN HINT
+    // =====================================================
+
+    openHint() {
+
+        this.window.open({
+
+            title:
+                "EVA Hint"
 
         });
+
+
+        this.window.setContent(
+
+            "Don't automatically choose the cheapest or most innovative option.\n\n" +
+
+            "First identify the actual bottleneck, then compare each solution's " +
+
+            "impact, cost, feasibility, strategic fit, and long-term value.\n\n" +
+
+            "Evidence investigation is optional, but stronger strategic decisions " +
+
+            "usually come from stronger evidence."
+
+        );
+
+    }
+
+
+    // =====================================================
+    // OPEN PROGRESS
+    // =====================================================
+
+    openProgress() {
+
+        const score =
+            this.scoreManager.getScore();
+
+
+        const timeRemaining =
+            this.scoreManager.getFormattedTime();
+
+
+        // =================================================
+        // NOTEBOOK STATUS
+        // =================================================
+
+        const notebookStatus =
+            this.scoreManager.isNotebookSubmitted()
+                ? "Completed"
+                : "Not Completed";
+
+
+        // =================================================
+        // ASSESSMENT STATUS
+        // =================================================
+
+        const assessmentStatus =
+            this.scoreManager.isAssessmentSubmitted()
+                ? "Completed"
+                : (
+                    this.scoreManager.isNotebookSubmitted()
+                        ? "Unlocked"
+                        : "Locked"
+                );
+
+
+        // =================================================
+        // EVIDENCE PROGRESS
+        // =================================================
+
+        let investigatedCount =
+            0;
+
+
+        const totalEvidence =
+            ROOM3_OBJECTS.length;
+
+
+        if (
+            this.roomView &&
+            typeof this.roomView.getInvestigatedObjects ===
+                "function"
+        ) {
+
+            investigatedCount =
+                this.roomView
+                    .getInvestigatedObjects()
+                    .length;
+
+        }
+
+
+        // =================================================
+        // ACHIEVEMENT CHECK
+        // =================================================
+
+        this.checkThoroughInvestigator();
+
+
+        const achievementStatus =
+            this.thoroughInvestigatorEarned
+                ? "Unlocked ✓"
+                : `${investigatedCount} / ${totalEvidence}`;
+
+
+        // =================================================
+        // WINDOW
+        // =================================================
+
+        this.window.open({
+
+            title:
+                "Mission Progress"
+
+        });
+
+
+        this.window.setContent(
+
+            "MISSION 03: STRATEGIC DECISION\n" +
+
+            "CEO OFFICE\n\n" +
+
+            `Time Remaining: ${timeRemaining}\n\n` +
+
+            `Notebook: ${notebookStatus}\n` +
+
+            `Assessment: ${assessmentStatus}\n` +
+
+            `Evidence: ${investigatedCount} / ${totalEvidence}\n\n` +
+
+            "BONUS ACHIEVEMENT\n" +
+
+            `Thorough Investigator: ${achievementStatus}\n\n` +
+
+            `Current Score: ${score}`
+
+        );
+
+    }
+
+
+    // =====================================================
+    // HANDLE ROOM OBJECT CLICK
+    // =====================================================
+
+    handleRoomObjectClick(
+        id
+    ) {
+
+        const object =
+            ROOM3_OBJECTS.find(
+
+                obj =>
+                    obj.id === id
+
+            );
+
+
+        // =================================================
+        // UNKNOWN OBJECT
+        // =================================================
+
+        if (
+            !object
+        ) {
+
+            console.warn(
+
+                `Unknown Room 3 object: ${id}`
+
+            );
+
+
+            return;
+
+        }
+
+
+        console.log(
+
+            `Room 3 object clicked: ${object.id}`
+
+        );
+
+
+        // =================================================
+        // CHECK EVIDENCE
+        // =================================================
+
+        if (
+            !object.evidence
+        ) {
+
+            console.warn(
+
+                `No evidence assigned to room object: ${object.id}`
+
+            );
+
+
+            return;
+
+        }
+
+
+        // =================================================
+        // OPEN EVIDENCE
+        // =================================================
+
+        this.evidenceViewer.openEvidence(
+
+            object.evidence
+
+        );
+
+
+        // =================================================
+        // CHECK OPTIONAL ACHIEVEMENT
+        // =================================================
+
+        this.checkThoroughInvestigator();
+
+    }
+
+
+    // =====================================================
+    // CLEANUP
+    // =====================================================
+
+    cleanupScene() {
+
+        /*
+         * Stop only Room 3's local Phaser timer event.
+         *
+         * The ScoreManager timer state is preserved
+         * until the entire game is reset.
+         */
+
+        this.stopLocalTimerEvent();
 
     }
 

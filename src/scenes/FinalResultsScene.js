@@ -1,5 +1,9 @@
 import Phaser from "phaser";
 
+import CompetitionResultsService
+    from "../services/CompetitionResultsService";
+
+
 export default class FinalResultsScene extends Phaser.Scene {
 
     constructor() {
@@ -18,8 +22,16 @@ export default class FinalResultsScene extends Phaser.Scene {
     init(data) {
 
         this.scoreManager =
-            data.scoreManager ||
+            data?.scoreManager ||
             this.game.scoreManager;
+
+
+        this.submissionStatusText =
+            null;
+
+
+        this.submissionStarted =
+            false;
 
     }
 
@@ -30,15 +42,103 @@ export default class FinalResultsScene extends Phaser.Scene {
 
     create() {
 
+        // =================================================
+        // SAFETY
+        // =================================================
+
+        if (
+            !this.scoreManager
+        ) {
+
+            console.error(
+                "FinalResultsScene: ScoreManager is missing."
+            );
+
+        }
+
+
+        // =================================================
+        // COMPETITION DATA
+        // =================================================
+
         const finalScore =
             this.scoreManager
                 ? this.scoreManager.getScore()
                 : 0;
 
 
-        const rating =
-            this.getFinalRating(finalScore);
+        const teamName =
+            this.getTeamName();
 
+
+        const timeRemaining =
+            this.getTimeRemaining();
+
+
+        const elapsedTime =
+            this.getElapsedTime();
+
+
+        const timerExpired =
+            this.getTimerExpired();
+
+
+        const rating =
+            this.getFinalRating(
+                finalScore
+            );
+
+
+        const roomScores =
+            this.getRoomScores();
+
+
+        const notebookTotal =
+
+            roomScores[1].notebook +
+            roomScores[2].notebook +
+            roomScores[3].notebook;
+
+
+        const assessmentTotal =
+
+            roomScores[1].assessment +
+            roomScores[2].assessment +
+            roomScores[3].assessment;
+
+        // =================================================
+        // AUDIO
+        // =================================================
+
+        if (
+            this.game.gameMusic
+        ) {
+
+            this.game.gameMusic.stop();
+            this.game.gameMusic.destroy();
+
+            this.game.gameMusic =
+                null;
+
+        }
+
+
+        if (
+            !this.game.finalMusic
+        ) {
+
+            this.game.finalMusic =
+                this.sound.add(
+                    "finalscene-music",
+                    {
+                loop: false,
+                        volume: 0.25
+                    }
+                );
+
+            this.game.finalMusic.play();
+
+        }
 
         // =================================================
         // BACKGROUND
@@ -48,353 +148,834 @@ export default class FinalResultsScene extends Phaser.Scene {
 
 
         // =================================================
-        // PANEL
+        // ROOT CONTAINER
         // =================================================
 
-        const panelWidth = 760;
-        const panelHeight = 610;
-
-        const panelX =
+        const centerX =
             this.scale.width / 2;
 
-        const panelY =
+
+        const centerY =
             this.scale.height / 2;
 
 
-        const panel =
-            this.add.rectangle(
-
-                panelX,
-                panelY,
-
-                panelWidth,
-                panelHeight,
-
-                0xf4f4f4
-
+        this.resultsContainer =
+            this.add.container(
+                centerX,
+                centerY
             );
 
 
-        panel.setStrokeStyle(
-            3,
-            0x1683e8
+        // =================================================
+        // RESPONSIVE SCALE
+        // =================================================
+
+        const scaleX =
+            this.scale.width / 1280;
+
+
+        const scaleY =
+            this.scale.height / 720;
+
+
+        this.uiScale =
+            Math.min(
+                scaleX,
+                scaleY,
+                1
+            );
+
+
+        this.resultsContainer.setScale(
+            this.uiScale
         );
 
 
         // =================================================
-        // TITLE
+        // OUTER SHADOW
         // =================================================
 
-        this.add.text(
+        const shadow =
+            this.add.rectangle(
 
-            panelX,
-            panelY - 275,
+                8,
+                10,
 
-            "🎉 BUSINESS CHALLENGE COMPLETE!",
+                1000,
+                650,
 
-            {
+                0x07111f,
+                0.55
 
-                fontFamily: "monospace",
+            );
 
-                fontSize: "30px",
 
-                fontStyle: "bold",
+        this.resultsContainer.add(
+            shadow
+        );
 
-                color: "#111111",
 
-                align: "center"
+        // =================================================
+        // OUTER PANEL
+        // =================================================
 
-            }
+        const outerPanel =
+            this.add.rectangle(
 
-        )
-        .setOrigin(0.5);
+                0,
+                0,
+
+                1000,
+                650,
+
+                0x0d1828
+
+            );
+
+
+        outerPanel.setStrokeStyle(
+            3,
+            0x24b8ff
+        );
+
+
+        this.resultsContainer.add(
+            outerPanel
+        );
+
+
+        // =================================================
+        // REPORT PANEL
+        // =================================================
+
+        const report =
+            this.add.rectangle(
+
+                0,
+                18,
+
+                950,
+                590,
+
+                0xf4f1e8
+
+            );
+
+
+        report.setStrokeStyle(
+            1,
+            0xb9c3cc
+        );
+
+
+        this.resultsContainer.add(
+            report
+        );
+
+
+        // =================================================
+        // HEADER
+        // =================================================
+
+        const header =
+            this.add.rectangle(
+
+                0,
+                -257,
+
+                950,
+                112,
+
+                0x17263b
+
+            );
+
+
+        this.resultsContainer.add(
+            header
+        );
+
+
+        // =================================================
+        // GAME LABEL
+        // =================================================
+
+        const gameLabel =
+            this.add.text(
+
+                0,
+                -287,
+
+                "ESCAPE STARTUP LAB",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "13px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#62d6ff",
+
+                    letterSpacing:
+                        3
+
+                }
+
+            )
+            .setOrigin(
+                0.5
+            );
+
+
+        this.resultsContainer.add(
+            gameLabel
+        );
+
+
+        // =================================================
+        // MAIN TITLE
+        // =================================================
+
+        const title =
+            this.add.text(
+
+                0,
+                -258,
+
+                timerExpired
+                    ? "FOUNDER ASSESSMENT — TIME EXPIRED"
+                    : "FOUNDER ASSESSMENT COMPLETE",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "27px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#ffffff",
+
+                    align:
+                        "center"
+
+                }
+
+            )
+            .setOrigin(
+                0.5
+            );
+
+
+        this.resultsContainer.add(
+            title
+        );
 
 
         // =================================================
         // SUBTITLE
         // =================================================
 
-        this.add.text(
+        const subtitle =
+            this.add.text(
 
-            panelX,
-            panelY - 235,
+                0,
+                -225,
 
-            "Your Entrepreneurial Performance",
+                "ENTREPRENEURIAL PERFORMANCE REPORT",
 
-            {
+                {
 
-                fontFamily: "monospace",
+                    fontFamily:
+                        "monospace",
 
-                fontSize: "17px",
+                    fontSize:
+                        "12px",
 
-                color: "#666666",
+                    color:
+                        "#b8c6d9"
 
-                align: "center"
+                }
 
-            }
+            )
+            .setOrigin(
+                0.5
+            );
 
-        )
-        .setOrigin(0.5);
+
+        this.resultsContainer.add(
+            subtitle
+        );
+
+
+        // =================================================
+        // COMPETITION INFORMATION BAR
+        // =================================================
+
+        this.createCompetitionInfoBar(
+
+            teamName,
+
+            timeRemaining,
+
+            elapsedTime,
+
+            timerExpired
+
+        );
 
 
         // =================================================
         // FINAL SCORE LABEL
         // =================================================
 
-        this.add.text(
+        const finalScoreLabel =
+            this.add.text(
 
-            panelX,
-            panelY - 185,
+                -320,
+                -114,
 
-            "FINAL SCORE",
+                "FINAL SCORE",
 
-            {
+                {
 
-                fontFamily: "monospace",
+                    fontFamily:
+                        "monospace",
 
-                fontSize: "16px",
+                    fontSize:
+                        "14px",
 
-                fontStyle: "bold",
+                    fontStyle:
+                        "bold",
 
-                color: "#555555",
+                    color:
+                        "#5d6670"
 
-                align: "center"
+                }
 
-            }
+            )
+            .setOrigin(
+                0.5
+            );
 
-        )
-        .setOrigin(0.5);
+
+        this.resultsContainer.add(
+            finalScoreLabel
+        );
 
 
         // =================================================
-        // FINAL SCORE
+        // SCORE NUMBER
         // =================================================
 
         const scoreText =
             this.add.text(
 
-                panelX,
-                panelY - 145,
+                -320,
+                -65,
 
                 `${finalScore}`,
 
                 {
 
-                    fontFamily: "monospace",
+                    fontFamily:
+                        "monospace",
 
-                    fontSize: "46px",
+                    fontSize:
+                        "58px",
 
-                    fontStyle: "bold",
+                    fontStyle:
+                        "bold",
 
-                    color: "#1683e8",
-
-                    align: "center"
+                    color:
+                        "#148be8"
 
                 }
 
             )
-            .setOrigin(0.5);
+            .setOrigin(
+                0.5
+            );
+
+
+        this.resultsContainer.add(
+            scoreText
+        );
 
 
         // =================================================
-        // FINAL RATING
+        // SCORE SUBTEXT
         // =================================================
 
-        this.add.text(
+        const scoreSubtext =
+            this.add.text(
 
-            panelX,
-            panelY - 90,
+                -320,
+                -22,
 
-            `${rating.icon} ${rating.title}`,
+                "TOTAL PERFORMANCE POINTS",
 
-            {
+                {
 
-                fontFamily: "monospace",
+                    fontFamily:
+                        "monospace",
 
-                fontSize: "24px",
+                    fontSize:
+                        "10px",
 
-                fontStyle: "bold",
+                    color:
+                        "#7b848c"
 
-                color: rating.color,
-
-                align: "center",
-
-                wordWrap: {
-                    width: 680
                 }
 
-            }
+            )
+            .setOrigin(
+                0.5
+            );
 
-        )
-        .setOrigin(0.5);
+
+        this.resultsContainer.add(
+            scoreSubtext
+        );
+
+
+        // =================================================
+        // VERTICAL DIVIDER
+        // =================================================
+
+        const divider =
+            this.add.rectangle(
+
+                -145,
+                -70,
+
+                1,
+                130,
+
+                0xc6ccd1
+
+            );
+
+
+        this.resultsContainer.add(
+            divider
+        );
+
+
+        // =================================================
+        // RATING LABEL
+        // =================================================
+
+        const ratingLabel =
+            this.add.text(
+
+                -105,
+                -125,
+
+                "ENTREPRENEURIAL PROFILE",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "12px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#69727a"
+
+                }
+
+            );
+
+
+        this.resultsContainer.add(
+            ratingLabel
+        );
+
+
+        // =================================================
+        // RATING BADGE
+        // =================================================
+
+        const ratingBadge =
+            this.add.rectangle(
+
+                145,
+                -82,
+
+                500,
+                50,
+
+                0xffffff
+
+            );
+
+
+        ratingBadge.setStrokeStyle(
+
+            2,
+
+            Phaser.Display.Color
+                .HexStringToColor(
+                    rating.color
+                )
+                .color
+
+        );
+
+
+        this.resultsContainer.add(
+            ratingBadge
+        );
+
+
+        // =================================================
+        // RATING TITLE
+        // =================================================
+
+        const ratingTitle =
+            this.add.text(
+
+                145,
+                -82,
+
+                `${rating.icon}  ${rating.title}`,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "19px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        rating.color,
+
+                    align:
+                        "center"
+
+                }
+
+            )
+            .setOrigin(
+                0.5
+            );
+
+
+        this.fitTextToWidth(
+
+            ratingTitle,
+
+            450,
+
+            13
+
+        );
+
+
+        this.resultsContainer.add(
+            ratingTitle
+        );
 
 
         // =================================================
         // RATING DESCRIPTION
         // =================================================
 
-        this.add.text(
+        const ratingDescription =
+            this.add.text(
 
-            panelX,
-            panelY - 45,
+                -105,
+                -46,
 
-            rating.description,
+                rating.description,
 
-            {
+                {
 
-                fontFamily: "monospace",
+                    fontFamily:
+                        "monospace",
 
-                fontSize: "14px",
+                    fontSize:
+                        "12px",
 
-                color: "#444444",
+                    color:
+                        "#42484e",
 
-                align: "center",
+                    wordWrap: {
 
-                wordWrap: {
-                    width: 600
-                },
+                        width:
+                            500
 
-                lineSpacing: 4
+                    },
 
-            }
+                    lineSpacing:
+                        3
 
-        )
-        .setOrigin(0.5);
-
-
-        // =================================================
-        // SCORE BREAKDOWN
-        // =================================================
-
-        this.add.text(
-
-            panelX,
-            panelY + 15,
-
-            "SCORE BREAKDOWN",
-
-            {
-
-                fontFamily: "monospace",
-
-                fontSize: "16px",
-
-                fontStyle: "bold",
-
-                color: "#222222",
-
-                align: "center"
-
-            }
-
-        )
-        .setOrigin(0.5);
-
-
-        this.createScoreBreakdown(
-            panelX,
-            panelY + 50
-        );
-
-
-        // =================================================
-        // PLAY AGAIN BUTTON
-        // =================================================
-
-        const buttonY =
-            panelY + 215;
-
-
-        const button =
-            this.add.rectangle(
-
-                panelX,
-                buttonY,
-
-                190,
-                45,
-
-                0xeaf3ff
+                }
 
             );
 
 
-        button.setStrokeStyle(
-            2,
-            0x1683e8
+        this.resultsContainer.add(
+            ratingDescription
         );
 
 
-        button.setInteractive({
-            useHandCursor: true
-        });
+        // =================================================
+        // SECTION DIVIDER
+        // =================================================
+
+        const horizontalDivider =
+            this.add.rectangle(
+
+                0,
+                22,
+
+                880,
+                1,
+
+                0xc7ccd0
+
+            );
 
 
-        const buttonText =
+        this.resultsContainer.add(
+            horizontalDivider
+        );
+
+
+        // =================================================
+        // BREAKDOWN TITLE
+        // =================================================
+
+        const breakdownTitle =
             this.add.text(
 
-                panelX,
-                buttonY,
+                -425,
+                37,
 
-                "🔄 Play Again",
+                "MISSION SCORE BREAKDOWN",
 
                 {
 
-                    fontFamily: "monospace",
+                    fontFamily:
+                        "monospace",
 
-                    fontSize: "17px",
+                    fontSize:
+                        "14px",
 
-                    fontStyle: "bold",
+                    fontStyle:
+                        "bold",
 
-                    color: "#1683e8",
+                    color:
+                        "#253342"
 
-                    align: "center"
+                }
+
+            );
+
+
+        this.resultsContainer.add(
+            breakdownTitle
+        );
+
+
+        // =================================================
+        // ROOM CARDS
+        // =================================================
+
+        this.createRoomCard(
+
+            -290,
+            123,
+
+            1,
+
+            "PROBLEM DISCOVERY",
+
+            roomScores[1]
+
+        );
+
+
+        this.createRoomCard(
+
+            0,
+            123,
+
+            2,
+
+            "OPPORTUNITY ANALYSIS",
+
+            roomScores[2]
+
+        );
+
+
+        this.createRoomCard(
+
+            290,
+            123,
+
+            3,
+
+            "STRATEGIC DECISION",
+
+            roomScores[3]
+
+        );
+
+
+        // =================================================
+        // TOTALS PANEL
+        // =================================================
+
+        const totalsPanel =
+            this.add.rectangle(
+
+                -150,
+                230,
+
+                540,
+                60,
+
+                0xe7edf2
+
+            );
+
+
+        totalsPanel.setStrokeStyle(
+            1,
+            0xc1cbd3
+        );
+
+
+        this.resultsContainer.add(
+            totalsPanel
+        );
+
+
+        // =================================================
+        // SUMMARY VALUES
+        // =================================================
+
+        this.createSummaryValue(
+
+            -365,
+            215,
+
+            "NOTEBOOK",
+
+            notebookTotal
+
+        );
+
+
+        this.createSummaryValue(
+
+            -190,
+            215,
+
+            "ASSESSMENT",
+
+            assessmentTotal
+
+        );
+
+
+        this.createSummaryValue(
+
+            -15,
+            215,
+
+            "FINAL TOTAL",
+
+            finalScore
+
+        );
+
+
+        // =================================================
+        // PLAY AGAIN
+        // =================================================
+
+        this.createPlayAgainButton(
+
+            285,
+            230
+
+        );
+
+
+        // =================================================
+        // SUBMISSION STATUS
+        // =================================================
+
+        this.submissionStatusText =
+            this.add.text(
+
+                0,
+                279,
+
+                "Submitting competition result...",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "11px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#68727d",
+
+                    align:
+                        "center"
 
                 }
 
             )
-            .setOrigin(0.5);
+            .setOrigin(
+                0.5
+            );
 
 
-        button.on(
-            "pointerover",
-            () => {
+        this.fitTextToWidth(
 
-                button.setFillStyle(
-                    0xdceeff
-                );
+            this.submissionStatusText,
 
-                buttonText.setColor(
-                    "#ff8800"
-                );
+            700,
 
-            }
+            9
+
         );
 
 
-        button.on(
-            "pointerout",
-            () => {
-
-                button.setFillStyle(
-                    0xeaf3ff
-                );
-
-                buttonText.setColor(
-                    "#1683e8"
-                );
-
-            }
-        );
-
-
-        button.on(
-            "pointerdown",
-            () => {
-
-                this.playAgain();
-
-            }
+        this.resultsContainer.add(
+            this.submissionStatusText
         );
 
 
@@ -402,49 +983,956 @@ export default class FinalResultsScene extends Phaser.Scene {
         // FOOTER
         // =================================================
 
-        this.add.text(
+        const footer =
+            this.add.text(
 
-            panelX,
-            panelY + 270,
+                0,
+                302,
 
-            "Every great entrepreneur learns, adapts, and acts.",
+                "Every founder learns. Every founder adapts. Every founder acts.",
 
-            {
+                {
 
-                fontFamily: "monospace",
+                    fontFamily:
+                        "monospace",
 
-                fontSize: "13px",
+                    fontSize:
+                        "10px",
 
-                color: "#777777",
+                    color:
+                        "#7a838b",
 
-                align: "center"
+                    align:
+                        "center"
 
-            }
+                }
 
-        )
-        .setOrigin(0.5);
+            )
+            .setOrigin(
+                0.5
+            );
+
+
+        this.resultsContainer.add(
+            footer
+        );
 
 
         // =================================================
-        // SCORE ANIMATION
+        // ENTRANCE ANIMATION
         // =================================================
 
-        scoreText.setScale(0.7);
+        this.resultsContainer
+            .setAlpha(
+                0
+            )
+            .setScale(
+                this.uiScale * 0.96
+            );
 
 
         this.tweens.add({
 
-            targets: scoreText,
+            targets:
+                this.resultsContainer,
 
-            scaleX: 1,
+            alpha:
+                1,
 
-            scaleY: 1,
+            scaleX:
+                this.uiScale,
 
-            duration: 500,
+            scaleY:
+                this.uiScale,
 
-            ease: "Back.out"
+            duration:
+                550,
+
+            ease:
+                "Back.Out"
 
         });
+
+
+        // =================================================
+        // SCORE POP
+        // =================================================
+
+        scoreText.setScale(
+            0.65
+        );
+
+
+        this.tweens.add({
+
+            targets:
+                scoreText,
+
+            scaleX:
+                1,
+
+            scaleY:
+                1,
+
+            delay:
+                250,
+
+            duration:
+                550,
+
+            ease:
+                "Back.Out"
+
+        });
+
+
+        // =================================================
+        // SUBMIT RESULT
+        // =================================================
+
+        this.submitCompetitionResult();
+
+    }
+
+
+    // =====================================================
+    // COMPETITION INFORMATION BAR
+    // =====================================================
+
+    createCompetitionInfoBar(
+        teamName,
+        timeRemaining,
+        elapsedTime,
+        timerExpired
+    ) {
+
+        // =================================================
+        // PANEL GEOMETRY
+        // =================================================
+
+        const panelY =
+            -178;
+
+
+        const panelWidth =
+            880;
+
+
+        const panelHeight =
+            46;
+
+
+        const panel =
+            this.add.rectangle(
+
+                0,
+                panelY,
+
+                panelWidth,
+                panelHeight,
+
+                0xe7edf2
+
+            );
+
+
+        panel.setStrokeStyle(
+            1,
+            0xc1cbd3
+        );
+
+
+        this.resultsContainer.add(
+            panel
+        );
+
+
+        // =================================================
+        // SAFE VERTICAL POSITIONS
+        // =================================================
+
+        /*
+         * The bar spans roughly:
+         *
+         * top    = -201
+         * bottom = -155
+         *
+         * Keeping labels at -188 and values at -172
+         * prevents the text from touching the bottom border.
+         */
+
+        const labelY =
+            -188;
+
+
+        const valueY =
+            -172;
+
+
+        // =================================================
+        // COLUMN LAYOUT
+        // =================================================
+
+        const teamLeft =
+            -415;
+
+
+        const teamWidth =
+            450;
+
+
+        const timeLeft =
+            100;
+
+
+        const timeWidth =
+            145;
+
+
+        const elapsedLeft =
+            305;
+
+
+        const elapsedWidth =
+            110;
+
+
+        // =================================================
+        // COLUMN DIVIDERS
+        // =================================================
+
+        const divider1 =
+            this.add.rectangle(
+
+                70,
+                panelY,
+
+                1,
+                30,
+
+                0xc5cfd7
+
+            );
+
+
+        const divider2 =
+            this.add.rectangle(
+
+                275,
+                panelY,
+
+                1,
+                30,
+
+                0xc5cfd7
+
+            );
+
+
+        this.resultsContainer.add([
+            divider1,
+            divider2
+        ]);
+
+
+        // =================================================
+        // TEAM LABEL
+        // =================================================
+
+        const teamLabel =
+            this.add.text(
+
+                teamLeft,
+                labelY,
+
+                "TEAM",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "10px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#68727d"
+
+                }
+
+            );
+
+
+        this.resultsContainer.add(
+            teamLabel
+        );
+
+
+        // =================================================
+        // TEAM VALUE
+        // =================================================
+
+        const teamValue =
+            this.add.text(
+
+                teamLeft,
+                valueY,
+
+                teamName,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "14px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#17263b"
+
+                }
+
+            )
+            .setOrigin(
+                0,
+                0
+            );
+
+
+        this.fitTextToWidth(
+
+            teamValue,
+
+            teamWidth,
+
+            9
+
+        );
+
+
+        this.resultsContainer.add(
+            teamValue
+        );
+
+
+        // =================================================
+        // TIME REMAINING LABEL
+        // =================================================
+
+        const timeLabel =
+            this.add.text(
+
+                timeLeft,
+                labelY,
+
+                "TIME REMAINING",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "9px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#68727d"
+
+                }
+
+            );
+
+
+        this.fitTextToWidth(
+
+            timeLabel,
+
+            timeWidth,
+
+            8
+
+        );
+
+
+        this.resultsContainer.add(
+            timeLabel
+        );
+
+
+        // =================================================
+        // TIME REMAINING VALUE
+        // =================================================
+
+        const timeValue =
+            this.add.text(
+
+                timeLeft +
+                timeWidth,
+
+                valueY,
+
+                timeRemaining,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "14px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        timerExpired
+                            ? "#c94747"
+                            : "#1683e8",
+
+                    align:
+                        "right"
+
+                }
+
+            )
+            .setOrigin(
+                1,
+                0
+            );
+
+
+        this.fitTextToWidth(
+
+            timeValue,
+
+            timeWidth,
+
+            10
+
+        );
+
+
+        this.resultsContainer.add(
+            timeValue
+        );
+
+
+        // =================================================
+        // ELAPSED LABEL
+        // =================================================
+
+        const elapsedLabel =
+            this.add.text(
+
+                elapsedLeft,
+                labelY,
+
+                "ELAPSED",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "9px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#68727d"
+
+                }
+
+            );
+
+
+        this.fitTextToWidth(
+
+            elapsedLabel,
+
+            elapsedWidth,
+
+            8
+
+        );
+
+
+        this.resultsContainer.add(
+            elapsedLabel
+        );
+
+
+        // =================================================
+        // ELAPSED VALUE
+        // =================================================
+
+        const elapsedValue =
+            this.add.text(
+
+                elapsedLeft +
+                elapsedWidth,
+
+                valueY,
+
+                elapsedTime,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "14px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#17263b",
+
+                    align:
+                        "right"
+
+                }
+
+            )
+            .setOrigin(
+                1,
+                0
+            );
+
+
+        this.fitTextToWidth(
+
+            elapsedValue,
+
+            elapsedWidth,
+
+            10
+
+        );
+
+
+        this.resultsContainer.add(
+            elapsedValue
+        );
+
+    }
+
+
+    // =====================================================
+    // FIT TEXT TO AVAILABLE WIDTH
+    // =====================================================
+
+    fitTextToWidth(
+        textObject,
+        maxWidth,
+        minimumFontSize = 8
+    ) {
+
+        if (
+            !textObject
+        ) {
+
+            return;
+
+        }
+
+
+        let fontSize =
+            parseInt(
+                textObject.style.fontSize
+            ) || 16;
+
+
+        // =================================================
+        // SHRINK FONT
+        // =================================================
+
+        while (
+            textObject.width > maxWidth &&
+            fontSize > minimumFontSize
+        ) {
+
+            fontSize--;
+
+
+            textObject.setFontSize(
+                fontSize
+            );
+
+        }
+
+
+        // =================================================
+        // LAST RESORT: ELLIPSIS
+        // =================================================
+
+        if (
+            textObject.width > maxWidth
+        ) {
+
+            const original =
+                String(
+                    textObject.text
+                );
+
+
+            let shortened =
+                original;
+
+
+            while (
+                shortened.length > 3
+            ) {
+
+                shortened =
+                    shortened.slice(
+                        0,
+                        -1
+                    );
+
+
+                textObject.setText(
+                    `${shortened}...`
+                );
+
+
+                if (
+                    textObject.width <= maxWidth
+                ) {
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    // =====================================================
+    // TEAM NAME
+    // =====================================================
+
+    getTeamName() {
+
+        if (
+            this.scoreManager &&
+            typeof this.scoreManager.getTeamName ===
+                "function"
+        ) {
+
+            const name =
+                this.scoreManager.getTeamName();
+
+
+            if (
+                name
+            ) {
+
+                return name;
+
+            }
+
+        }
+
+
+        return "UNREGISTERED TEAM";
+
+    }
+
+
+    // =====================================================
+    // TIME REMAINING
+    // =====================================================
+
+    getTimeRemaining() {
+
+        if (
+            this.scoreManager &&
+            typeof this.scoreManager.getFormattedTime ===
+                "function"
+        ) {
+
+            return this.scoreManager
+                .getFormattedTime();
+
+        }
+
+
+        return "--:--";
+
+    }
+
+
+    // =====================================================
+    // ELAPSED TIME
+    // =====================================================
+
+    getElapsedTime() {
+
+        if (
+            this.scoreManager &&
+            typeof this.scoreManager.getFormattedElapsedTime ===
+                "function"
+        ) {
+
+            return this.scoreManager
+                .getFormattedElapsedTime();
+
+        }
+
+
+        return "--:--";
+
+    }
+
+
+    // =====================================================
+    // TIMER STATUS
+    // =====================================================
+
+    getTimerExpired() {
+
+        if (
+            this.scoreManager &&
+            typeof this.scoreManager.isTimerExpired ===
+                "function"
+        ) {
+
+            return this.scoreManager
+                .isTimerExpired();
+
+        }
+
+
+        return false;
+
+    }
+
+
+    // =====================================================
+    // SUBMIT COMPETITION RESULT
+    // =====================================================
+
+    async submitCompetitionResult() {
+
+        // =================================================
+        // PREVENT DOUBLE CALL
+        // =================================================
+
+        if (
+            this.submissionStarted
+        ) {
+
+            return;
+
+        }
+
+
+        this.submissionStarted =
+            true;
+
+
+        // =================================================
+        // SCORE MANAGER CHECK
+        // =================================================
+
+        if (
+            !this.scoreManager
+        ) {
+
+            this.setSubmissionStatus(
+
+                "Result not submitted — game data unavailable.",
+
+                "#c94747"
+
+            );
+
+
+            return;
+
+        }
+
+
+        // =================================================
+        // TEAM CHECK
+        // =================================================
+
+        const teamName =
+            this.getTeamName();
+
+
+        if (
+            !teamName ||
+            teamName ===
+                "UNREGISTERED TEAM"
+        ) {
+
+            console.warn(
+                "Competition result not submitted: no team name."
+            );
+
+
+            this.setSubmissionStatus(
+
+                "Result not submitted — no team name registered.",
+
+                "#c94747"
+
+            );
+
+
+            return;
+
+        }
+
+
+        // =================================================
+        // ALREADY SUBMITTED
+        // =================================================
+
+        if (
+            typeof this.scoreManager
+                .hasResultBeenSubmitted ===
+                "function" &&
+            this.scoreManager
+                .hasResultBeenSubmitted()
+        ) {
+
+            this.setSubmissionStatus(
+
+                "Competition result already submitted ✓",
+
+                "#249b5b"
+
+            );
+
+
+            return;
+
+        }
+
+
+        // =================================================
+        // SEND RESULT
+        // =================================================
+
+        try {
+
+            this.setSubmissionStatus(
+
+                "Submitting competition result...",
+
+                "#68727d"
+
+            );
+
+
+            await CompetitionResultsService.submit(
+                this.scoreManager
+            );
+
+
+            console.log(
+                "Competition result submitted."
+            );
+
+
+            this.setSubmissionStatus(
+
+                "Competition result submitted ✓",
+
+                "#249b5b"
+
+            );
+
+        }
+
+        catch (
+            error
+        ) {
+
+            console.error(
+
+                "Competition result submission failed:",
+
+                error
+
+            );
+
+
+            this.setSubmissionStatus(
+
+                "Could not submit result — check network connection.",
+
+                "#c94747"
+
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // UPDATE SUBMISSION STATUS
+    // =====================================================
+
+    setSubmissionStatus(
+        text,
+        color
+    ) {
+
+        if (
+            !this.submissionStatusText
+        ) {
+
+            return;
+
+        }
+
+
+        this.submissionStatusText
+            .setText(
+                text
+            )
+            .setColor(
+                color
+            );
+
+
+        this.submissionStatusText
+            .setFontSize(
+                11
+            );
+
+
+        this.fitTextToWidth(
+
+            this.submissionStatusText,
+
+            700,
+
+            8
+
+        );
 
     }
 
@@ -463,7 +1951,35 @@ export default class FinalResultsScene extends Phaser.Scene {
             this.scale.width,
             this.scale.height,
 
-            0x1d2638
+            0x172337
+
+        );
+
+
+        this.add.rectangle(
+
+            this.scale.width / 2,
+            this.scale.height / 2,
+
+            this.scale.width * 0.78,
+            this.scale.height * 0.72,
+
+            0x223751,
+            0.45
+
+        );
+
+
+        this.add.rectangle(
+
+            this.scale.width / 2,
+            12,
+
+            this.scale.width,
+            3,
+
+            0x24b8ff,
+            0.65
 
         );
 
@@ -471,43 +1987,673 @@ export default class FinalResultsScene extends Phaser.Scene {
 
 
     // =====================================================
-    // FINAL ENTREPRENEURIAL RATING
+    // ROOM SCORE CARD
     // =====================================================
 
-    getFinalRating(score) {
+    createRoomCard(
+        x,
+        y,
+        roomNumber,
+        title,
+        room
+    ) {
 
         // =================================================
-        // 300+
+        // CARD
         // =================================================
 
-        if (score >= 300) {
+        const card =
+            this.add.rectangle(
+
+                x,
+                y,
+
+                260,
+                142,
+
+                0xffffff
+
+            );
+
+
+        card.setStrokeStyle(
+            1,
+            0xbfc8cf
+        );
+
+
+        this.resultsContainer.add(
+            card
+        );
+
+
+        // =================================================
+        // ROOM LABEL
+        // =================================================
+
+        const roomLabel =
+            this.add.text(
+
+                x - 108,
+                y - 56,
+
+                `MISSION 0${roomNumber}`,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "10px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#1683e8"
+
+                }
+
+            );
+
+
+        this.resultsContainer.add(
+            roomLabel
+        );
+
+
+        // =================================================
+        // ROOM TITLE
+        // =================================================
+
+        const roomTitle =
+            this.add.text(
+
+                x - 108,
+                y - 36,
+
+                title,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "10px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#2a3138"
+
+                }
+
+            );
+
+
+        this.fitTextToWidth(
+
+            roomTitle,
+
+            215,
+
+            8
+
+        );
+
+
+        this.resultsContainer.add(
+            roomTitle
+        );
+
+
+        // =================================================
+        // DIVIDER
+        // =================================================
+
+        const divider =
+            this.add.rectangle(
+
+                x,
+                y - 12,
+
+                215,
+                1,
+
+                0xd5dadd
+
+            );
+
+
+        this.resultsContainer.add(
+            divider
+        );
+
+
+        // =================================================
+        // NOTEBOOK
+        // =================================================
+
+        this.createCardRow(
+
+            x,
+            y + 2,
+
+            "Notebook",
+
+            room.notebook
+
+        );
+
+
+        // =================================================
+        // ASSESSMENT
+        // =================================================
+
+        this.createCardRow(
+
+            x,
+            y + 24,
+
+            "Assessment",
+
+            room.assessment
+
+        );
+
+
+        // =================================================
+        // TOTAL LABEL
+        // =================================================
+
+        const totalLabel =
+            this.add.text(
+
+                x - 108,
+                y + 49,
+
+                "TOTAL",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "11px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#37424d"
+
+                }
+
+            );
+
+
+        this.resultsContainer.add(
+            totalLabel
+        );
+
+
+        // =================================================
+        // TOTAL VALUE
+        // =================================================
+
+        const totalValue =
+            this.add.text(
+
+                x + 108,
+                y + 45,
+
+                `${room.total}`,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "17px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#1683e8"
+
+                }
+
+            )
+            .setOrigin(
+                1,
+                0
+            );
+
+
+        this.fitTextToWidth(
+
+            totalValue,
+
+            90,
+
+            10
+
+        );
+
+
+        this.resultsContainer.add(
+            totalValue
+        );
+
+    }
+
+
+    // =====================================================
+    // ROOM CARD ROW
+    // =====================================================
+
+    createCardRow(
+        x,
+        y,
+        label,
+        value
+    ) {
+
+        const labelText =
+            this.add.text(
+
+                x - 108,
+                y,
+
+                label,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "10px",
+
+                    color:
+                        "#747c83"
+
+                }
+
+            );
+
+
+        this.resultsContainer.add(
+            labelText
+        );
+
+
+        const valueText =
+            this.add.text(
+
+                x + 108,
+                y,
+
+                `${value}`,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "11px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#333333"
+
+                }
+
+            )
+            .setOrigin(
+                1,
+                0
+            );
+
+
+        this.fitTextToWidth(
+
+            valueText,
+
+            85,
+
+            8
+
+        );
+
+
+        this.resultsContainer.add(
+            valueText
+        );
+
+    }
+
+
+    // =====================================================
+    // SUMMARY VALUE
+    // =====================================================
+
+    createSummaryValue(
+        x,
+        y,
+        label,
+        value
+    ) {
+
+        const labelText =
+            this.add.text(
+
+                x,
+                y,
+
+                label,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "10px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#68727d"
+
+                }
+
+            );
+
+
+        this.resultsContainer.add(
+            labelText
+        );
+
+
+        const valueText =
+            this.add.text(
+
+                x,
+                y + 19,
+
+                `${value}`,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "18px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#1683e8"
+
+                }
+
+            );
+
+
+        this.fitTextToWidth(
+
+            valueText,
+
+            110,
+
+            10
+
+        );
+
+
+        this.resultsContainer.add(
+            valueText
+        );
+
+    }
+
+
+    // =====================================================
+    // PLAY AGAIN BUTTON
+    // =====================================================
+
+    createPlayAgainButton(
+        x,
+        y
+    ) {
+
+        const button =
+            this.add.rectangle(
+
+                x,
+                y,
+
+                240,
+                60,
+
+                0x17263b
+
+            );
+
+
+        button.setStrokeStyle(
+            2,
+            0x24b8ff
+        );
+
+
+        button.setInteractive({
+
+            useHandCursor:
+                true
+
+        });
+
+
+        this.resultsContainer.add(
+            button
+        );
+
+
+        // =================================================
+        // LABEL
+        // =================================================
+
+        const label =
+            this.add.text(
+
+                x,
+                y - 5,
+
+                "PLAY AGAIN",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "16px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#67d6ff"
+
+                }
+
+            )
+            .setOrigin(
+                0.5
+            );
+
+
+        this.resultsContainer.add(
+            label
+        );
+
+
+        // =================================================
+        // SUBLABEL
+        // =================================================
+
+        const sublabel =
+            this.add.text(
+
+                x,
+                y + 17,
+
+                "Register a new team",
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "9px",
+
+                    color:
+                        "#aebed0"
+
+                }
+
+            )
+            .setOrigin(
+                0.5
+            );
+
+
+        this.resultsContainer.add(
+            sublabel
+        );
+
+
+        // =================================================
+        // HOVER IN
+        // =================================================
+
+        button.on(
+
+            "pointerover",
+
+            () => {
+
+                button.setFillStyle(
+                    0x203a55
+                );
+
+
+                label.setColor(
+                    "#ffffff"
+                );
+
+            }
+
+        );
+
+
+        // =================================================
+        // HOVER OUT
+        // =================================================
+
+        button.on(
+
+            "pointerout",
+
+            () => {
+
+                button.setFillStyle(
+                    0x17263b
+                );
+
+
+                label.setColor(
+                    "#67d6ff"
+                );
+
+            }
+
+        );
+
+
+        // =================================================
+        // CLICK
+        // =================================================
+
+        button.on(
+
+            "pointerdown",
+
+            () => {
+
+                this.playAgain();
+
+            }
+
+        );
+
+    }
+
+
+    // =====================================================
+    // FINAL RATING
+    // =====================================================
+
+    getFinalRating(
+        score
+    ) {
+
+        if (
+            score >= 300
+        ) {
 
             return {
 
-                icon: "👑",
+                icon:
+                    "◆",
 
                 title:
                     "ENTREPRENEURIAL MASTERMIND",
 
                 description:
-                    "You demonstrate exceptional entrepreneurial judgment. You identify the right problems, evaluate evidence, and turn insights into strategic action.",
+                    "Exceptional entrepreneurial judgment. You identify the right problems, evaluate evidence, and translate insight into strategic action.",
 
-                color: "#9b59b6"
+                color:
+                    "#8e44ad"
 
             };
 
         }
 
 
-        // =================================================
-        // 250–299
-        // =================================================
-
-        if (score >= 250) {
+        if (
+            score >= 250
+        ) {
 
             return {
 
-                icon: "🚀",
+                icon:
+                    "▲",
 
                 title:
                     "BUSINESS STRATEGIST",
@@ -515,22 +2661,22 @@ export default class FinalResultsScene extends Phaser.Scene {
                 description:
                     "You think strategically and understand how to turn business challenges into opportunities for growth.",
 
-                color: "#8e44ad"
+                color:
+                    "#7d3c98"
 
             };
 
         }
 
 
-        // =================================================
-        // 180–249
-        // =================================================
-
-        if (score >= 180) {
+        if (
+            score >= 180
+        ) {
 
             return {
 
-                icon: "📈",
+                icon:
+                    "↑",
 
                 title:
                     "GROWTH ENTREPRENEUR",
@@ -538,319 +2684,52 @@ export default class FinalResultsScene extends Phaser.Scene {
                 description:
                     "You understand the business and can make decisions that create meaningful opportunities for improvement and growth.",
 
-                color: "#1683e8"
+                color:
+                    "#1683e8"
 
             };
 
         }
 
 
-        // =================================================
-        // 100–179
-        // =================================================
-
-        if (score >= 100) {
+        if (
+            score >= 100
+        ) {
 
             return {
 
-                icon: "💡",
+                icon:
+                    "●",
 
                 title:
                     "EMERGING ENTREPRENEUR",
 
                 description:
-                    "You are beginning to recognize opportunities, evaluate business problems, and make your first strategic moves.",
+                    "You are beginning to recognize opportunities, evaluate business problems, and make strategic choices.",
 
-                color: "#27ae60"
+                color:
+                    "#249b5b"
 
             };
 
         }
 
 
-        // =================================================
-        // BELOW 100
-        // =================================================
-
         return {
 
-            icon: "🌱",
+            icon:
+                "◇",
 
             title:
                 "ASPIRING ENTREPRENEUR",
 
             description:
-                "You have the foundation of an entrepreneurial mindset. Keep questioning assumptions, looking for opportunities, and turning ideas into action.",
+                "You have the foundation of an entrepreneurial mindset. Keep testing assumptions, examining evidence, and turning ideas into action.",
 
-            color: "#795548"
+            color:
+                "#8a6748"
 
         };
-
-    }
-
-
-    // =====================================================
-    // SCORE BREAKDOWN
-    // =====================================================
-
-    createScoreBreakdown(
-        centerX,
-        startY
-    ) {
-
-        // -------------------------------------------------
-        // COLUMN POSITIONS
-        // -------------------------------------------------
-
-        const roomX =
-            centerX - 270;
-
-        const notebookX =
-            centerX - 90;
-
-        const assessmentX =
-            centerX + 80;
-
-        const totalX =
-            centerX + 250;
-
-
-        // =================================================
-        // HEADERS
-        // =================================================
-
-        this.add.text(
-
-            roomX,
-            startY,
-
-            "Room",
-
-            {
-
-                fontFamily: "monospace",
-
-                fontSize: "13px",
-
-                fontStyle: "bold",
-
-                color: "#555555"
-
-            }
-
-        );
-
-
-        this.add.text(
-
-            notebookX,
-            startY,
-
-            "Notebook",
-
-            {
-
-                fontFamily: "monospace",
-
-                fontSize: "13px",
-
-                fontStyle: "bold",
-
-                color: "#555555",
-
-                align: "center"
-
-            }
-
-        )
-        .setOrigin(0.5, 0);
-
-
-        this.add.text(
-
-            assessmentX,
-            startY,
-
-            "Assessment",
-
-            {
-
-                fontFamily: "monospace",
-
-                fontSize: "13px",
-
-                fontStyle: "bold",
-
-                color: "#555555",
-
-                align: "center"
-
-            }
-
-        )
-        .setOrigin(0.5, 0);
-
-
-        this.add.text(
-
-            totalX,
-            startY,
-
-            "Total",
-
-            {
-
-                fontFamily: "monospace",
-
-                fontSize: "13px",
-
-                fontStyle: "bold",
-
-                color: "#555555",
-
-                align: "center"
-
-            }
-
-        )
-        .setOrigin(0.5, 0);
-
-
-        // =================================================
-        // ROOM SCORES
-        // =================================================
-
-        const roomScores =
-            this.getRoomScores();
-
-
-        for (
-            let i = 0;
-            i < 3;
-            i++
-        ) {
-
-            const roomNumber =
-                i + 1;
-
-
-            const room =
-                roomScores[roomNumber];
-
-
-            const rowY =
-                startY +
-                27 +
-                (i * 27);
-
-
-            // -------------------------------------------------
-            // ROOM
-            // -------------------------------------------------
-
-            this.add.text(
-
-                roomX,
-                rowY,
-
-                `Room ${roomNumber}`,
-
-                {
-
-                    fontFamily: "monospace",
-
-                    fontSize: "13px",
-
-                    color: "#333333"
-
-                }
-
-            );
-
-
-            // -------------------------------------------------
-            // NOTEBOOK
-            // -------------------------------------------------
-
-            this.add.text(
-
-                notebookX,
-                rowY,
-
-                `${room.notebook}`,
-
-                {
-
-                    fontFamily: "monospace",
-
-                    fontSize: "13px",
-
-                    color: "#333333",
-
-                    align: "center"
-
-                }
-
-            )
-            .setOrigin(0.5, 0);
-
-
-            // -------------------------------------------------
-            // ASSESSMENT
-            // -------------------------------------------------
-
-            this.add.text(
-
-                assessmentX,
-                rowY,
-
-                `${room.assessment}`,
-
-                {
-
-                    fontFamily: "monospace",
-
-                    fontSize: "13px",
-
-                    color: "#333333",
-
-                    align: "center"
-
-                }
-
-            )
-            .setOrigin(0.5, 0);
-
-
-            // -------------------------------------------------
-            // TOTAL
-            // -------------------------------------------------
-
-            this.add.text(
-
-                totalX,
-                rowY,
-
-                `${room.total}`,
-
-                {
-
-                    fontFamily: "monospace",
-
-                    fontSize: "13px",
-
-                    fontStyle: "bold",
-
-                    color: "#1683e8",
-
-                    align: "center"
-
-                }
-
-            )
-            .setOrigin(0.5, 0);
-
-        }
 
     }
 
@@ -861,11 +2740,68 @@ export default class FinalResultsScene extends Phaser.Scene {
 
     getRoomScores() {
 
-        const scores = {};
+        const scores =
+            {};
 
 
         // =================================================
-        // CURRENT SCORE MANAGER STRUCTURE
+        // PREFERRED SCORE MANAGER METHOD
+        // =================================================
+
+        if (
+            this.scoreManager &&
+            typeof this.scoreManager.getRoomScore ===
+                "function"
+        ) {
+
+            for (
+                let roomNumber = 1;
+                roomNumber <= 3;
+                roomNumber++
+            ) {
+
+                const room =
+                    this.scoreManager.getRoomScore(
+                        roomNumber
+                    );
+
+
+                const notebook =
+                    Number(
+                        room?.notebook || 0
+                    );
+
+
+                const assessment =
+                    Number(
+                        room?.assessment || 0
+                    );
+
+
+                scores[
+                    roomNumber
+                ] = {
+
+                    notebook,
+
+                    assessment,
+
+                    total:
+                        notebook +
+                        assessment
+
+                };
+
+            }
+
+
+            return scores;
+
+        }
+
+
+        // =================================================
+        // ROOM SCORES FALLBACK
         // =================================================
 
         if (
@@ -897,7 +2833,9 @@ export default class FinalResultsScene extends Phaser.Scene {
                     );
 
 
-                scores[roomNumber] = {
+                scores[
+                    roomNumber
+                ] = {
 
                     notebook,
 
@@ -918,7 +2856,7 @@ export default class FinalResultsScene extends Phaser.Scene {
 
 
         // =================================================
-        // FALLBACK
+        // EMPTY FALLBACK
         // =================================================
 
         for (
@@ -927,13 +2865,18 @@ export default class FinalResultsScene extends Phaser.Scene {
             roomNumber++
         ) {
 
-            scores[roomNumber] = {
+            scores[
+                roomNumber
+            ] = {
 
-                notebook: 0,
+                notebook:
+                    0,
 
-                assessment: 0,
+                assessment:
+                    0,
 
-                total: 0
+                total:
+                    0
 
             };
 
@@ -952,7 +2895,7 @@ export default class FinalResultsScene extends Phaser.Scene {
     playAgain() {
 
         console.log(
-            "Starting a new game..."
+            "Starting a new competition run..."
         );
 
 
@@ -962,7 +2905,8 @@ export default class FinalResultsScene extends Phaser.Scene {
 
         if (
             this.scoreManager &&
-            typeof this.scoreManager.reset === "function"
+            typeof this.scoreManager.reset ===
+                "function"
         ) {
 
             this.scoreManager.reset();
@@ -971,13 +2915,15 @@ export default class FinalResultsScene extends Phaser.Scene {
 
 
         // =================================================
-        // RESET GLOBAL SCORE MANAGER
+        // RESET GLOBAL MANAGER IF DIFFERENT
         // =================================================
 
         if (
             this.game.scoreManager &&
-            this.game.scoreManager !== this.scoreManager &&
-            typeof this.game.scoreManager.reset === "function"
+            this.game.scoreManager !==
+                this.scoreManager &&
+            typeof this.game.scoreManager.reset ===
+                "function"
         ) {
 
             this.game.scoreManager.reset();
@@ -989,8 +2935,23 @@ export default class FinalResultsScene extends Phaser.Scene {
         // RETURN TO MAIN MENU
         // =================================================
 
-        this.scene.start(
-            "MainMenuScene"
+        this.cameras.main.fadeOut(
+            300
+        );
+
+
+        this.cameras.main.once(
+
+            "camerafadeoutcomplete",
+
+            () => {
+
+                this.scene.start(
+                    "MainMenuScene"
+                );
+
+            }
+
         );
 
     }

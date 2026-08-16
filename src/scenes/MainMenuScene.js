@@ -506,7 +506,7 @@ export default class MainMenuScene extends Phaser.Scene {
             () => {
 
                 this.scene.start(
-                    "IntroScene"
+                    "TeamNameScene"
                 );
 
             }
