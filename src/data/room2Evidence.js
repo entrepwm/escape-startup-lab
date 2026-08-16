@@ -151,9 +151,9 @@ Highest during peak periods.`
     // =====================================================
 
     {
-        id: "manager_interview",
+        id: "manager_report",
 
-        title: "Manager Interview",
+        title: "Manager Report",
 
         type: "document",
 

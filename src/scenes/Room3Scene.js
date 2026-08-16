@@ -192,7 +192,7 @@ export default class Room3Scene extends Phaser.Scene {
     initializeUI() {
 
         this.terminal.setRoom(
-            "Strategy Lab"
+            "MISSION 03: STRATEGIC DECISION\nCEO OFFICE"
         );
 
 

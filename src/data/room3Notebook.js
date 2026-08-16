@@ -19,7 +19,8 @@ const ROOM3_NOTEBOOK = [
             "Rp85,000,000"
         ],
 
-        correctAnswer: "Rp50,000,000"
+        correctAnswer:
+            "Rp50,000,000"
     },
 
 
@@ -31,23 +32,24 @@ const ROOM3_NOTEBOOK = [
         id: "main_bottleneck",
 
         question:
-            "According to the peak-hour operations report, what is the restaurant's main operational bottleneck?",
+            "According to the operations evidence, what is the restaurant's most important peak-period bottleneck?",
 
         type: "radio",
 
         options: [
-            "Marketing capacity",
+            "Insufficient marketing reach",
             "Kitchen processing capacity",
             "Restaurant atmosphere",
-            "Food pricing"
+            "Menu pricing"
         ],
 
-        correctAnswer: "Kitchen processing capacity"
+        correctAnswer:
+            "Kitchen processing capacity"
     },
 
 
     // =====================================================
-    // Q3 — EMPLOYEE WORKLOAD
+    // Q3 — STAFF UTILIZATION
     // =====================================================
 
     {
@@ -59,302 +61,310 @@ const ROOM3_NOTEBOOK = [
         type: "radio",
 
         options: [
-            "It decreases to 50%",
+            "It decreases to approximately 50%",
             "It remains at approximately 68%",
             "It increases to approximately 94%",
-            "It reaches 100%"
+            "It remains below 60%"
         ],
 
-        correctAnswer: "It increases to approximately 94%"
+        correctAnswer:
+            "It increases to approximately 94%"
     },
 
 
     // =====================================================
-    // Q4 — CUSTOMER IMPACT
+    // Q4 — BOTTLENECK INTERPRETATION
+    // =====================================================
+
+    {
+        id: "capacity_interpretation",
+
+        question:
+            "What does the combination of high staff utilization and long customer waiting times most strongly suggest?",
+
+        type: "radio",
+
+        options: [
+            "The restaurant has excessive unused capacity",
+            "Demand is exceeding current operational capacity during peak periods",
+            "Customers are primarily dissatisfied with food quality",
+            "The restaurant should reduce its marketing activity"
+        ],
+
+        correctAnswer:
+            "Demand is exceeding current operational capacity during peak periods"
+    },
+
+
+    // =====================================================
+    // Q5 — CUSTOMER IMPACT
     // =====================================================
 
     {
         id: "waiting_time",
 
         question:
-            "What is the most direct customer consequence of the operational bottleneck during peak periods?",
+            "What is the most direct customer consequence of the restaurant's peak-period capacity constraint?",
 
         type: "radio",
 
         options: [
             "Higher food prices",
             "Longer waiting times",
-            "Lower advertising reach",
-            "Reduced menu variety"
-        ],
-
-        correctAnswer: "Longer waiting times"
-    },
-
-
-    // =====================================================
-    // Q5 — FINANCIAL CONSTRAINT
-    // =====================================================
-
-    {
-        id: "investment_constraint",
-
-        question:
-            "Why can't the restaurant simply implement every available improvement option?",
-
-        type: "radio",
-
-        options: [
-            "Customers do not want improvements",
-            "The restaurant has limited investment capital",
-            "Employees refuse to cooperate",
-            "The restaurant has no operational problems"
+            "Lower advertising exposure",
+            "Reduced brand awareness"
         ],
 
         correctAnswer:
-            "The restaurant has limited investment capital"
+            "Longer waiting times"
     },
 
 
     // =====================================================
-    // Q6 — ADDITIONAL STAFF
+    // Q6 — STAFFING OPTION
     // =====================================================
 
     {
         id: "staff_benefit",
 
         question:
-            "What is the primary operational benefit of hiring two additional kitchen employees?",
+            "Why could hiring additional kitchen employees help address the current bottleneck?",
 
         type: "radio",
 
         options: [
-            "Increasing advertising reach",
-            "Reducing ingredient costs",
-            "Increasing peak-period kitchen capacity",
-            "Eliminating the need for training"
+            "It directly increases available labor capacity during peak periods",
+            "It guarantees lower ingredient costs",
+            "It automatically eliminates all waiting time",
+            "It reduces the need for operational processes"
         ],
 
         correctAnswer:
-            "Increasing peak-period kitchen capacity"
+            "It directly increases available labor capacity during peak periods"
     },
 
 
     // =====================================================
-    // Q7 — EQUIPMENT
+    // Q7 — EQUIPMENT OPTION
     // =====================================================
 
     {
         id: "equipment_benefit",
 
         question:
-            "What is the main potential advantage of upgrading the kitchen equipment?",
+            "What is the strongest strategic argument for upgrading kitchen equipment?",
 
         type: "radio",
 
         options: [
-            "Increasing operational capacity",
-            "Reducing customer demand",
-            "Eliminating all staffing costs",
-            "Increasing advertising effectiveness"
+            "It may increase throughput at the identified production bottleneck",
+            "It guarantees that customer demand will increase",
+            "It eliminates the need for employees",
+            "It mainly improves brand awareness"
         ],
 
         correctAnswer:
-            "Increasing operational capacity"
+            "It may increase throughput at the identified production bottleneck"
     },
 
 
     // =====================================================
-    // Q8 — ONLINE ORDERING
-    // =====================================================
-
-    {
-        id: "online_ordering",
-
-        question:
-            "What problem could the online ordering system directly help address?",
-
-        type: "radio",
-
-        options: [
-            "Ordering time and customer convenience",
-            "Kitchen capacity",
-            "Employee recruitment",
-            "Ingredient prices"
-        ],
-
-        correctAnswer:
-            "Ordering time and customer convenience"
-    },
-
-
-    // =====================================================
-    // Q9 — COST VS IMPACT
-    // =====================================================
-
-    {
-        id: "cost_impact",
-
-        question:
-            "When comparing the available investment options, what should management consider?",
-
-        type: "radio",
-
-        options: [
-            "Only the cheapest option",
-            "Only the most expensive option",
-            "Both investment cost and expected operational impact",
-            "Only the manager's personal preference"
-        ],
-
-        correctAnswer:
-            "Both investment cost and expected operational impact"
-    },
-
-
-    // =====================================================
-    // Q10 — TECHNOLOGY LIMITATION
+    // Q8 — TECHNOLOGY LIMITATION
     // =====================================================
 
     {
         id: "technology_limitation",
 
         question:
-            "Why might online ordering or queue management not completely solve the restaurant's main problem?",
+            "Why might an online ordering or queue-management system fail to fully resolve the restaurant's main problem?",
 
         type: "radio",
 
         options: [
-            "Customers never use technology",
-            "Neither solution directly increases kitchen capacity",
-            "Both solutions are more expensive than equipment",
-            "Technology always reduces customer satisfaction"
+            "Customers generally refuse to use technology",
+            "The systems may improve ordering flow without increasing kitchen processing capacity",
+            "Technology investments always reduce profitability",
+            "The systems would necessarily increase food prices"
         ],
 
         correctAnswer:
-            "Neither solution directly increases kitchen capacity"
+            "The systems may improve ordering flow without increasing kitchen processing capacity"
     },
 
 
     // =====================================================
-    // Q11 — LONG-TERM CAPACITY
-    // =====================================================
-
-    {
-        id: "long_term_capacity",
-
-        question:
-            "Which option most directly increases the restaurant's ability to handle more orders during peak periods?",
-
-        type: "radio",
-
-        options: [
-            "Online ordering",
-            "Queue management",
-            "Additional kitchen staff",
-            "Advertising campaign"
-        ],
-
-        correctAnswer:
-            "Additional kitchen staff"
-    },
-
-
-    // =====================================================
-    // Q12 — OPPORTUNITY COST
-    // =====================================================
-
-    {
-        id: "opportunity_cost",
-
-        question:
-            "If the restaurant spends Rp40 million on kitchen equipment, what is the main opportunity cost?",
-
-        type: "radio",
-
-        options: [
-            "The restaurant will have no customers",
-            "The restaurant has less capital available for other improvements",
-            "The restaurant will automatically increase its prices",
-            "The restaurant will no longer need employees"
-        ],
-
-        correctAnswer:
-            "The restaurant has less capital available for other improvements"
-    },
-
-
-    // =====================================================
-    // Q13 — EVIDENCE INTEGRATION
+    // Q9 — EVIDENCE INTEGRATION
     // =====================================================
 
     {
         id: "evidence_integration",
 
         question:
-            "Considering the operations and HR evidence together, which conclusion is best supported?",
+            "Considering the operations, HR, and technology evidence together, which conclusion is best supported?",
 
         type: "radio",
 
         options: [
-            "The restaurant mainly needs more advertising",
-            "Peak demand is exceeding current kitchen capacity",
-            "Customers are primarily unhappy with pricing",
-            "The restaurant should completely redesign its menu"
+            "The core problem is insufficient advertising",
+            "The restaurant should focus primarily on lowering prices",
+            "The restaurant should prioritize an intervention that increases peak-period throughput",
+            "The restaurant should redesign its brand identity before addressing operations"
         ],
 
         correctAnswer:
-            "Peak demand is exceeding current kitchen capacity"
+            "The restaurant should prioritize an intervention that increases peak-period throughput"
     },
 
 
     // =====================================================
-    // Q14 — STRATEGIC PRIORITIZATION
+    // Q10 — CASE-BASED STRATEGIC PRIORITIZATION
     // =====================================================
 
     {
-        id: "strategic_priority",
+        id: "case_priority",
 
         question:
-            "If management cannot implement every improvement, what should be prioritized?",
+            "Given the Rp50,000,000 budget constraint, what is the strongest basis for choosing among the available improvement options?",
 
         type: "radio",
 
         options: [
-            "The most expensive option",
-            "The cheapest option regardless of impact",
-            "The option with the best combination of impact, cost, and feasibility",
-            "The option that sounds the most innovative"
+            "Choose the option with the lowest initial cost",
+            "Choose the most technologically advanced option",
+            "Prioritize the option that best addresses the bottleneck while remaining financially and operationally feasible",
+            "Select the option preferred by management regardless of evidence"
         ],
 
         correctAnswer:
-            "The option with the best combination of impact, cost, and feasibility"
+            "Prioritize the option that best addresses the bottleneck while remaining financially and operationally feasible"
     },
 
 
     // =====================================================
-    // Q15 — FINAL BUSINESS JUDGMENT
+    // Q11 — STRATEGIC DECISION MAKING:
+    // MARGINAL VALUE
     // =====================================================
 
     {
-        id: "final_strategy",
+        id: "marginal_value",
 
         question:
-            "Which principle should guide the restaurant's final investment decision?",
+            "When comparing two investment alternatives under a fixed budget, which reasoning best reflects marginal analysis?",
 
         type: "radio",
 
         options: [
-            "Always choose the cheapest option",
-            "Always choose the most expensive option",
-            "Choose whatever the manager prefers",
-            "Balance operational impact, cost, feasibility, and long-term value"
+            "Choose whichever option has the highest total cost because it probably delivers more value",
+            "Compare the additional benefit generated by each additional unit of resources committed",
+            "Select the alternative with the largest number of features",
+            "Ignore incremental benefits and focus only on total expenditure"
         ],
 
         correctAnswer:
-            "Balance operational impact, cost, feasibility, and long-term value"
+            "Compare the additional benefit generated by each additional unit of resources committed"
+    },
+
+
+    // =====================================================
+    // Q12 — STRATEGIC DECISION MAKING:
+    // RESOURCE ALLOCATION
+    // =====================================================
+
+    {
+        id: "resource_allocation",
+
+        question:
+            "A firm has several attractive projects but insufficient capital to fund all of them. Which principle should guide strategic resource allocation?",
+
+        type: "radio",
+
+        options: [
+            "Allocate resources equally across all projects regardless of expected impact",
+            "Fund projects according to strategic relevance, expected value, constraints, and risk",
+            "Prioritize projects proposed by the most senior manager",
+            "Always select the project with the shortest implementation time"
+        ],
+
+        correctAnswer:
+            "Fund projects according to strategic relevance, expected value, constraints, and risk"
+    },
+
+
+    // =====================================================
+    // Q13 — STRATEGIC DECISION MAKING:
+    // STRATEGIC FIT
+    // =====================================================
+
+    {
+        id: "strategic_fit",
+
+        question:
+            "What does strategic fit mean when evaluating an entrepreneurial investment decision?",
+
+        type: "radio",
+
+        options: [
+            "The investment is fashionable within the industry",
+            "The investment is consistent with the firm's capabilities, priorities, and the problem it is trying to solve",
+            "The investment has the highest possible purchase price",
+            "The investment can be implemented without collecting evidence"
+        ],
+
+        correctAnswer:
+            "The investment is consistent with the firm's capabilities, priorities, and the problem it is trying to solve"
+    },
+
+
+    // =====================================================
+    // Q14 — STRATEGIC DECISION MAKING:
+    // UNCERTAINTY
+    // =====================================================
+
+    {
+        id: "decision_under_uncertainty",
+
+        question:
+            "When expected outcomes are uncertain, which approach is most defensible for an entrepreneur making a major investment decision?",
+
+        type: "radio",
+
+        options: [
+            "Assume the most optimistic outcome will occur",
+            "Delay every decision until uncertainty disappears completely",
+            "Compare plausible outcomes, risks, assumptions, and downside exposure before committing resources",
+            "Choose whichever alternative has the most innovative technology"
+        ],
+
+        correctAnswer:
+            "Compare plausible outcomes, risks, assumptions, and downside exposure before committing resources"
+    },
+
+
+    // =====================================================
+    // Q15 — STRATEGIC DECISION MAKING:
+    // IMPLEMENTATION RISK
+    // =====================================================
+
+    {
+        id: "implementation_risk",
+
+        question:
+            "Two alternatives have similar expected financial returns, but one requires substantial employee retraining and major workflow changes. Why might management reasonably prefer the other alternative?",
+
+        type: "radio",
+
+        options: [
+            "Because strategic decisions should avoid all organizational change",
+            "Because implementation complexity and execution risk can reduce the value actually realized from an investment",
+            "Because employee training never creates long-term value",
+            "Because financial returns are irrelevant when choosing investments"
+        ],
+
+        correctAnswer:
+            "Because implementation complexity and execution risk can reduce the value actually realized from an investment"
     }
 
 ];
+
 
 export default ROOM3_NOTEBOOK;

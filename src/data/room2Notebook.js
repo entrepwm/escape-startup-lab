@@ -1,7 +1,7 @@
 const ROOM2_NOTEBOOK = [
 
     // =====================================================
-    // Q1 — CUSTOMER INTERVIEW
+    // Q1 — CUSTOMER INTERVIEWS
     // =====================================================
 
     {
@@ -19,35 +19,36 @@ const ROOM2_NOTEBOOK = [
             "Very Poor"
         ],
 
-        correctAnswer: "Generally Good"
+        correctAnswer:
+            "Generally Good"
     },
 
-
     // =====================================================
-    // Q2 — CUSTOMER SURVEY
+    // Q2 — CUSTOMER SATISFACTION
     // =====================================================
 
     {
-        id: "survey_food_quality",
+        id: "survey_satisfaction",
 
         question:
-            "According to the customer survey, what percentage of respondents gave the food a 4-star or 5-star rating?",
+            "According to the customer survey, what percentage of respondents reported being satisfied with their overall experience?",
 
         type: "radio",
 
         options: [
-            "52%",
-            "72%",
-            "82%",
-            "92%"
+            "24%",
+            "62%",
+            "61%",
+            "85%"
         ],
 
-        correctAnswer: "82%"
+        correctAnswer:
+            "62%"
     },
 
 
     // =====================================================
-    // Q3 — SERVICE SPEED
+    // Q3 — SERVICE PROBLEM
     // =====================================================
 
     {
@@ -65,12 +66,13 @@ const ROOM2_NOTEBOOK = [
             "High prices"
         ],
 
-        correctAnswer: "Slow service speed"
+        correctAnswer:
+            "Slow service speed"
     },
 
 
     // =====================================================
-    // Q4 — ONLINE REVIEWS
+    // Q4 — ONLINE REVIEW PATTERN
     // =====================================================
 
     {
@@ -118,7 +120,7 @@ const ROOM2_NOTEBOOK = [
 
 
     // =====================================================
-    // Q6 — CONNECTING EVIDENCE
+    // Q6 — CONNECTING MULTIPLE SOURCES
     // =====================================================
 
     {
@@ -131,111 +133,160 @@ const ROOM2_NOTEBOOK = [
 
         options: [
             "Customers mainly dislike the food",
-            "Long waiting times are particularly problematic during busy periods",
+            "Long waiting times are especially problematic during busy periods",
             "The restaurant needs more advertising",
             "Customers are primarily concerned about pricing"
         ],
 
         correctAnswer:
-            "Long waiting times are particularly problematic during busy periods"
+            "Long waiting times are especially problematic during busy periods"
     },
 
 
     // =====================================================
-    // Q7 — MANAGER'S CLAIM
+    // Q7 — MANAGER CLAIM
     // =====================================================
 
     {
         id: "manager_claim",
 
         question:
-            "The manager believes that pricing is the restaurant's main problem. How should this claim be evaluated?",
+            "The manager believes pricing is the restaurant's main problem. What is the best way to evaluate this claim?",
 
         type: "radio",
 
         options: [
-            "Accept it immediately because the manager knows the business",
-            "Reject it immediately because managers are always biased",
-            "Compare it with customer and operational evidence",
-            "Ignore all internal opinions"
+            "Accept it because the manager has authority",
+            "Reject it because managers may be biased",
+            "Compare it against customer and operational evidence",
+            "Ignore internal opinions entirely"
         ],
 
         correctAnswer:
-            "Compare it with customer and operational evidence"
+            "Compare it against customer and operational evidence"
     },
 
 
     // =====================================================
-    // Q8 — CONFLICTING EVIDENCE
+    // Q8 — ENTREPRENEURSHIP: ASSUMPTION TESTING
     // =====================================================
 
     {
-        id: "conflicting_evidence",
+        id: "assumption_testing",
 
         question:
-            "The manager recommends discounts, but customers frequently complain about waiting time. What is the most appropriate interpretation?",
+            "An entrepreneur believes customers are leaving because prices are too high. What is the strongest next step?",
 
         type: "radio",
 
         options: [
-            "Discounts are definitely the best solution",
-            "Waiting time should be ignored because discounts attract customers",
-            "The proposed solution may not address the main problem identified by the evidence",
-            "Customer feedback should always be ignored"
+            "Immediately reduce prices",
+            "Collect evidence to test whether price is actually causing customers to leave",
+            "Increase advertising before investigating further",
+            "Copy a competitor's pricing strategy"
         ],
 
         correctAnswer:
-            "The proposed solution may not address the main problem identified by the evidence"
+            "Collect evidence to test whether price is actually causing customers to leave"
     },
 
 
     // =====================================================
-    // Q9 — PRIORITIZATION
+    // Q9 — ENTREPRENEURSHIP: PRODUCT-MARKET FIT
     // =====================================================
 
     {
-        id: "priority_problem",
+        id: "product_market_fit",
 
         question:
-            "If the restaurant can address only ONE issue immediately, which should receive priority based on the evidence?",
+            "Which situation is the strongest indication that a business may be moving toward product-market fit?",
 
         type: "radio",
 
         options: [
-            "Food quality",
-            "Restaurant atmosphere",
-            "Service speed during peak periods",
-            "Advertising budget"
+            "The founder personally likes the product",
+            "Customers repeatedly choose the offering because it solves an important problem for them",
+            "The business has a visually attractive logo",
+            "The company spends heavily on promotion"
         ],
 
         correctAnswer:
-            "Service speed during peak periods"
+            "Customers repeatedly choose the offering because it solves an important problem for them"
     },
 
 
     // =====================================================
-    // Q10 — FINAL BUSINESS JUDGMENT
+    // Q10 — ENTREPRENEURSHIP: OPPORTUNITY COST
     // =====================================================
 
     {
-        id: "best_action",
+        id: "opportunity_cost",
 
         question:
-            "Which action is most strongly supported by the evidence collected in Room 2?",
+            "A small business can either spend its limited budget on advertising or on improving service capacity. What does opportunity cost mean in this decision?",
 
         type: "radio",
 
         options: [
-            "Increase promotional discounts during peak periods",
-            "Increase advertising to attract more customers",
-            "Improve service capacity and reduce waiting time during peak periods",
-            "Replace the restaurant's menu entirely"
+            "The total amount of money the business owns",
+            "The value of the best alternative the business gives up when choosing one option",
+            "The cost of hiring additional employees",
+            "The amount customers are willing to pay"
         ],
 
         correctAnswer:
-            "Improve service capacity and reduce waiting time during peak periods"
+            "The value of the best alternative the business gives up when choosing one option"
+    },
+
+
+    // =====================================================
+    // Q11 — ENTREPRENEURSHIP: SCALABILITY
+    // =====================================================
+
+    {
+        id: "scalability",
+
+        question:
+            "Which improvement would best support scalability in a restaurant experiencing peak-hour delays?",
+
+        type: "radio",
+
+        options: [
+            "Depend more heavily on one highly skilled employee",
+            "Create repeatable processes that allow the team to handle higher demand efficiently",
+            "Offer more menu items regardless of kitchen capacity",
+            "Increase demand before fixing operational bottlenecks"
+        ],
+
+        correctAnswer:
+            "Create repeatable processes that allow the team to handle higher demand efficiently"
+    },
+
+
+    // =====================================================
+    // Q12 — ENTREPRENEURSHIP: DATA-DRIVEN DECISION MAKING
+    // =====================================================
+
+    {
+        id: "data_driven_decision",
+
+        question:
+            "Which statement best reflects data-driven entrepreneurial decision making?",
+
+        type: "radio",
+
+        options: [
+            "Always follow the largest data source even if it conflicts with the business context",
+            "Use evidence from multiple relevant sources while applying entrepreneurial judgment",
+            "Avoid qualitative information because only numerical data is reliable",
+            "Follow management opinion whenever data is unclear"
+        ],
+
+        correctAnswer:
+            "Use evidence from multiple relevant sources while applying entrepreneurial judgment"
     }
 
 ];
+
 
 export default ROOM2_NOTEBOOK;

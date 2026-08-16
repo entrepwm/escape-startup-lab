@@ -2,296 +2,800 @@ import Phaser from "phaser";
 
 import RoomView from "./RoomView";
 
+
 export default class AssessmentTerminal {
 
     constructor(scene) {
 
         this.scene = scene;
 
-        this.width = scene.scale.width;
-        this.height = scene.scale.height;
+        this.width =
+            scene.scale.width;
+
+        this.height =
+            scene.scale.height;
 
         this.buttons = {};
+
+        this.callback = null;
 
         this.draw();
 
     }
 
+
+    // =====================================================
+    // DRAW TERMINAL
+    // =====================================================
+
     draw() {
 
-        const w = this.width;
-        const h = this.height;
+        const w =
+            this.width;
+
+        const h =
+            this.height;
+
 
         // =====================================================
-        // Layout Constants
+        // LAYOUT CONSTANTS
         // =====================================================
 
-        const topBarHeight = 60;
-        const bottomBarHeight = 90;
-        const sidebarWidth = w * 0.22;
-        const padding = 20;
+        const topBarHeight =
+            60;
+
+        const bottomBarHeight =
+            90;
+
+        const sidebarWidth =
+            w * 0.22;
+
+        const padding =
+            20;
+
 
         // =====================================================
-        // Background
+        // BACKGROUND
         // =====================================================
 
         this.scene.add.rectangle(
+
             w / 2,
             h / 2,
+
             w,
             h,
+
             0x36415d
+
         );
+
 
         // =====================================================
         // TOP BAR
         // =====================================================
 
         this.scene.add.rectangle(
+
             w / 2,
+
             topBarHeight / 2,
+
             w,
+
             topBarHeight,
+
             0x1d2638
+
         );
+
+
+        // =====================================================
+        // TERMINAL TITLE
+        // =====================================================
 
         this.scene.add.text(
+
             padding,
+
             16,
+
             "Startup Lab Assessment Terminal",
+
             {
-                fontSize: "26px",
-                color: "#ffffff",
-                fontStyle: "bold"
+
+                fontSize:
+                    "26px",
+
+                fontFamily:
+                    "monospace",
+
+                color:
+                    "#ffffff",
+
+                fontStyle:
+                    "bold"
+
             }
+
         );
 
-        this.scoreText = this.scene.add.text(
-            w - 220,
-            16,
-            "Score: 0",
-            {
-                fontSize: "22px",
-                color: "#ffffff"
-            }
-        );
 
-        this.timeText = this.scene.add.text(
-            w - 95,
-            16,
-            "15:00",
-            {
-                fontSize: "22px",
-                color: "#ffffff"
-            }
-        );
+        // =====================================================
+        // SCORE
+        // =====================================================
+
+        this.scoreText =
+            this.scene.add.text(
+
+                w - 220,
+
+                16,
+
+                "Score: 0",
+
+                {
+
+                    fontSize:
+                        "22px",
+
+                    fontFamily:
+                        "monospace",
+
+                    color:
+                        "#ffffff"
+
+                }
+
+            );
+
+
+        // =====================================================
+        // TIMER
+        // =====================================================
+
+        this.timeText =
+            this.scene.add.text(
+
+                w - 95,
+
+                16,
+
+                "15:00",
+
+                {
+
+                    fontSize:
+                        "22px",
+
+                    fontFamily:
+                        "monospace",
+
+                    color:
+                        "#ffffff"
+
+                }
+
+            );
+
 
         // =====================================================
         // SIDEBAR
         // =====================================================
 
         const sidebarHeight =
-            h - topBarHeight - bottomBarHeight;
+
+            h -
+            topBarHeight -
+            bottomBarHeight;
+
 
         this.scene.add.rectangle(
+
             sidebarWidth / 2,
-            topBarHeight + sidebarHeight / 2,
+
+            topBarHeight +
+            sidebarHeight / 2,
+
             sidebarWidth,
+
             sidebarHeight,
+
             0x2d364c
+
         );
 
-        const buttonStart = 110;
-        const buttonGap = 70;
+
+        const buttonStart =
+            110;
+
+        const buttonGap =
+            70;
+
+
+        // =====================================================
+        // NOTEBOOK
+        // =====================================================
 
         this.createButton(
+
             "notebook",
+
             "📒 Notebook",
+
             buttonStart
+
         );
 
+
+        // =====================================================
+        // ASSESSMENT
+        // =====================================================
+
         this.createButton(
+
             "assessment",
+
             "📋 Assessment",
-            buttonStart + buttonGap
+
+            buttonStart +
+            buttonGap
+
         );
 
+
+        // =====================================================
+        // HINT
+        // =====================================================
+
         this.createButton(
+
             "hint",
+
             "💡 Request Hint",
-            buttonStart + buttonGap * 2
+
+            buttonStart +
+            buttonGap * 2
+
         );
 
+
+        // =====================================================
+        // PROGRESS
+        // =====================================================
+
         this.createButton(
+
             "progress",
+
             "📊 Progress",
-            buttonStart + buttonGap * 3
+
+            buttonStart +
+            buttonGap * 3
+
         );
+
 
         // =====================================================
         // ROOM VIEW
         // =====================================================
 
-        const roomX = sidebarWidth + padding;
+        const roomX =
 
-        const roomY = topBarHeight + padding;
+            sidebarWidth +
+            padding;
+
+
+        const roomY =
+
+            topBarHeight +
+            padding;
+
 
         const roomWidth =
-            w - sidebarWidth - padding * 2;
+
+            w -
+            sidebarWidth -
+            padding * 2;
+
 
         const roomHeight =
-            h
-            - topBarHeight
-            - bottomBarHeight
-            - padding * 2;
 
-        this.roomView = new RoomView(
+            h -
+            topBarHeight -
+            bottomBarHeight -
+            padding * 2;
 
-            this.scene,
 
-            roomX + roomWidth / 2,
+        this.roomView =
+            new RoomView(
 
-            roomY + roomHeight / 2,
+                this.scene,
 
-            roomWidth,
+                roomX +
+                roomWidth / 2,
 
-            roomHeight
+                roomY +
+                roomHeight / 2,
 
-        );
+                roomWidth,
 
-        this.roomTitle = this.scene.add.text(
+                roomHeight
 
-            roomX + 20,
+            );
 
-            roomY + 20,
-
-            "Idea Lab",
-
-            {
-
-                fontSize: "28px",
-
-                color: "#000000",
-
-                fontStyle: "bold"
-
-            }
-
-        );
 
         // =====================================================
-        // DIALOGUE BAR
+        // ROOM TITLE
+        // =====================================================
+
+        this.roomTitle =
+            this.scene.add.text(
+
+                roomX + 30,
+
+                roomY + 22,
+
+                "MISSION 01: PROBLEM DISCOVERY",
+
+                {
+
+                    fontSize:
+                        "22px",
+
+                    fontFamily:
+                        "monospace",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#ffffff",
+
+                    stroke:
+                        "#000000",
+
+                    strokeThickness:
+                        6,
+
+                    shadow: {
+
+                        offsetX:
+                            2,
+
+                        offsetY:
+                            2,
+
+                        color:
+                            "#000000",
+
+                        blur:
+                            3,
+
+                        fill:
+                            true
+
+                    }
+
+                }
+
+            );
+
+
+        // =====================================================
+        // ROOM SUBTITLE
+        // =====================================================
+
+        this.roomSubtitle =
+            this.scene.add.text(
+
+                roomX + 32,
+
+                roomY + 52,
+
+                "RESTAURANT",
+
+                {
+
+                    fontSize:
+                        "15px",
+
+                    fontFamily:
+                        "monospace",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#d9ecff",
+
+                    stroke:
+                        "#000000",
+
+                    strokeThickness:
+                        5,
+
+                    shadow: {
+
+                        offsetX:
+                            2,
+
+                        offsetY:
+                            2,
+
+                        color:
+                            "#000000",
+
+                        blur:
+                            3,
+
+                        fill:
+                            true
+
+                    }
+
+                }
+
+            );
+
+
+        // =====================================================
+        // BOTTOM DIALOGUE BAR
         // =====================================================
 
         this.scene.add.rectangle(
+
             w / 2,
-            h - bottomBarHeight / 2,
+
+            h -
+            bottomBarHeight / 2,
+
             w,
+
             bottomBarHeight,
+
             0x1d2638
+
         );
 
-        this.dialogueText = this.scene.add.text(
-            padding,
-            h - 65,
-            "Welcome, Candidate.",
-            {
-                fontSize: "20px",
-                color: "#ffffff",
-                wordWrap: {
-                    width: w - 260
+
+        // =====================================================
+        // DIALOGUE TEXT
+        // =====================================================
+
+        this.dialogueText =
+            this.scene.add.text(
+
+                padding,
+
+                h - 65,
+
+                "Welcome, Candidate.",
+
+                {
+
+                    fontSize:
+                        "20px",
+
+                    fontFamily:
+                        "monospace",
+
+                    color:
+                        "#ffffff",
+
+                    wordWrap: {
+
+                        width:
+                            w - 260
+
+                    }
+
                 }
+
+            );
+
+
+        // =====================================================
+        // CONTINUE BUTTON
+        // =====================================================
+
+        this.continueButton =
+            this.scene.add.text(
+
+                w - 170,
+
+                h - 60,
+
+                "[ Continue ]",
+
+                {
+
+                    fontSize:
+                        "22px",
+
+                    fontFamily:
+                        "monospace",
+
+                    color:
+                        "#00ff88",
+
+                    fontStyle:
+                        "bold"
+
+                }
+
+            )
+            .setInteractive({
+
+                useHandCursor:
+                    true
+
+            });
+
+
+        // =====================================================
+        // STORE CONTINUE BUTTON
+        // =====================================================
+
+        /*
+         * This lets setButtonEnabled("continue", ...)
+         * work the same way as the sidebar buttons.
+         */
+
+        this.buttons.continue =
+            this.continueButton;
+
+
+        // =====================================================
+        // CONTINUE — HOVER IN
+        // =====================================================
+
+        this.continueButton.on(
+
+            "pointerover",
+
+            () => {
+
+                this.continueButton
+                    .setColor(
+                        "#7dffb5"
+                    )
+                    .setScale(
+                        1.05
+                    );
+
             }
+
         );
 
-        this.continueButton = this.scene.add.text(
-            w - 170,
-            h - 60,
-            "[ Continue ]",
-            {
-                fontSize: "22px",
-                color: "#00ff88",
-                fontStyle: "bold"
+
+        // =====================================================
+        // CONTINUE — HOVER OUT
+        // =====================================================
+
+        this.continueButton.on(
+
+            "pointerout",
+
+            () => {
+
+                this.continueButton
+                    .setColor(
+                        "#00ff88"
+                    )
+                    .setScale(
+                        1
+                    );
+
             }
-        )
-        .setInteractive({
-            useHandCursor: true
-        });
+
+        );
+
+
+        // =====================================================
+        // CONTINUE — CLICK
+        // =====================================================
+
+        this.continueButton.on(
+
+            "pointerdown",
+
+            () => {
+
+                console.log(
+                    "Continue button clicked"
+                );
+
+
+                if (this.callback) {
+
+                    this.callback(
+                        "continue"
+                    );
+
+                }
+
+            }
+
+        );
 
     }
 
+
     // =====================================================
-    // Sidebar Buttons
+    // SIDEBAR BUTTON
     // =====================================================
 
-    createButton(id, label, y) {
+    createButton(
+        id,
+        label,
+        y
+    ) {
 
-        const button = this.scene.add.text(
-            25,
-            y,
-            label,
-            {
-                fontSize: "22px",
-                fontFamily: "Arial",
-                fontStyle: "bold",
-                color: "#ffffff"
+        const button =
+            this.scene.add.text(
+
+                25,
+
+                y,
+
+                label,
+
+                {
+
+                    fontSize:
+                        "22px",
+
+                    fontFamily:
+                        "Arial",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#ffffff"
+
+                }
+
+            )
+            .setInteractive({
+
+                useHandCursor:
+                    true
+
+            });
+
+
+        // =====================================================
+        // HOVER IN
+        // =====================================================
+
+        button.on(
+
+            "pointerover",
+
+            () => {
+
+                button.setColor(
+                    "#ffd54f"
+                );
+
+
+                button.setScale(
+                    1.05
+                );
+
+
+                button.setX(
+                    30
+                );
+
             }
-        )
-        .setInteractive({
-            useHandCursor: true
-        });
 
-        button.on("pointerover", () => {
+        );
 
-            button.setColor("#ffd54f");
 
-            button.setScale(1.05);
-            button.setX(30);
+        // =====================================================
+        // HOVER OUT
+        // =====================================================
 
-        });
+        button.on(
 
-        button.on("pointerout", () => {
+            "pointerout",
 
-            button.setColor("#ffffff");
+            () => {
 
-            button.setScale(1);
-            button.setX(25);
+                button.setColor(
+                    "#ffffff"
+                );
 
-        });
 
-        button.on("pointerdown", () => {
+                button.setScale(
+                    1
+                );
 
-            if (this.callback) {
 
-                this.callback(id);
+                button.setX(
+                    25
+                );
 
             }
 
-        });
+        );
 
-        this.buttons[id] = button;
+
+        // =====================================================
+        // CLICK
+        // =====================================================
+
+        button.on(
+
+            "pointerdown",
+
+            () => {
+
+                if (
+                    this.callback
+                ) {
+
+                    this.callback(
+                        id
+                    );
+
+                }
+
+            }
+
+        );
+
+
+        // =====================================================
+        // STORE BUTTON
+        // =====================================================
+
+        this.buttons[id] =
+            button;
 
     }
 
+
     // =====================================================
-    // Public Methods
+    // BUTTON CALLBACK
     // =====================================================
 
     onButtonClick(callback) {
 
-        this.callback = callback;
+        this.callback =
+            callback;
 
     }
+
+
+    // =====================================================
+    // SET DIALOGUE
+    // =====================================================
 
     setDialogue(text) {
 
-        this.dialogueText.setText(text);
+        this.dialogueText.setText(
+            text
+        );
 
     }
 
-    setButtonEnabled(id, enabled) {
 
-        const button = this.buttons[id];
+    // =====================================================
+    // ENABLE / DISABLE BUTTON
+    // =====================================================
+
+    setButtonEnabled(
+        id,
+        enabled
+    ) {
+
+        const button =
+            this.buttons[id];
+
 
         if (!button) {
 
@@ -303,46 +807,160 @@ export default class AssessmentTerminal {
 
         }
 
+
+        // =================================================
+        // ENABLE
+        // =================================================
+
         if (enabled) {
 
-            button.setAlpha(1);
+            button.setAlpha(
+                1
+            );
+
 
             button.setInteractive({
-                useHandCursor: true
+
+                useHandCursor:
+                    true
+
             });
 
-            button.setColor("#ffffff");
 
-        }   
+            // Continue has its own green color.
+            if (
+                id === "continue"
+            ) {
+
+                button.setColor(
+                    "#00ff88"
+                );
+
+            }
+
+            else {
+
+                button.setColor(
+                    "#ffffff"
+                );
+
+            }
+
+        }
+
+
+        // =================================================
+        // DISABLE
+        // =================================================
+
         else {
 
-            button.setAlpha(0.4);
+            button.setAlpha(
+                0.4
+            );
+
 
             button.disableInteractive();
 
-            button.setColor("#888888");
+
+            button.setColor(
+                "#888888"
+            );
 
         }
 
     }
 
+
+    // =====================================================
+    // SET SCORE
+    // =====================================================
+
     setScore(score) {
 
-        this.scoreText.setText(`Score: ${score}`);
+        this.scoreText.setText(
+
+            `Score: ${score}`
+
+        );
 
     }
+
+
+    // =====================================================
+    // SET ROOM TITLE
+    // =====================================================
 
     setRoom(roomName) {
 
-        this.roomTitle.setText(roomName);
+        /*
+         * Example:
+         *
+         * MISSION 01: PROBLEM DISCOVERY
+         * RESTAURANT
+         *
+         * The first line becomes the main title.
+         * The second line becomes the subtitle.
+         */
+
+        const lines =
+
+            String(
+                roomName
+            )
+                .split(
+                    "\n"
+                );
+
+
+        const title =
+
+            lines[0] ||
+
+            "MISSION 01: PROBLEM DISCOVERY";
+
+
+        const subtitle =
+
+            lines[1] ||
+
+            "";
+
+
+        this.roomTitle.setText(
+            title
+        );
+
+
+        if (
+            this.roomSubtitle
+        ) {
+
+            this.roomSubtitle.setText(
+                subtitle
+            );
+
+        }
 
     }
+
+
+    // =====================================================
+    // SET TIMER
+    // =====================================================
 
     setTime(time) {
 
-        this.timeText.setText(time);
+        this.timeText.setText(
+            time
+        );
 
     }
+
+
+    // =====================================================
+    // GET ROOM VIEW
+    // =====================================================
 
     getRoomView() {
 

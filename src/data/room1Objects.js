@@ -4,8 +4,8 @@ const ROOM1_OBJECTS = [
         id: "customer",
         label: "Customer",
         icon: "🙂",
-        x: 180,
-        y: 120,
+        x: 275,
+        y: 350,
         evidence: "reviews"
     },
 
@@ -13,17 +13,17 @@ const ROOM1_OBJECTS = [
         id: "employee",
         label: "Employee",
         icon: "👨‍🍳",
-        x: 520,
+        x: 1020,
         y: 220,
-        evidence: "interview"
+        evidence: "employee"
     },
 
     {
-        id: "whiteboard",
-        label: "Whiteboard",
+        id: "blackboard",
+        label: "Blackboard",
         icon: "📋",
-        x: 620,
-        y: 80,
+        x: 500,
+        y: 75,
         evidence: "sales"
     },
 
@@ -31,8 +31,8 @@ const ROOM1_OBJECTS = [
         id: "kitchen",
         label: "Kitchen",
         icon: "🚪",
-        x: 350,
-        y: 390,
+        x: 790,
+        y: 160,
         evidence: "kitchen_photo"
     },
 
@@ -40,8 +40,8 @@ const ROOM1_OBJECTS = [
         id: "cashier",
         label: "Cashier",
         icon: "💰",
-        x: 120,
-        y: 300,
+        x: 585,
+        y: 165,
         evidence: "receipt"
     }
 

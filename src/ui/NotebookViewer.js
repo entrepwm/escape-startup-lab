@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 
+
 export default class NotebookViewer {
 
     constructor(
@@ -10,23 +11,76 @@ export default class NotebookViewer {
         onSubmit
     ) {
 
-        this.scene = scene;
-        this.window = window;
-        this.notebookData = notebookData;
-        this.scoreManager = scoreManager;
-        this.onSubmit = onSubmit;
+        this.scene =
+            scene;
 
-        // Store player answers
-        this.answers = {};
+        this.window =
+            window;
 
-        // Current question/page
-        this.currentPage = 0;
+        this.notebookData =
+            notebookData;
 
-        // One question per page
-        this.questionsPerPage = 1;
+        this.scoreManager =
+            scoreManager;
 
-        // Prevent double submission
-        this.submitted = false;
+        this.onSubmit =
+            onSubmit;
+
+
+        // =====================================================
+        // NOTEBOOK STATE
+        // =====================================================
+
+        this.answers =
+            {};
+
+        this.currentPage =
+            0;
+
+        this.questionsPerPage =
+            1;
+
+        this.submitted =
+            false;
+
+
+        // =====================================================
+        // LAYOUT
+        // =====================================================
+
+        this.contentWidth =
+            410;
+
+        /*
+         * Question content is allowed to occupy this much
+         * vertical space before being slightly scaled down.
+         */
+        this.maxQuestionHeight =
+            340;
+
+
+        /*
+         * Footer positions are FIXED.
+         *
+         * Long questions can no longer push these controls
+         * beneath the notebook window.
+         */
+        this.dividerY =
+            352;
+
+        this.pageIndicatorY =
+            364;
+
+        this.navigationY =
+            392;
+
+
+        // =====================================================
+        // WARNING STATE
+        // =====================================================
+
+        this.warningMessage =
+            null;
 
     }
 
@@ -37,17 +91,34 @@ export default class NotebookViewer {
 
     open() {
 
-        // Don't reset answers if notebook has already been submitted
-        if (this.submitted) {
-            console.log("Notebook already submitted.");
+        if (
+            this.submitted
+        ) {
+
+            console.log(
+                "Notebook already submitted."
+            );
+
             return;
+
         }
 
-        this.currentPage = 0;
+
+        this.currentPage =
+            0;
+
+
+        this.warningMessage =
+            null;
+
 
         this.window.open({
-            title: "Investigation Notebook"
+
+            title:
+                "Investigation Notebook"
+
         });
+
 
         this.renderPage();
 
@@ -60,41 +131,84 @@ export default class NotebookViewer {
 
     renderPage() {
 
-        // Clear previous content
+        // =================================================
+        // CLEAR OLD CONTENT
+        // =================================================
+
         this.window.clearContent();
 
-        // Main container
+
+        // =================================================
+        // ROOT CONTAINER
+        // =================================================
+
         const container =
-            this.scene.add.container(0, 0);
+            this.scene.add.container(
+                0,
+                0
+            );
 
-        let currentY = 0;
+
+        // =================================================
+        // QUESTION CONTAINER
+        // =================================================
+
+        /*
+         * Questions are separated from the footer.
+         *
+         * Only this container may be scaled if a question
+         * is unusually long.
+         */
+
+        const questionContainer =
+            this.scene.add.container(
+                0,
+                0
+            );
 
 
-        // =====================================================
+        container.add(
+            questionContainer
+        );
+
+
+        let currentY =
+            0;
+
+
+        // =================================================
         // PAGE CALCULATION
-        // =====================================================
+        // =================================================
 
         const totalPages =
             Math.ceil(
+
                 this.notebookData.length /
                 this.questionsPerPage
+
             );
 
+
         const startIndex =
+
             this.currentPage *
             this.questionsPerPage;
 
+
         const endIndex =
             Math.min(
+
                 startIndex +
                 this.questionsPerPage,
+
                 this.notebookData.length
+
             );
 
 
-        // =====================================================
+        // =================================================
         // QUESTIONS
-        // =====================================================
+        // =================================================
 
         for (
             let i = startIndex;
@@ -107,250 +221,341 @@ export default class NotebookViewer {
 
 
             // =================================================
+            // QUESTION NUMBER
+            // =================================================
+
+            const questionNumber =
+                this.scene.add.text(
+
+                    0,
+                    currentY,
+
+                    `QUESTION ${i + 1}`,
+
+                    {
+
+                        fontSize:
+                            "13px",
+
+                        fontFamily:
+                            "monospace",
+
+                        fontStyle:
+                            "bold",
+
+                        color:
+                            "#64748b"
+
+                    }
+
+                );
+
+
+            questionContainer.add(
+                questionNumber
+            );
+
+
+            currentY +=
+                questionNumber.height + 8;
+
+
+            // =================================================
             // QUESTION TEXT
             // =================================================
 
             const questionText =
                 this.scene.add.text(
+
                     0,
                     currentY,
+
                     question.question,
+
                     {
-                        fontSize: "20px",
-                        color: "#000000",
-                        fontStyle: "bold",
+
+                        fontSize:
+                            "20px",
+
+                        fontFamily:
+                            "monospace",
+
+                        color:
+                            "#111111",
+
+                        fontStyle:
+                            "bold",
 
                         wordWrap: {
-                            width: 410
+
+                            width:
+                                this.contentWidth
+
                         },
 
-                        lineSpacing: 2
+                        lineSpacing:
+                            2
+
                     }
+
                 );
 
-            container.add(questionText);
+
+            questionContainer.add(
+                questionText
+            );
 
 
             currentY +=
-                questionText.height + 18;
+                questionText.height + 16;
 
 
             // =================================================
             // OPTIONS
             // =================================================
 
-            question.options.forEach(option => {
+            question.options.forEach(
+                option => {
 
-                const selected =
-                    this.answers[question.id] === option;
+                    const optionText =
+                        this.createOption(
+
+                            question,
+                            option,
+                            currentY
+
+                        );
 
 
-                const optionText =
-                    this.scene.add.text(
-                        15,
-                        currentY,
-
-                        selected
-                            ? `● ${option}`
-                            : `○ ${option}`,
-
-                        {
-                            fontSize: "17px",
-
-                            color:
-                                selected
-                                    ? "#008800"
-                                    : "#0066cc",
-
-                            wordWrap: {
-                                width: 395
-                            },
-
-                            lineSpacing: 2
-                        }
+                    questionContainer.add(
+                        optionText
                     );
 
 
-                optionText.setInteractive({
-                    useHandCursor: true
-                });
+                    currentY +=
+                        optionText.height + 8;
 
-
-                // =================================================
-                // HOVER
-                // =================================================
-
-                optionText.on(
-                    "pointerover",
-                    () => {
-
-                        if (!selected) {
-
-                            optionText.setColor(
-                                "#ff8800"
-                            );
-
-                        }
-
-                    }
-                );
-
-
-                optionText.on(
-                    "pointerout",
-                    () => {
-
-                        optionText.setColor(
-                            selected
-                                ? "#008800"
-                                : "#0066cc"
-                        );
-
-                    }
-                );
-
-
-                // =================================================
-                // SELECT
-                // =================================================
-
-                optionText.on(
-                    "pointerdown",
-                    () => {
-
-                        console.log(
-                            `Answer selected: ${question.id} = ${option}`
-                        );
-
-
-                        this.answers[
-                            question.id
-                        ] = option;
-
-
-                        // Re-render
-                        this.renderPage();
-
-                    }
-                );
-
-
-                container.add(optionText);
-
-
-                // Account for wrapped text
-                currentY +=
-                    optionText.height + 9;
-
-            });
+                }
+            );
 
         }
 
 
-        // =====================================================
+        // =================================================
+        // AUTO-COMPACT LONG QUESTIONS
+        // =================================================
+
+        if (
+            currentY >
+            this.maxQuestionHeight
+        ) {
+
+            const calculatedScale =
+
+                this.maxQuestionHeight /
+                currentY;
+
+
+            /*
+             * Don't allow the text to become excessively
+             * small.
+             */
+
+            const safeScale =
+                Math.max(
+
+                    calculatedScale,
+                    0.80
+
+                );
+
+
+            questionContainer.setScale(
+                safeScale
+            );
+
+        }
+
+
+        // =================================================
+        // FIXED FOOTER DIVIDER
+        // =================================================
+
+        const divider =
+            this.scene.add.graphics();
+
+
+        divider.lineStyle(
+
+            1,
+            0xd4d4d4,
+            1
+
+        );
+
+
+        divider.beginPath();
+
+
+        divider.moveTo(
+            0,
+            this.dividerY
+        );
+
+
+        divider.lineTo(
+            this.contentWidth,
+            this.dividerY
+        );
+
+
+        divider.strokePath();
+
+
+        container.add(
+            divider
+        );
+
+
+        // =================================================
+        // OPTIONAL WARNING
+        // =================================================
+
+        if (
+            this.warningMessage
+        ) {
+
+            const warning =
+                this.scene.add.text(
+
+                    this.contentWidth / 2,
+                    this.dividerY - 17,
+
+                    this.warningMessage,
+
+                    {
+
+                        fontFamily:
+                            "monospace",
+
+                        fontSize:
+                            "12px",
+
+                        fontStyle:
+                            "bold",
+
+                        color:
+                            "#cc0000",
+
+                        align:
+                            "center"
+
+                    }
+
+                )
+                .setOrigin(
+                    0.5,
+                    1
+                );
+
+
+            container.add(
+                warning
+            );
+
+        }
+
+
+        // =================================================
         // PAGE INDICATOR
-        // =====================================================
-
-        currentY += 10;
-
+        // =================================================
 
         const pageIndicator =
             this.scene.add.text(
-                165,
-                currentY,
+
+                this.contentWidth / 2,
+                this.pageIndicatorY,
 
                 `Page ${this.currentPage + 1} / ${totalPages}`,
 
                 {
-                    fontSize: "15px",
-                    color: "#555555"
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "14px",
+
+                    color:
+                        "#555555"
+
                 }
+
+            )
+            .setOrigin(
+                0.5,
+                0
             );
 
 
-        container.add(pageIndicator);
+        container.add(
+            pageIndicator
+        );
 
 
-        currentY +=
-            pageIndicator.height + 15;
+        // =================================================
+        // PREVIOUS BUTTON
+        // =================================================
 
-
-        // =====================================================
-        // NAVIGATION
-        // =====================================================
-
-        const navigationY =
-            currentY;
-
-
-        // =====================================================
-        // PREVIOUS
-        // =====================================================
-
-        if (this.currentPage > 0) {
+        if (
+            this.currentPage > 0
+        ) {
 
             const previous =
-                this.scene.add.text(
+                this.createFooterButton(
+
                     0,
-                    navigationY,
+                    this.navigationY,
+
                     "◀ Previous",
-                    {
-                        fontSize: "17px",
-                        color: "#0066cc",
-                        fontStyle: "bold"
-                    }
+
+                    "#0066cc",
+
+                    0
+
                 );
 
 
-            previous.setInteractive({
-                useHandCursor: true
-            });
-
-
             previous.on(
-                "pointerover",
-                () => {
 
-                    previous.setColor(
-                        "#ff8800"
-                    );
-
-                }
-            );
-
-
-            previous.on(
-                "pointerout",
-                () => {
-
-                    previous.setColor(
-                        "#0066cc"
-                    );
-
-                }
-            );
-
-
-            previous.on(
                 "pointerdown",
+
                 () => {
+
+                    this.warningMessage =
+                        null;
+
 
                     this.currentPage--;
+
 
                     this.renderPage();
 
                 }
+
             );
 
 
-            container.add(previous);
+            container.add(
+                previous
+            );
 
         }
 
 
-        // =====================================================
-        // NEXT
-        // =====================================================
+        // =================================================
+        // NEXT BUTTON
+        // =================================================
 
         if (
             this.currentPage <
@@ -358,67 +563,50 @@ export default class NotebookViewer {
         ) {
 
             const next =
-                this.scene.add.text(
-                    320,
-                    navigationY,
+                this.createFooterButton(
+
+                    this.contentWidth,
+                    this.navigationY,
+
                     "Next ▶",
-                    {
-                        fontSize: "17px",
-                        color: "#0066cc",
-                        fontStyle: "bold"
-                    }
+
+                    "#0066cc",
+
+                    1
+
                 );
 
 
-            next.setInteractive({
-                useHandCursor: true
-            });
-
-
             next.on(
-                "pointerover",
-                () => {
 
-                    next.setColor(
-                        "#ff8800"
-                    );
-
-                }
-            );
-
-
-            next.on(
-                "pointerout",
-                () => {
-
-                    next.setColor(
-                        "#0066cc"
-                    );
-
-                }
-            );
-
-
-            next.on(
                 "pointerdown",
+
                 () => {
+
+                    this.warningMessage =
+                        null;
+
 
                     this.currentPage++;
+
 
                     this.renderPage();
 
                 }
+
             );
 
 
-            container.add(next);
+            container.add(
+                next
+            );
 
         }
 
 
-        // =====================================================
+        // =================================================
         // SUBMIT BUTTON
-        // =====================================================
+        // =================================================
 
         if (
             this.currentPage ===
@@ -426,25 +614,24 @@ export default class NotebookViewer {
         ) {
 
             const submit =
-                this.scene.add.text(
-                    235,
-                    navigationY,
+                this.createFooterButton(
+
+                    this.contentWidth,
+                    this.navigationY,
+
                     "✓ Submit Notebook",
-                    {
-                        fontSize: "17px",
-                        color: "#ff8800",
-                        fontStyle: "bold"
-                    }
+
+                    "#e67e00",
+
+                    1
+
                 );
 
 
-            submit.setInteractive({
-                useHandCursor: true
-            });
-
-
             submit.on(
+
                 "pointerover",
+
                 () => {
 
                     submit.setColor(
@@ -452,47 +639,304 @@ export default class NotebookViewer {
                     );
 
                 }
+
             );
 
 
             submit.on(
+
                 "pointerout",
+
                 () => {
 
                     submit.setColor(
-                        "#ff8800"
+                        "#e67e00"
                     );
 
                 }
+
             );
 
 
             submit.on(
+
                 "pointerdown",
+
                 () => {
 
                     console.log(
                         "SUBMIT NOTEBOOK CLICKED"
                     );
 
+
                     this.submitNotebook();
 
                 }
+
             );
 
 
-            container.add(submit);
+            container.add(
+                submit
+            );
 
         }
 
 
-        // =====================================================
+        // =================================================
         // SET WINDOW CONTENT
-        // =====================================================
+        // =================================================
 
         this.window.setContent(
             container
         );
+
+    }
+
+
+    // =====================================================
+    // CREATE OPTION
+    // =====================================================
+
+    createOption(
+        question,
+        option,
+        y
+    ) {
+
+        const isSelected =
+            () => {
+
+                return (
+
+                    this.answers[
+                        question.id
+                    ] === option
+
+                );
+
+            };
+
+
+        const optionText =
+            this.scene.add.text(
+
+                15,
+                y,
+
+                isSelected()
+                    ? `● ${option}`
+                    : `○ ${option}`,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "17px",
+
+                    color:
+                        isSelected()
+                            ? "#008800"
+                            : "#0066cc",
+
+                    wordWrap: {
+
+                        width:
+                            this.contentWidth - 15
+
+                    },
+
+                    lineSpacing:
+                        2
+
+                }
+
+            );
+
+
+        optionText.setInteractive({
+
+            useHandCursor:
+                true
+
+        });
+
+
+        // =================================================
+        // HOVER IN
+        // =================================================
+
+        optionText.on(
+
+            "pointerover",
+
+            () => {
+
+                if (
+                    !isSelected()
+                ) {
+
+                    optionText.setColor(
+                        "#ff8800"
+                    );
+
+                }
+
+            }
+
+        );
+
+
+        // =================================================
+        // HOVER OUT
+        // =================================================
+
+        optionText.on(
+
+            "pointerout",
+
+            () => {
+
+                optionText.setColor(
+
+                    isSelected()
+                        ? "#008800"
+                        : "#0066cc"
+
+                );
+
+            }
+
+        );
+
+
+        // =================================================
+        // SELECT
+        // =================================================
+
+        optionText.on(
+
+            "pointerdown",
+
+            () => {
+
+                console.log(
+
+                    `Answer selected: ${question.id} = ${option}`
+
+                );
+
+
+                this.answers[
+                    question.id
+                ] = option;
+
+
+                this.warningMessage =
+                    null;
+
+
+                this.renderPage();
+
+            }
+
+        );
+
+
+        return optionText;
+
+    }
+
+
+    // =====================================================
+    // CREATE FOOTER BUTTON
+    // =====================================================
+
+    createFooterButton(
+        x,
+        y,
+        label,
+        color,
+        originX
+    ) {
+
+        const button =
+            this.scene.add.text(
+
+                x,
+                y,
+
+                label,
+
+                {
+
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "16px",
+
+                    color:
+                        color,
+
+                    fontStyle:
+                        "bold"
+
+                }
+
+            )
+            .setOrigin(
+                originX,
+                0
+            )
+            .setInteractive({
+
+                useHandCursor:
+                    true
+
+            });
+
+
+        if (
+            label !==
+            "✓ Submit Notebook"
+        ) {
+
+            button.on(
+
+                "pointerover",
+
+                () => {
+
+                    button.setColor(
+                        "#ff8800"
+                    );
+
+                }
+
+            );
+
+
+            button.on(
+
+                "pointerout",
+
+                () => {
+
+                    button.setColor(
+                        color
+                    );
+
+                }
+
+            );
+
+        }
+
+
+        return button;
 
     }
 
@@ -503,57 +947,73 @@ export default class NotebookViewer {
 
     getCorrectAnswers() {
 
-        const correctAnswers = {};
+        const correctAnswers =
+            {};
 
-        this.notebookData.forEach(question => {
 
-            /*
-             * Supports:
-             *
-             * correctAnswer
-             * answer
-             * correct
-             *
-             * This makes the NotebookViewer
-             * compatible with different room data.
-             */
+        this.notebookData.forEach(
+            question => {
 
-            if (
-                question.correctAnswer !== undefined
-            ) {
+                // =================================================
+                // STANDARD FORMAT
+                // =================================================
 
-                correctAnswers[
-                    question.id
-                ] = question.correctAnswer;
+                if (
+                    question.correctAnswer !==
+                    undefined
+                ) {
+
+                    correctAnswers[
+                        question.id
+                    ] =
+                        question.correctAnswer;
+
+                }
+
+
+                // =================================================
+                // ALTERNATIVE FORMAT: answer
+                // =================================================
+
+                else if (
+                    question.answer !==
+                    undefined
+                ) {
+
+                    correctAnswers[
+                        question.id
+                    ] =
+                        question.answer;
+
+                }
+
+
+                // =================================================
+                // ALTERNATIVE FORMAT: correct
+                // =================================================
+
+                else if (
+                    question.correct !==
+                    undefined
+                ) {
+
+                    correctAnswers[
+                        question.id
+                    ] =
+                        question.correct;
+
+                }
 
             }
-
-            else if (
-                question.answer !== undefined
-            ) {
-
-                correctAnswers[
-                    question.id
-                ] = question.answer;
-
-            }
-
-            else if (
-                question.correct !== undefined
-            ) {
-
-                correctAnswers[
-                    question.id
-                ] = question.correct;
-
-            }
-
-        });
+        );
 
 
         console.log(
+
             "Correct notebook answers:",
+
             correctAnswers
+
         );
 
 
@@ -568,7 +1028,13 @@ export default class NotebookViewer {
 
     submitNotebook() {
 
-        if (this.submitted) {
+        // =================================================
+        // PREVENT DOUBLE SUBMISSION
+        // =================================================
+
+        if (
+            this.submitted
+        ) {
 
             console.warn(
                 "Notebook has already been submitted."
@@ -580,19 +1046,27 @@ export default class NotebookViewer {
 
 
         console.log(
+
             "Notebook answers:",
+
             this.answers
+
         );
 
 
-        // =====================================================
-        // CHECK ALL QUESTIONS ANSWERED
-        // =====================================================
+        // =================================================
+        // CHECK FOR UNANSWERED QUESTIONS
+        // =================================================
 
         const unanswered =
             this.notebookData.filter(
+
                 question =>
-                    !this.answers[question.id]
+
+                    !this.answers[
+                        question.id
+                    ]
+
             );
 
 
@@ -605,29 +1079,19 @@ export default class NotebookViewer {
             );
 
 
-            const message =
-                this.scene.add.text(
-                    0,
-                    0,
+            /*
+             * Don't replace the notebook with an error page.
+             *
+             * Keep the player on the current page and show
+             * a small warning above the footer.
+             */
 
-                    "Please answer all questions before submitting.",
+            this.warningMessage =
 
-                    {
-                        fontSize: "18px",
-                        color: "#cc0000",
-
-                        wordWrap: {
-                            width: 410
-                        },
-
-                        lineSpacing: 2
-                    }
-                );
+                `Answer all questions before submitting (${unanswered.length} remaining).`;
 
 
-            this.window.setContent(
-                message
-            );
+            this.renderPage();
 
 
             return;
@@ -635,52 +1099,42 @@ export default class NotebookViewer {
         }
 
 
-        // =====================================================
+        // =================================================
         // GET CORRECT ANSWERS
-        // =====================================================
+        // =================================================
 
         const correctAnswers =
             this.getCorrectAnswers();
 
 
-        // =====================================================
-        // SAFETY CHECK
-        // =====================================================
+        // =================================================
+        // VALIDATE ANSWER CONFIGURATION
+        // =================================================
 
         if (
-            Object.keys(correctAnswers).length !==
+
+            Object.keys(
+                correctAnswers
+            ).length !==
             this.notebookData.length
+
         ) {
 
             console.error(
+
                 "Notebook correct answers are missing!",
+
                 correctAnswers
+
             );
 
 
-            const message =
-                this.scene.add.text(
-                    0,
-                    0,
+            this.warningMessage =
 
-                    "Error: Notebook answer configuration is incomplete.",
-
-                    {
-                        fontSize: "18px",
-                        color: "#cc0000",
-
-                        wordWrap: {
-                            width: 410
-                        },
-
-                        lineSpacing: 2
-                    }
-                );
+                "Notebook configuration error: missing correct answers.";
 
 
-            this.window.setContent(
-                message
-            );
+            this.renderPage();
 
 
             return;
@@ -688,11 +1142,12 @@ export default class NotebookViewer {
         }
 
 
-        // =====================================================
+        // =================================================
         // CALCULATE SCORE
-        // =====================================================
+        // =================================================
 
-        let points = 0;
+        let points =
+            0;
 
 
         if (
@@ -700,41 +1155,58 @@ export default class NotebookViewer {
         ) {
 
             points =
-                this.scoreManager.calculateNotebookScore(
-                    this.answers,
-                    correctAnswers
-                );
+                this.scoreManager
+                    .calculateNotebookScore(
+
+                        this.answers,
+
+                        correctAnswers
+
+                    );
 
         }
 
 
         console.log(
+
             `Notebook score: +${points}`
+
         );
 
 
-        console.log(
-            `Total game score: ${this.scoreManager.getScore()}`
-        );
+        if (
+            this.scoreManager &&
+            typeof this.scoreManager.getScore ===
+            "function"
+        ) {
+
+            console.log(
+
+                `Total game score: ${this.scoreManager.getScore()}`
+
+            );
+
+        }
 
 
-        // =====================================================
+        // =================================================
         // MARK SUBMITTED
-        // =====================================================
+        // =================================================
 
-        this.submitted = true;
+        this.submitted =
+            true;
 
 
-        // =====================================================
+        // =================================================
         // CLOSE NOTEBOOK
-        // =====================================================
+        // =================================================
 
         this.window.close();
 
 
-        // =====================================================
+        // =================================================
         // NOTIFY ROOM
-        // =====================================================
+        // =================================================
 
         if (
             this.onSubmit

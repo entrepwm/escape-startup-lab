@@ -179,7 +179,7 @@ export default class Room2Scene extends Phaser.Scene {
 
         // Room title
         this.terminal.setRoom(
-            "Customer Hub"
+            "MISSION 02: OPPORTUNITY ANALYSIS\nMANAGEMENT OFFICE"
         );
 
 
@@ -408,6 +408,29 @@ export default class Room2Scene extends Phaser.Scene {
                     );
 
                     break;
+
+                // =============================================
+                // TEMPORARY DEVELOPMENT SHORTCUT
+                // =============================================
+
+                case "continue":
+
+                    console.log(
+                        "DEV: Skipping Room 2 → Room 3"
+                    );
+
+                    this.scoreManager.setRoom(3);
+
+                    this.scene.start(
+                        "Room3Scene",
+                        {
+                            scoreManager:
+                                this.scoreManager
+                        }
+                    );
+
+                    break;
+
 
 
                 // =========================================

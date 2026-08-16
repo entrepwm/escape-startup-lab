@@ -55,7 +55,7 @@ export default class ScoreManager {
 
 
         // =====================================================
-        // CURRENT ASSESSMENT
+        // CURRENT ASSESSMENT CONFIG
         // =====================================================
 
         this.correctRecommendation = null;
@@ -78,11 +78,20 @@ export default class ScoreManager {
 
     addPoints(points) {
 
-        this.score += points;
+        const safePoints =
+            Number(points) || 0;
+
+
+        this.score +=
+            safePoints;
+
 
         console.log(
-            `Added ${points} points. Total: ${this.score}`
+
+            `Added ${safePoints} points. Total: ${this.score}`
+
         );
+
 
         return this.score;
 
@@ -95,17 +104,32 @@ export default class ScoreManager {
 
     setRoom(roomNumber) {
 
-        this.currentRoom = roomNumber;
+        this.currentRoom =
+            roomNumber;
 
-        // Reset room-specific progress
 
-        this.notebookSubmitted = false;
+        // Reset room-specific state
+        this.notebookSubmitted =
+            false;
 
-        this.assessmentSubmitted = false;
 
-        this.correctRecommendation = null;
+        this.assessmentSubmitted =
+            false;
 
-        this.assessmentExplanation = "";
+
+        this.correctRecommendation =
+            null;
+
+
+        this.assessmentExplanation =
+            "";
+
+
+        console.log(
+
+            `ScoreManager entered Room ${roomNumber}`
+
+        );
 
     }
 
@@ -123,51 +147,94 @@ export default class ScoreManager {
 
     getRoomScore(roomNumber) {
 
-        if (!this.roomScores[roomNumber]) {
+        if (
+            !this.roomScores[
+                roomNumber
+            ]
+        ) {
 
             return {
+
                 notebook: 0,
+
                 assessment: 0
+
             };
 
         }
 
-        return this.roomScores[roomNumber];
+
+        return this.roomScores[
+            roomNumber
+        ];
 
     }
 
 
     getNotebookScore(roomNumber) {
 
-        if (!this.roomScores[roomNumber]) {
+        if (
+            !this.roomScores[
+                roomNumber
+            ]
+        ) {
+
             return 0;
+
         }
 
-        return this.roomScores[roomNumber].notebook;
+
+        return this.roomScores[
+            roomNumber
+        ].notebook;
 
     }
 
 
     getAssessmentScore(roomNumber) {
 
-        if (!this.roomScores[roomNumber]) {
+        if (
+            !this.roomScores[
+                roomNumber
+            ]
+        ) {
+
             return 0;
+
         }
 
-        return this.roomScores[roomNumber].assessment;
+
+        return this.roomScores[
+            roomNumber
+        ].assessment;
 
     }
 
 
     getTotalRoomScore(roomNumber) {
 
-        if (!this.roomScores[roomNumber]) {
+        if (
+            !this.roomScores[
+                roomNumber
+            ]
+        ) {
+
             return 0;
+
         }
 
+
+        const room =
+            this.roomScores[
+                roomNumber
+            ];
+
+
         return (
-            this.roomScores[roomNumber].notebook +
-            this.roomScores[roomNumber].assessment
+
+            room.notebook +
+            room.assessment
+
         );
 
     }
@@ -182,15 +249,43 @@ export default class ScoreManager {
         correctAnswers
     ) {
 
+        // Prevent duplicate scoring
+        if (
+            this.notebookSubmitted
+        ) {
+
+            console.warn(
+
+                `Room ${this.currentRoom} notebook already submitted.`
+
+            );
+
+
+            return this.getNotebookScore(
+                this.currentRoom
+            );
+
+        }
+
+
         let points = 0;
 
 
-        Object.keys(correctAnswers).forEach(
+        Object.keys(
+            correctAnswers
+        ).forEach(
+
             questionId => {
 
                 if (
-                    answers[questionId] ===
-                    correctAnswers[questionId]
+
+                    answers[
+                        questionId
+                    ] ===
+                    correctAnswers[
+                        questionId
+                    ]
+
                 ) {
 
                     points += 10;
@@ -198,34 +293,51 @@ export default class ScoreManager {
                 }
 
             }
+
         );
 
 
-        // Add to total score
+        // =================================================
+        // ADD TOTAL SCORE
+        // =================================================
 
-        this.score += points;
+        this.score +=
+            points;
 
 
-        // Record score for current room
+        // =================================================
+        // RECORD ROOM SCORE
+        // =================================================
 
-        if (this.roomScores[this.currentRoom]) {
+        if (
+            this.roomScores[
+                this.currentRoom
+            ]
+        ) {
 
             this.roomScores[
                 this.currentRoom
-            ].notebook = points;
+            ].notebook =
+                points;
 
         }
 
 
-        this.notebookSubmitted = true;
+        this.notebookSubmitted =
+            true;
 
 
         console.log(
+
             `Room ${this.currentRoom} Notebook score: +${points}`
+
         );
 
+
         console.log(
+
             `Total score: ${this.score}`
+
         );
 
 
@@ -253,8 +365,16 @@ export default class ScoreManager {
         this.correctRecommendation =
             correctRecommendation;
 
+
         this.assessmentExplanation =
-            explanation;
+            explanation || "";
+
+
+        console.log(
+
+            `Assessment configured for Room ${this.currentRoom}`
+
+        );
 
     }
 
@@ -265,11 +385,51 @@ export default class ScoreManager {
 
     evaluate(answer) {
 
-        if (!this.correctRecommendation) {
+        // -------------------------------------------------
+        // Prevent duplicate assessment scoring
+        // -------------------------------------------------
+
+        if (
+            this.assessmentSubmitted
+        ) {
 
             console.warn(
-                "No assessment answer configured."
+
+                `Room ${this.currentRoom} assessment already submitted.`
+
             );
+
+
+            return {
+
+                correct:
+                    answer ===
+                    this.correctRecommendation,
+
+                score: 0,
+
+                explanation:
+                    this.assessmentExplanation
+
+            };
+
+        }
+
+
+        // -------------------------------------------------
+        // Validate configuration
+        // -------------------------------------------------
+
+        if (
+            !this.correctRecommendation
+        ) {
+
+            console.warn(
+
+                "No assessment answer configured."
+
+            );
+
 
             return {
 
@@ -285,7 +445,12 @@ export default class ScoreManager {
         }
 
 
+        // -------------------------------------------------
+        // Check answer
+        // -------------------------------------------------
+
         const correct =
+
             answer ===
             this.correctRecommendation;
 
@@ -293,43 +458,68 @@ export default class ScoreManager {
         let points = 0;
 
 
+        // -------------------------------------------------
+        // Award points
+        // -------------------------------------------------
+
         if (correct) {
 
             points = 50;
 
-            this.score += points;
+
+            this.score +=
+                points;
 
         }
 
 
-        // Record assessment score
+        // -------------------------------------------------
+        // Record room assessment score
+        // -------------------------------------------------
 
-        if (this.roomScores[this.currentRoom]) {
+        if (
+            this.roomScores[
+                this.currentRoom
+            ]
+        ) {
 
             this.roomScores[
                 this.currentRoom
-            ].assessment = points;
+            ].assessment =
+                points;
 
         }
 
 
-        this.assessmentSubmitted = true;
+        this.assessmentSubmitted =
+            true;
 
 
         console.log(
+
             `Room ${this.currentRoom} Assessment answer: ${answer}`
+
         );
 
+
         console.log(
+
             `Correct: ${correct}`
+
         );
 
+
         console.log(
+
             `Assessment points: +${points}`
+
         );
 
+
         console.log(
+
             `Total score: ${this.score}`
+
         );
 
 
@@ -356,7 +546,8 @@ export default class ScoreManager {
 
     markAssessmentSubmitted() {
 
-        this.assessmentSubmitted = true;
+        this.assessmentSubmitted =
+            true;
 
     }
 
@@ -369,15 +560,24 @@ export default class ScoreManager {
 
         this.score = 0;
 
+
         this.currentRoom = 1;
 
-        this.notebookSubmitted = false;
 
-        this.assessmentSubmitted = false;
+        this.notebookSubmitted =
+            false;
 
-        this.correctRecommendation = null;
 
-        this.assessmentExplanation = "";
+        this.assessmentSubmitted =
+            false;
+
+
+        this.correctRecommendation =
+            null;
+
+
+        this.assessmentExplanation =
+            "";
 
 
         this.roomScores = {

@@ -1,18 +1,19 @@
 const ROOM3_OBJECTS = [
 
     // =====================================================
-    // FINANCE DESK
+    // INVESTMENT BUDGET
     // =====================================================
 
     {
         id: "finance_desk",
 
-        name: "Finance Desk",
+        label: "Investment Budget",
 
         icon: "💰",
 
-        x: 180,
-        y: 150,
+        // Bottom-left report stacks
+        x: 120,
+        y: 410,
 
         evidence: "investment_budget"
 
@@ -20,18 +21,19 @@ const ROOM3_OBJECTS = [
 
 
     // =====================================================
-    // OPERATIONS DESK
+    // OPERATIONS REPORT
     // =====================================================
 
     {
         id: "operations_desk",
 
-        name: "Operations Desk",
+        label: "Operations Report",
 
-        icon: "👨‍🍳",
+        icon: "📋",
 
-        x: 400,
-        y: 150,
+        // Upper-left planning / process board
+        x: 260,
+        y: 125,
 
         evidence: "operations_report"
 
@@ -39,18 +41,19 @@ const ROOM3_OBJECTS = [
 
 
     // =====================================================
-    // TECHNOLOGY DESK
+    // TECHNOLOGY REPORT
     // =====================================================
 
     {
         id: "technology_desk",
 
-        name: "Technology Desk",
+        label: "Technology Report",
 
         icon: "💻",
 
-        x: 620,
-        y: 150,
+        // Main CEO desk
+        x: 515,
+        y: 335,
 
         evidence: "technology_report"
 
@@ -58,18 +61,19 @@ const ROOM3_OBJECTS = [
 
 
     // =====================================================
-    // HR DESK
+    // HR REPORT
     // =====================================================
 
     {
         id: "hr_desk",
 
-        name: "HR Desk",
+        label: "HR Report",
 
         icon: "👥",
 
-        x: 290,
-        y: 320,
+        // Right-side filing / binder shelf
+        x: 865,
+        y: 165,
 
         evidence: "staffing_report"
 
@@ -83,17 +87,19 @@ const ROOM3_OBJECTS = [
     {
         id: "strategy_dashboard",
 
-        name: "Strategy Dashboard",
+        label: "Strategy Dashboard",
 
         icon: "📊",
 
-        x: 520,
-        y: 320,
+        // Large wall dashboard
+        x: 590,
+        y: 115,
 
         evidence: "strategy_comparison"
 
     }
 
 ];
+
 
 export default ROOM3_OBJECTS;

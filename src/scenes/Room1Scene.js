@@ -2,7 +2,6 @@ import Phaser from "phaser";
 
 import AssessmentTerminal from "../ui/AssessmentTerminal";
 import Window from "../ui/Window";
-import RoomView from "../ui/RoomView";
 
 import EvidenceViewer from "../ui/EvidenceViewer";
 import NotebookViewer from "../ui/NotebookViewer";
@@ -16,6 +15,7 @@ import ROOM1_NOTEBOOK from "../data/room1Notebook";
 import ROOM1_ASSESSMENT from "../data/room1Assessment";
 import ROOM1_ANSWER from "../data/room1Answer";
 
+
 export default class Room1Scene extends Phaser.Scene {
 
     constructor() {
@@ -24,148 +24,343 @@ export default class Room1Scene extends Phaser.Scene {
 
     }
 
+
     // =====================================================
     // CREATE
     // =====================================================
 
     create() {
 
+        console.log(
+            "Starting Room 1: Mission 01 - Problem Discovery"
+        );
+
+
+        // =================================================
+        // SYSTEMS
+        // =================================================
+
         this.createSystems();
+
+
+        if (!this.scoreManager) {
+
+            console.error(
+                "Room 1 could not initialize ScoreManager."
+            );
+
+            return;
+
+        }
+
+
+        // =================================================
+        // ROOM OBJECTS
+        // =================================================
 
         this.createRoomObjects();
 
+
+        // =================================================
+        // EVENTS
+        // =================================================
+
         this.registerEvents();
+
+
+        // =================================================
+        // UI
+        // =================================================
 
         this.initializeUI();
 
+
+        // =================================================
+        // CAMERA
+        // =================================================
+
+        this.cameras.main.fadeIn(
+            400
+        );
+
     }
 
+
     // =====================================================
-    // SYSTEMS
+    // CREATE SYSTEMS
     // =====================================================
 
     createSystems() {
 
-        // -------------------------------------------------
-        // Main UI
-        // -------------------------------------------------
+        // =================================================
+        // ASSESSMENT TERMINAL
+        // =================================================
 
-        this.terminal = new AssessmentTerminal(this);
+        this.terminal =
+            new AssessmentTerminal(
+                this
+            );
 
-        // -------------------------------------------------
-        // Popup Window
-        // -------------------------------------------------
 
-        this.window = new Window(this);
+        // =================================================
+        // POPUP WINDOW
+        // =================================================
 
-        // -------------------------------------------------
-        // Score Manager
-        // -------------------------------------------------
+        this.window =
+            new Window(
+                this
+            );
 
-        this.scoreManager = this.game.scoreManager
 
-        this.scoreManager.setRoom(1);
+        // =================================================
+        // SCORE MANAGER
+        // =================================================
+
+        const globalScoreManager =
+            this.game.scoreManager;
+
+
+        if (
+            globalScoreManager &&
+            typeof globalScoreManager.setRoom === "function" &&
+            typeof globalScoreManager.getScore === "function" &&
+            typeof globalScoreManager.setAssessment === "function"
+        ) {
+
+            this.scoreManager =
+                globalScoreManager;
+
+        }
+
+        else {
+
+            console.warn(
+                "Global ScoreManager missing or invalid. Creating a new ScoreManager."
+            );
+
+
+            this.scoreManager =
+                new ScoreManager();
+
+
+            this.game.scoreManager =
+                this.scoreManager;
+
+        }
+
+
+        console.log(
+            "Room 1 ScoreManager:",
+            this.scoreManager
+        );
+
+
+        // =================================================
+        // CONFIGURE ROOM 1
+        // =================================================
+
+        this.scoreManager.setRoom(
+            1
+        );
+
 
         this.scoreManager.setAssessment(
+
             ROOM1_ANSWER.correctRecommendation,
+
             ROOM1_ANSWER.explanation
+
         );
 
-        // -------------------------------------------------
-        // Evidence Viewer
-        // -------------------------------------------------
 
-        this.evidenceViewer = new EvidenceViewer(
-            this,
-            this.window,
-            ROOM1_EVIDENCE
-        );
+        // =================================================
+        // EVIDENCE VIEWER
+        // =================================================
 
-        // -------------------------------------------------
-        // Notebook Viewer
-        // -------------------------------------------------
+        this.evidenceViewer =
+            new EvidenceViewer(
 
-        this.notebookViewer = new NotebookViewer(
+                this,
 
-            this,
-            this.window,
-            ROOM1_NOTEBOOK,
-            this.scoreManager,
-            (points) => {
+                this.window,
 
-                this.terminal.setScore(
-                    this.scoreManager.getScore()
-                );
+                ROOM1_EVIDENCE
 
-                this.unlockAssessment();
+            );
 
-            }
-        );
 
-        // -------------------------------------------------
-        // Assessment Viewer
-        // -------------------------------------------------
+        // =================================================
+        // NOTEBOOK VIEWER
+        // =================================================
 
-        this.assessmentViewer = new AssessmentViewer(
+        this.notebookViewer =
+            new NotebookViewer(
 
-            this,
-            this.window,
-            ROOM1_ASSESSMENT,
-            this.scoreManager,
-            "Room2Scene"
-            
-        );
+                this,
 
-        // -------------------------------------------------
-        // Room View
-        // -------------------------------------------------
+                this.window,
+
+                ROOM1_NOTEBOOK,
+
+                this.scoreManager,
+
+                (points) => {
+
+                    console.log(
+                        `Room 1 Notebook completed. +${points} points`
+                    );
+
+
+                    // -----------------------------------------
+                    // UPDATE SCORE HUD
+                    // -----------------------------------------
+
+                    this.terminal.setScore(
+
+                        this.scoreManager.getScore()
+
+                    );
+
+
+                    // -----------------------------------------
+                    // UNLOCK ASSESSMENT
+                    // -----------------------------------------
+
+                    this.unlockAssessment();
+
+                }
+
+            );
+
+
+        // =================================================
+        // ASSESSMENT VIEWER
+        // =================================================
+
+        this.assessmentViewer =
+            new AssessmentViewer(
+
+                this,
+
+                this.window,
+
+                ROOM1_ASSESSMENT,
+
+                this.scoreManager
+
+            );
+
+
+        // =================================================
+        // ROOM VIEW
+        // =================================================
 
         this.roomView =
             this.terminal.getRoomView();
 
+
+        if (!this.roomView) {
+
+            console.error(
+                "Room 1 RoomView could not be created."
+            );
+
+        }
+
     }
 
+
     // =====================================================
-    // INITIAL UI
+    // INITIALIZE UI
     // =====================================================
 
     initializeUI() {
 
-        this.terminal.setRoom("Idea Lab");
+        // =================================================
+        // ROOM NAME
+        // =================================================
 
-        this.terminal.setDialogue(
-            "Welcome, Candidate.\n" +
-            "Investigate every object before completing your assessment."
+        this.terminal.setRoom(
+            "MISSION 01: PROBLEM DISCOVERY\nRESTAURANT"
         );
 
-        this.terminal.setScore(0);
 
-        this.terminal.setTime("15:00");
+        // =================================================
+        // DIALOGUE
+        // =================================================
 
-        // -----------------------------------------------
-        // Assessment starts LOCKED
-        // -----------------------------------------------
+        this.terminal.setDialogue(
+
+            "Welcome, Candidate.\n" +
+            "Investigate every object before completing your assessment."
+
+        );
+
+
+        // =================================================
+        // CURRENT GLOBAL SCORE
+        // =================================================
+
+        this.terminal.setScore(
+
+            this.scoreManager.getScore()
+
+        );
+
+
+        // =================================================
+        // TIMER
+        // =================================================
+
+        this.terminal.setTime(
+            "15:00"
+        );
+
+
+        // =================================================
+        // ASSESSMENT STARTS LOCKED
+        // =================================================
 
         this.terminal.setButtonEnabled(
+
             "assessment",
+
             false
+
         );
 
     }
 
+
     // =====================================================
-    // ROOM OBJECTS
+    // CREATE ROOM OBJECTS
     // =====================================================
 
     createRoomObjects() {
 
-        ROOM1_OBJECTS.forEach(object => {
+        if (!this.roomView) {
 
-            this.roomView.addObject(object);
+            console.error(
+                "Cannot create Room 1 objects because RoomView is missing."
+            );
 
-        });
+            return;
+
+        }
+
+
+        ROOM1_OBJECTS.forEach(
+            object => {
+
+                this.roomView.addObject(
+                    object
+                );
+
+            }
+        );
 
     }
+
 
     // =====================================================
     // UNLOCK ASSESSMENT
@@ -173,328 +368,363 @@ export default class Room1Scene extends Phaser.Scene {
 
     unlockAssessment() {
 
-        console.log("Assessment unlocked!");
-
-        this.terminal.setButtonEnabled(
-            "assessment",
-            true
+        console.log(
+            "Room 1 Assessment unlocked!"
         );
 
+
+        this.terminal.setButtonEnabled(
+
+            "assessment",
+
+            true
+
+        );
+
+
         this.terminal.setDialogue(
-            "Notebook completed. Your assessment is now unlocked."
+
+            "Investigation complete.\n" +
+            "Your final assessment is now available."
+
         );
 
     }
 
-    // =====================================================
-    // ROOM 1 COMPLETE
-    // =====================================================
-
-    completeRoom1() {
-
-        console.log(
-            "ROOM 1 COMPLETED"
-        );
-
-        const finalScore =
-            this.scoreManager.getScore();
-
-        const container =
-            this.add.container(0, 0);
-
-    // -------------------------------------------------
-    // Title
-    // -------------------------------------------------
-
-    const title =
-        this.add.text(
-            0,
-            0,
-            "🎉 ROOM 1 COMPLETE",
-            {
-                fontSize: "28px",
-                color: "#000000",
-                fontStyle: "bold"
-            }
-        );
-
-    // -------------------------------------------------
-    // Description
-    // -------------------------------------------------
-
-    const description =
-        this.add.text(
-            0,
-            60,
-
-            "You investigated the restaurant,\nanalyzed the evidence,\nand identified the main operational problem.",
-
-            {
-                fontSize: "20px",
-                color: "#000000",
-                wordWrap: {
-                    width: 420
-                }
-            }
-        );
-
-    // -------------------------------------------------
-    // Final score
-    // -------------------------------------------------
-
-    const score =
-        this.add.text(
-            0,
-            170,
-
-            `Final Score: ${finalScore}`,
-
-            {
-                fontSize: "24px",
-                color: "#008800",
-                fontStyle: "bold"
-            }
-        );
-
-    // -------------------------------------------------
-    // Recommendation
-    // -------------------------------------------------
-
-    const recommendation =
-        this.add.text(
-            0,
-            220,
-
-            "Recommendation:\nImprove Service Speed",
-
-            {
-                fontSize: "20px",
-                color: "#000000",
-                fontStyle: "bold"
-            }
-        );
-
-    // -------------------------------------------------
-    // Continue button
-    // -------------------------------------------------
-
-    const continueButton =
-        this.add.text(
-            0,
-            310,
-
-            "Continue to Room 2 →",
-
-            {
-                fontSize: "22px",
-                color: "#0066cc",
-                fontStyle: "bold"
-            }
-        );
-
-    continueButton.setInteractive({
-        useHandCursor: true
-    });
-
-    continueButton.on("pointerover", () => {
-
-        continueButton.setColor(
-            "#ff8800"
-        );
-
-    });
-
-    continueButton.on("pointerout", () => {
-
-        continueButton.setColor(
-            "#0066cc"
-        );
-
-    });
-
-    continueButton.on("pointerdown", () => {
-
-        console.log(
-            "Moving to Room 2..."
-        );
-
-        this.scene.start(
-            "Room2Scene"
-        );
-
-    });
-
-    container.add(title);
-    container.add(description);
-    container.add(score);
-    container.add(recommendation);
-    container.add(continueButton);
-
-    // -------------------------------------------------
-    // Open completion window
-    // -------------------------------------------------
-
-    this.window.open({
-        title: "Room 1 Complete"
-    });
-
-    this.window.setContent(
-        container
-    );
-
-}
 
     // =====================================================
-    // EVENTS
+    // REGISTER EVENTS
     // =====================================================
 
     registerEvents() {
 
         // =================================================
-        // SIDEBAR
+        // SIDEBAR BUTTONS
         // =================================================
 
-        this.terminal.onButtonClick((id) => {
+        this.terminal.onButtonClick(
 
-            switch (id) {
+            (id) => {
 
-                // -----------------------------------------
-                // NOTEBOOK
-                // -----------------------------------------
+                switch (id) {
 
-                case "notebook":
+                    // =====================================
+                    // NOTEBOOK
+                    // =====================================
 
-                    this.notebookViewer.open();
+                    case "notebook":
 
-                    break;
+                        this.notebookViewer.open();
+
+                        break;
 
 
-                // -----------------------------------------
-                // ASSESSMENT
-                // -----------------------------------------
+                    // =====================================
+                    // ASSESSMENT
+                    // =====================================
 
-                case "assessment":
+                    case "assessment":
 
-                // Assessment is unlocked only after Notebook is submitted
-                if (!this.scoreManager.isNotebookSubmitted()) {
+                        this.openAssessment();
 
-                    this.window.open({
-                        title: "Assessment Locked"
-                    });
+                        break;
 
-                    this.window.setContent(
-                        "Complete and submit the Investigation Notebook first."
-                    );
 
-                    return;
+                    // =====================================
+                    // HINT
+                    // =====================================
+
+                    case "hint":
+
+                        this.openHint();
+
+                        break;
+
+
+                    // =====================================
+                    // PROGRESS
+                    // =====================================
+
+                    case "progress":
+
+                        this.openProgress();
+
+                        break;
+
+
+
+                    // -----------------------------------------
+                    // TEMP DEV CONTINUE
+                    // -----------------------------------------
+
+                    case "continue":
+
+                        console.log(
+                            "DEV: Skipping Room 1 → Room 2"
+                        );
+
+                        this.scoreManager.setRoom(2);
+
+                        this.scene.start(
+                            "Room2Scene",
+                            {
+                                scoreManager:
+                                    this.scoreManager
+                            }
+                        );
+
+                        break;
+
+                    // =====================================
+                    // UNKNOWN
+                    // =====================================
+
+                    default:
+
+                        console.warn(
+                            `Unknown sidebar button: ${id}`
+                        );
 
                 }
 
-                // Notebook completed → open assessment
-                this.assessmentViewer.open();
+            }
 
-                break;
-
-
-                // -----------------------------------------
-                // HINT
-                // -----------------------------------------
-
-                case "hint":
-
-                    this.window.open({
-                        title: "Hint"
-                    });
-
-                    this.window.setContent(
-                        "Remember to compare customer opinions with operational evidence."
-                    );
-
-                    break;
+        );
 
 
-                // -----------------------------------------
-                // PROGRESS
-                // -----------------------------------------
+        // =================================================
+        // ROOM OBJECT CLICKS
+        // =================================================
 
-                case "progress":
+        if (!this.roomView) {
 
-                    this.window.open({
-                        title: "Progress"
-                    });
+            return;
 
-                    this.window.setContent(
-                        "Room 1 of 4"
-                    );
-
-                    break;
+        }
 
 
-                // -----------------------------------------
-                // UNKNOWN
-                // -----------------------------------------
+        this.roomView.onObjectClick(
 
-                default:
+            (id) => {
 
-                    console.warn(
-                        `Unknown sidebar button: ${id}`
-                    );
+                this.handleRoomObjectClick(
+                    id
+                );
 
             }
+
+        );
+
+    }
+
+
+    // =====================================================
+    // OPEN ASSESSMENT
+    // =====================================================
+
+    openAssessment() {
+
+        // =================================================
+        // NOTEBOOK MUST BE SUBMITTED
+        // =================================================
+
+        if (
+            !this.scoreManager.isNotebookSubmitted()
+        ) {
+
+            this.window.open({
+
+                title:
+                    "Assessment Locked"
+
+            });
+
+
+            this.window.setContent(
+
+                "Complete and submit the " +
+                "Investigation Notebook first."
+
+            );
+
+
+            return;
+
+        }
+
+
+        // =================================================
+        // OPTIONAL OBJECT CHECK
+        // =================================================
+
+        if (
+            this.roomView &&
+            typeof this.roomView.allObjectsInvestigated ===
+                "function" &&
+            !this.roomView.allObjectsInvestigated()
+        ) {
+
+            this.window.open({
+
+                title:
+                    "Assessment Locked"
+
+            });
+
+
+            this.window.setContent(
+
+                "Investigate all objects in the room " +
+                "before completing the assessment."
+
+            );
+
+
+            return;
+
+        }
+
+
+        // =================================================
+        // OPEN ASSESSMENT
+        // =================================================
+
+        this.assessmentViewer.open();
+
+    }
+
+
+    // =====================================================
+    // OPEN HINT
+    // =====================================================
+
+    openHint() {
+
+        this.window.open({
+
+            title:
+                "EVA Hint"
 
         });
 
 
-        // =================================================
-        // ROOM OBJECTS
-        // =================================================
+        this.window.setContent(
 
-        this.roomView.onObjectClick((id) => {
+            "Do not rely on a single source of information.\n\n" +
 
-            const object =
-                ROOM1_OBJECTS.find(
-                    obj => obj.id === id
-                );
+            "Compare customer feedback, operational evidence, " +
+            "and business assumptions before making your recommendation."
 
-            if (!object) {
+        );
 
-                console.warn(
-                    `Unknown room object: ${id}`
-                );
-
-                return;
-
-            }
-
-            console.log(
-                `Room object clicked: ${object.id}`
-            );
+    }
 
 
-            // ---------------------------------------------
-            // Check evidence
-            // ---------------------------------------------
+    // =====================================================
+    // OPEN PROGRESS
+    // =====================================================
 
-            if (!object.evidence) {
+    openProgress() {
 
-                console.warn(
-                    `No evidence assigned to room object: ${object.id}`
-                );
-
-                return;
-
-            }
+        const score =
+            this.scoreManager.getScore();
 
 
-            // ---------------------------------------------
-            // Open evidence
-            // ---------------------------------------------
+        const notebookStatus =
+            this.scoreManager.isNotebookSubmitted()
+                ? "Completed"
+                : "Not Completed";
 
-            this.evidenceViewer.openEvidence(
-                object.evidence
-            );
+
+        const assessmentStatus =
+            this.scoreManager.isAssessmentSubmitted()
+                ? "Completed"
+                : "Not Completed";
+
+
+        this.window.open({
+
+            title:
+                "Mission Progress"
 
         });
+
+
+        this.window.setContent(
+
+            "MISSION 01: PROBLEM DISCOVERY\n" +
+            "RESTAURANT\n\n" +
+
+            `Notebook: ${notebookStatus}\n` +
+
+            `Assessment: ${assessmentStatus}\n\n` +
+
+            `Current Score: ${score}`
+
+        );
+
+    }
+
+
+    // =====================================================
+    // HANDLE ROOM OBJECT CLICK
+    // =====================================================
+
+    handleRoomObjectClick(id) {
+
+        const object =
+            ROOM1_OBJECTS.find(
+
+                item =>
+                    item.id === id
+
+            );
+
+
+        // =================================================
+        // UNKNOWN OBJECT
+        // =================================================
+
+        if (!object) {
+
+            console.warn(
+                `Unknown Room 1 object: ${id}`
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            `Room 1 object clicked: ${object.id}`
+        );
+
+
+        // =================================================
+        // CHECK EVIDENCE
+        // =================================================
+
+        if (!object.evidence) {
+
+            console.warn(
+                `No evidence assigned to Room 1 object: ${object.id}`
+            );
+
+            return;
+
+        }
+
+
+        // =================================================
+        // OPEN EVIDENCE
+        // =================================================
+
+        this.evidenceViewer.openEvidence(
+
+            object.evidence
+
+        );
 
     }
 

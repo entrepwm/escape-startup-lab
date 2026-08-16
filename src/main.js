@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import "./style.css";
 
 // =====================================================
 // SCENES
@@ -14,6 +15,7 @@ import Room2Scene from "./scenes/Room2Scene";
 import Room3Scene from "./scenes/Room3Scene";
 import FinalResultsScene from "./scenes/FinalResultsScene";
 
+
 // =====================================================
 // CORE SYSTEMS
 // =====================================================
@@ -25,7 +27,8 @@ import ScoreManager from "./managers/ScoreManager";
 // GLOBAL SCORE MANAGER
 // =====================================================
 
-const scoreManager = new ScoreManager();
+const scoreManager =
+    new ScoreManager();
 
 
 // =====================================================
@@ -36,6 +39,10 @@ const config = {
 
     type: Phaser.AUTO,
 
+    // Mount Phaser inside:
+    // <div id="app"></div>
+    parent: "app",
+
     width: 1280,
 
     height: 720,
@@ -44,9 +51,11 @@ const config = {
 
     scale: {
 
-        mode: Phaser.Scale.RESIZE,
+        mode:
+            Phaser.Scale.RESIZE,
 
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        autoCenter:
+            Phaser.Scale.CENTER_BOTH
 
     },
 
@@ -77,14 +86,22 @@ const config = {
 // CREATE GAME
 // =====================================================
 
-const game = new Phaser.Game(config);
+const game =
+    new Phaser.Game(
+        config
+    );
 
 
 // =====================================================
 // ATTACH GLOBAL SYSTEM
 // =====================================================
 
-game.scoreManager = scoreManager;
+game.scoreManager =
+    scoreManager;
 
+
+// =====================================================
+// EXPORT
+// =====================================================
 
 export default game;
