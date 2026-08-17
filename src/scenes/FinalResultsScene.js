@@ -2624,7 +2624,7 @@ export default class FinalResultsScene extends Phaser.Scene {
     ) {
 
         if (
-            score >= 300
+            score >= 500
         ) {
 
             return {
@@ -2647,7 +2647,7 @@ export default class FinalResultsScene extends Phaser.Scene {
 
 
         if (
-            score >= 250
+            score >= 400
         ) {
 
             return {
@@ -2670,7 +2670,7 @@ export default class FinalResultsScene extends Phaser.Scene {
 
 
         if (
-            score >= 180
+            score >= 300
         ) {
 
             return {
@@ -2693,7 +2693,7 @@ export default class FinalResultsScene extends Phaser.Scene {
 
 
         if (
-            score >= 100
+            score >= 200
         ) {
 
             return {
