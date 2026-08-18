@@ -5,9 +5,9 @@ const ROOM1_OBJECTS = [
         label: "Customer",
         icon: "🙂",
 
-        // 25.0% across, 77.8% down
-        x: 0.2500,
-        y: 0.7778,
+        // Dining-area customer sprite
+        x: 0.250,
+        y: 0.705,
 
         evidence: "reviews"
     },
@@ -17,10 +17,9 @@ const ROOM1_OBJECTS = [
         label: "Employee",
         icon: "👨‍🍳",
 
-        // Corrected from the old x:1020 value,
-        // which was outside the 900-wide room reference.
-        x: 0.9530,
-        y: 0.4889,
+        // Far-right employee sprite
+        x: 0.952,
+        y: 0.475,
 
         evidence: "employee"
     },
@@ -30,8 +29,9 @@ const ROOM1_OBJECTS = [
         label: "Blackboard",
         icon: "📋",
 
-        x: 0.5556,
-        y: 0.1667,
+        // Menu / blackboard area above the service counter
+        x: 0.425,
+        y: 0.135,
 
         evidence: "sales"
     },
@@ -41,8 +41,9 @@ const ROOM1_OBJECTS = [
         label: "Kitchen",
         icon: "🚪",
 
-        x: 0.8778,
-        y: 0.3556,
+        // Kitchen prep island
+        x: 0.650,
+        y: 0.370,
 
         evidence: "kitchen_photo"
     },
@@ -52,8 +53,9 @@ const ROOM1_OBJECTS = [
         label: "Cashier",
         icon: "💰",
 
-        x: 0.6500,
-        y: 0.3667,
+        // Register / cashier area
+        x: 0.505,
+        y: 0.295,
 
         evidence: "receipt"
     }

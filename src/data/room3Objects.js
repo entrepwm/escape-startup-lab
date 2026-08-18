@@ -3,83 +3,83 @@ const ROOM3_OBJECTS = [
     {
         id: "finance_desk",
 
-        label:
-            "Investment Budget",
+        label: "Investment Budget",
 
-        icon:
-            "💰",
+        icon: "💰",
 
-        x: 0.1333,
-        y: 0.9111,
+        // Bottom-left report stacks
+        x: 0.135,
+        y: 0.750,
 
-        evidence:
-            "investment_budget"
+        evidence: "investment_budget"
+
     },
+
 
     {
         id: "operations_desk",
 
-        label:
-            "Operations Report",
+        label: "Operations Report",
 
-        icon:
-            "📋",
+        icon: "📋",
 
-        x: 0.2889,
-        y: 0.2778,
+        // Upper-left process / planning board
+        x: 0.290,
+        y: 0.280,
 
-        evidence:
-            "operations_report"
+        evidence: "operations_report"
+
     },
+
 
     {
         id: "technology_desk",
 
-        label:
-            "Technology Report",
+        label: "Technology Report",
 
-        icon:
-            "💻",
+        icon: "💻",
 
-        x: 0.5722,
-        y: 0.7444,
+        // Laptop / technology report on CEO desk
+        x: 0.480,
+        y: 0.565,
 
-        evidence:
-            "technology_report"
+        evidence: "technology_report"
+
     },
+
 
     {
         id: "hr_desk",
 
-        label:
-            "HR Report",
+        label: "HR Report",
 
-        icon:
-            "👥",
+        icon: "👥",
 
-        x: 0.9611,
-        y: 0.3667,
+        // Right-side binder / filing shelf
+        x: 0.815,
+        y: 0.320,
 
-        evidence:
-            "staffing_report"
+        evidence: "staffing_report"
+
     },
+
 
     {
         id: "strategy_dashboard",
 
-        label:
-            "Strategy Dashboard",
+        label: "Strategy Dashboard",
 
-        icon:
-            "📊",
+        icon: "📊",
 
-        x: 0.6556,
-        y: 0.2556,
+        // Large dark dashboard on back wall
+        x: 0.500,
+        y: 0.195,
 
-        evidence:
-            "strategy_comparison"
+        evidence: "strategy_comparison"
+
     }
 
 ];
+
 
 export default ROOM3_OBJECTS;
