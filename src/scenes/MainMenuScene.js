@@ -17,7 +17,7 @@ export default class MainMenuScene extends Phaser.Scene {
     create() {
 
         // =====================================================
-        // FIXED LOGICAL GAME SIZE
+        // FIXED LOGICAL SIZE
         // =====================================================
 
         const GAME_WIDTH =
@@ -89,17 +89,6 @@ export default class MainMenuScene extends Phaser.Scene {
         // START BUTTON POSITION
         // =====================================================
 
-        /*
-         * Fixed coordinates inside the 1280 × 720 game.
-         *
-         * Phaser.Scale.FIT scales the artwork and this
-         * hit area together on desktop, laptop and mobile.
-         *
-         * The button is intentionally a little larger than
-         * the visible green button so it is easy to tap
-         * with a finger.
-         */
-
         const buttonX =
             640;
 
@@ -114,7 +103,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
         // =====================================================
-        // SUBTLE HOVER BORDER
+        // HOVER / TOUCH BORDER
         // =====================================================
 
         const hoverBorder =
@@ -174,29 +163,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
         // =====================================================
-        // MOBILE INPUT SAFETY
-        // =====================================================
-
-        /*
-         * Phaser's pointer events handle both mouse and touch.
-         *
-         * This is intentionally a large invisible rectangle
-         * so the user does not need pixel-perfect tapping.
-         */
-
-        startButton.input.hitArea.setTo(
-
-            -buttonWidth / 2,
-            -buttonHeight / 2,
-
-            buttonWidth,
-            buttonHeight
-
-        );
-
-
-        // =====================================================
-        // HOVER IN
+        // DESKTOP HOVER
         // =====================================================
 
         startButton.on(
@@ -223,9 +190,6 @@ export default class MainMenuScene extends Phaser.Scene {
                     .setScale(
                         1
                     )
-                    .setAlpha(
-                        0
-                    )
                     .setStrokeStyle(
 
                         2,
@@ -250,7 +214,7 @@ export default class MainMenuScene extends Phaser.Scene {
                         1.03,
 
                     duration:
-                        220,
+                        180,
 
                     ease:
                         "Sine.Out"
@@ -263,7 +227,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
         // =====================================================
-        // HOVER OUT
+        // DESKTOP HOVER OUT
         // =====================================================
 
         startButton.on(
@@ -271,6 +235,13 @@ export default class MainMenuScene extends Phaser.Scene {
             "pointerout",
 
             () => {
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * Once the game is starting, do not allow
+                 * pointerout to interfere with anything.
+                 */
 
                 if (
                     this.isStarting
@@ -301,7 +272,7 @@ export default class MainMenuScene extends Phaser.Scene {
                         1,
 
                     duration:
-                        180,
+                        150,
 
                     ease:
                         "Sine.Out"
@@ -337,13 +308,15 @@ export default class MainMenuScene extends Phaser.Scene {
                 );
 
 
-                this.tweens.killTweensOf(
-                    hoverBorder
-                );
-
+                // =============================================
+                // VISUAL FEEDBACK
+                // =============================================
 
                 hoverBorder
                     .setAlpha(
+                        1
+                    )
+                    .setScale(
                         1
                     )
                     .setStrokeStyle(
@@ -355,65 +328,21 @@ export default class MainMenuScene extends Phaser.Scene {
                     );
 
 
-                this.tweens.add({
+                // =============================================
+                // START IMMEDIATELY
+                // =============================================
 
-                    targets:
-                        hoverBorder,
+                /*
+                 * IMPORTANT MOBILE FIX:
+                 *
+                 * Do NOT wait for a tween's onComplete.
+                 *
+                 * Mobile browsers can emit pointerout when
+                 * the finger is released, which may cancel
+                 * that tween.
+                 */
 
-                    scaleX:
-                        0.99,
-
-                    scaleY:
-                        0.96,
-
-                    duration:
-                        80,
-
-                    yoyo:
-                        true,
-
-                    ease:
-                        "Quad.Out",
-
-                    onComplete:
-                        () => {
-
-                            this.startGame();
-
-                        }
-
-                });
-
-            }
-
-        );
-
-
-        // =====================================================
-        // POINTER UP FALLBACK
-        // =====================================================
-
-        /*
-         * Some mobile browsers can occasionally behave more
-         * reliably with pointerup after a tap.
-         *
-         * This does not start twice because startGame()
-         * already checks this.isStarting.
-         */
-
-        startButton.on(
-
-            "pointerup",
-
-            () => {
-
-                if (
-                    !this.isStarting
-                ) {
-
-                    this.startGame();
-
-                }
+                this.startGame();
 
             }
 
@@ -454,53 +383,6 @@ export default class MainMenuScene extends Phaser.Scene {
             );
 
         }
-
-
-        // =====================================================
-        // VERY SUBTLE BACKGROUND MOTION
-        // =====================================================
-
-        /*
-         * Tiny zoom only.
-         *
-         * Keep this extremely subtle so the baked-in green
-         * button does not visibly move away from the fixed
-         * hit area.
-         */
-
-        const originalScaleX =
-            background.scaleX;
-
-        const originalScaleY =
-            background.scaleY;
-
-
-        this.tweens.add({
-
-            targets:
-                background,
-
-            scaleX:
-                originalScaleX *
-                1.001,
-
-            scaleY:
-                originalScaleY *
-                1.001,
-
-            duration:
-                8000,
-
-            yoyo:
-                true,
-
-            repeat:
-                -1,
-
-            ease:
-                "Sine.easeInOut"
-
-        });
 
 
         // =====================================================
