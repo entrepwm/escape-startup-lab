@@ -18,6 +18,37 @@ export default class IntroScene extends Phaser.Scene {
     create() {
 
         // =================================================
+        // FIXED LOGICAL GAME SIZE
+        // =================================================
+
+        /*
+         * IMPORTANT:
+         *
+         * The game is designed at 1280 × 720.
+         *
+         * Phaser.Scale.FIT scales this entire coordinate
+         * system up/down for different laptop and phone
+         * displays.
+         *
+         * Therefore we do NOT reposition EVA based on the
+         * physical browser size.
+         */
+
+        const GAME_WIDTH =
+            1280;
+
+        const GAME_HEIGHT =
+            720;
+
+
+        const CENTER_X =
+            GAME_WIDTH / 2;
+
+        const CENTER_Y =
+            GAME_HEIGHT / 2;
+
+
+        // =================================================
         // AUDIO
         // =================================================
 
@@ -29,10 +60,14 @@ export default class IntroScene extends Phaser.Scene {
                 this.sound.add(
                     "opening-music",
                     {
-                        loop: true,
-                        volume: 0.25
+                        loop:
+                            true,
+
+                        volume:
+                            0.25
                     }
                 );
+
 
             this.game.openingMusic.play();
 
@@ -46,8 +81,8 @@ export default class IntroScene extends Phaser.Scene {
         this.background =
             this.add.image(
 
-                this.scale.width / 2,
-                this.scale.height / 2,
+                CENTER_X,
+                CENTER_Y,
 
                 "intro-background"
 
@@ -56,8 +91,10 @@ export default class IntroScene extends Phaser.Scene {
 
         this.background
             .setDisplaySize(
-                this.scale.width,
-                this.scale.height
+
+                GAME_WIDTH,
+                GAME_HEIGHT
+
             )
             .setDepth(
                 -10
@@ -71,11 +108,11 @@ export default class IntroScene extends Phaser.Scene {
         this.overlay =
             this.add.rectangle(
 
-                this.scale.width / 2,
-                this.scale.height / 2,
+                CENTER_X,
+                CENTER_Y,
 
-                this.scale.width,
-                this.scale.height,
+                GAME_WIDTH,
+                GAME_HEIGHT,
 
                 0x000000,
                 0.10
@@ -93,7 +130,7 @@ export default class IntroScene extends Phaser.Scene {
         this.titleText =
             this.add.text(
 
-                this.scale.width / 2,
+                CENTER_X,
                 75,
 
                 "ESCAPE STARTUP LAB",
@@ -139,7 +176,7 @@ export default class IntroScene extends Phaser.Scene {
         this.subtitleText =
             this.add.text(
 
-                this.scale.width / 2,
+                CENTER_X,
                 125,
 
                 "Founder Assessment Initiated",
@@ -179,19 +216,30 @@ export default class IntroScene extends Phaser.Scene {
 
 
         // =================================================
-        // EVA TARGET POSITION
+        // EVA POSITION
         // =================================================
 
-        const dialogueTopY =
-            this.scale.height - 230;
-
+        /*
+         * EVA uses a FIXED position inside the 1280×720
+         * coordinate system.
+         *
+         * Old position was roughly:
+         *
+         *     y = 410
+         *
+         * With a 300px tall sprite that placed her head
+         * around y=110, directly beside the subtitle.
+         *
+         * Moving the bottom anchor to 455 puts her head
+         * lower while still keeping her above the
+         * dialogue box.
+         */
 
         this.evaTargetX =
-            this.scale.width / 2;
-
+            CENTER_X;
 
         this.evaTargetY =
-            dialogueTopY - 80;
+            455;
 
 
         // =================================================
@@ -202,7 +250,9 @@ export default class IntroScene extends Phaser.Scene {
             this.add.image(
 
                 this.evaTargetX,
-                this.evaTargetY + 35,
+
+                this.evaTargetY +
+                35,
 
                 "eva-idle"
 
@@ -231,6 +281,7 @@ export default class IntroScene extends Phaser.Scene {
 
 
         this.evaBaseScale =
+
             this.evaTargetHeight /
             this.eva.height;
 
@@ -345,6 +396,7 @@ export default class IntroScene extends Phaser.Scene {
         this.dialogueData = [
 
             {
+
                 speaker:
                     "EVA",
 
@@ -353,9 +405,11 @@ export default class IntroScene extends Phaser.Scene {
 
                 pose:
                     "wink"
+
             },
 
             {
+
                 speaker:
                     "EVA",
 
@@ -364,9 +418,11 @@ export default class IntroScene extends Phaser.Scene {
 
                 pose:
                     "confident"
+
             },
 
             {
+
                 speaker:
                     "EVA",
 
@@ -375,9 +431,11 @@ export default class IntroScene extends Phaser.Scene {
 
                 pose:
                     "present"
+
             },
 
             {
+
                 speaker:
                     "EVA",
 
@@ -386,9 +444,11 @@ export default class IntroScene extends Phaser.Scene {
 
                 pose:
                     "talk"
+
             },
 
             {
+
                 speaker:
                     "EVA",
 
@@ -397,9 +457,11 @@ export default class IntroScene extends Phaser.Scene {
 
                 pose:
                     "think"
+
             },
 
             {
+
                 speaker:
                     "EVA",
 
@@ -408,9 +470,11 @@ export default class IntroScene extends Phaser.Scene {
 
                 pose:
                     "confident"
+
             },
 
             {
+
                 speaker:
                     "EVA",
 
@@ -419,6 +483,7 @@ export default class IntroScene extends Phaser.Scene {
 
                 pose:
                     "wink"
+
             }
 
         ];
@@ -448,7 +513,10 @@ export default class IntroScene extends Phaser.Scene {
 
             },
 
-            (currentDialogue, index) => {
+            (
+                currentDialogue,
+                index
+            ) => {
 
                 this.currentDialogueIndex =
                     index;
@@ -470,18 +538,22 @@ export default class IntroScene extends Phaser.Scene {
 
 
         // =================================================
-        // RESPONSIVE RESIZE
+        // IMPORTANT:
+        // NO RESIZE LISTENER
         // =================================================
 
-        this.scale.on(
-
-            "resize",
-
-            this.handleResize,
-
-            this
-
-        );
+        /*
+         * Do NOT do:
+         *
+         * this.scale.on("resize", ...)
+         *
+         * Phaser.Scale.FIT scales the entire 1280×720
+         * game uniformly.
+         *
+         * That keeps EVA, titles, background and dialogue
+         * in exactly the same relative positions on every
+         * device.
+         */
 
 
         // =================================================
@@ -507,7 +579,9 @@ export default class IntroScene extends Phaser.Scene {
     // SET EVA POSE
     // =====================================================
 
-    setEvaPose(pose) {
+    setEvaPose(
+        pose
+    ) {
 
         if (
             !this.eva
@@ -542,7 +616,11 @@ export default class IntroScene extends Phaser.Scene {
 
 
         const texture =
-            textureMap[pose] ||
+
+            textureMap[
+                pose
+            ] ||
+
             "eva-idle";
 
 
@@ -553,8 +631,11 @@ export default class IntroScene extends Phaser.Scene {
         ) {
 
             console.warn(
+
                 `EVA texture '${texture}' not found.`
+
             );
+
 
             return;
 
@@ -571,15 +652,19 @@ export default class IntroScene extends Phaser.Scene {
 
 
         // =================================================
-        // RECALCULATE SCALE FOR THIS TEXTURE
+        // NORMALIZE SIZE
         // =================================================
 
         /*
-         * Some generated EVA images may have slightly
-         * different pixel dimensions.
+         * Every EVA pose may have slightly different source
+         * dimensions.
+         *
+         * They will all appear exactly 300 logical pixels
+         * tall.
          */
 
         this.evaBaseScale =
+
             this.evaTargetHeight /
             this.eva.height;
 
@@ -590,29 +675,15 @@ export default class IntroScene extends Phaser.Scene {
 
 
         // =================================================
-        // STOP ONLY THE PREVIOUS POSE POP TWEEN
+        // STOP PREVIOUS POSE POP
         // =================================================
-
-        /*
-         * IMPORTANT:
-         *
-         * We do NOT call:
-         *
-         * this.tweens.killTweensOf(this.eva)
-         *
-         * because EVA also has:
-         *
-         * - entrance tween
-         * - idle bob tween
-         *
-         * which must keep running.
-         */
 
         if (
             this.evaPoseTween
         ) {
 
             this.evaPoseTween.stop();
+
 
             this.evaPoseTween =
                 null;
@@ -631,10 +702,12 @@ export default class IntroScene extends Phaser.Scene {
                     this.eva,
 
                 scaleX:
-                    this.evaBaseScale * 1.025,
+                    this.evaBaseScale *
+                    1.025,
 
                 scaleY:
-                    this.evaBaseScale * 1.025,
+                    this.evaBaseScale *
+                    1.025,
 
                 duration:
                     110,
@@ -690,6 +763,7 @@ export default class IntroScene extends Phaser.Scene {
 
             this.evaIdleTween.stop();
 
+
             this.evaIdleTween =
                 null;
 
@@ -703,7 +777,8 @@ export default class IntroScene extends Phaser.Scene {
                     this.eva,
 
                 y:
-                    this.evaTargetY - 4,
+                    this.evaTargetY -
+                    4,
 
                 duration:
                     1400,
@@ -744,6 +819,7 @@ export default class IntroScene extends Phaser.Scene {
 
 
         const delay =
+
             Phaser.Math.Between(
                 4000,
                 7000
@@ -784,13 +860,16 @@ export default class IntroScene extends Phaser.Scene {
         const randomPoses = [
 
             "wink",
+
             "confident",
+
             "present"
 
         ];
 
 
         const pose =
+
             Phaser.Utils.Array.GetRandom(
                 randomPoses
             );
@@ -800,10 +879,6 @@ export default class IntroScene extends Phaser.Scene {
             pose
         );
 
-
-        // =================================================
-        // RETURN TO CURRENT DIALOGUE POSE
-        // =================================================
 
         if (
             this.evaReturnPoseTimer
@@ -833,13 +908,15 @@ export default class IntroScene extends Phaser.Scene {
 
 
                     const currentDialogue =
+
                         this.dialogueData[
 
                             Math.min(
 
                                 this.currentDialogueIndex,
 
-                                this.dialogueData.length - 1
+                                this.dialogueData.length -
+                                1
 
                             )
 
@@ -913,6 +990,7 @@ export default class IntroScene extends Phaser.Scene {
 
             this.evaPoseTween.stop();
 
+
             this.evaPoseTween =
                 null;
 
@@ -928,6 +1006,7 @@ export default class IntroScene extends Phaser.Scene {
         ) {
 
             this.evaIdleTween.stop();
+
 
             this.evaIdleTween =
                 null;
@@ -949,6 +1028,7 @@ export default class IntroScene extends Phaser.Scene {
 
 
             this.evaBaseScale =
+
                 this.evaTargetHeight /
                 this.eva.height;
 
@@ -973,7 +1053,8 @@ export default class IntroScene extends Phaser.Scene {
                 0,
 
             y:
-                this.eva.y + 20,
+                this.eva.y +
+                20,
 
             duration:
                 300,
@@ -1011,146 +1092,10 @@ export default class IntroScene extends Phaser.Scene {
 
 
     // =====================================================
-    // HANDLE RESIZE
-    // =====================================================
-
-    handleResize(gameSize) {
-
-        const width =
-            gameSize.width;
-
-
-        const height =
-            gameSize.height;
-
-
-        // =================================================
-        // BACKGROUND
-        // =================================================
-
-        this.background
-            .setPosition(
-
-                width / 2,
-                height / 2
-
-            )
-            .setDisplaySize(
-
-                width,
-                height
-
-            );
-
-
-        // =================================================
-        // OVERLAY
-        // =================================================
-
-        this.overlay
-            .setPosition(
-
-                width / 2,
-                height / 2
-
-            )
-            .setSize(
-
-                width,
-                height
-
-            );
-
-
-        // =================================================
-        // TITLE
-        // =================================================
-
-        this.titleText.setPosition(
-
-            width / 2,
-            75
-
-        );
-
-
-        // =================================================
-        // SUBTITLE
-        // =================================================
-
-        this.subtitleText.setPosition(
-
-            width / 2,
-            125
-
-        );
-
-
-        // =================================================
-        // EVA POSITION
-        // =================================================
-
-        const dialogueTopY =
-            height - 230;
-
-
-        this.evaTargetX =
-            width / 2;
-
-
-        this.evaTargetY =
-            dialogueTopY - 80;
-
-
-        if (
-            this.eva
-        ) {
-
-            this.eva.setX(
-                this.evaTargetX
-            );
-
-
-            /*
-             * Don't forcibly reset Y while the bob
-             * animation is active.
-             */
-
-            if (
-                !this.evaIdleTween
-            ) {
-
-                this.eva.setY(
-                    this.evaTargetY
-                );
-
-            }
-
-        }
-
-    }
-
-
-    // =====================================================
     // CLEANUP
     // =====================================================
 
     cleanupScene() {
-
-        // =================================================
-        // RESIZE LISTENER
-        // =================================================
-
-        this.scale.off(
-
-            "resize",
-
-            this.handleResize,
-
-            this
-
-        );
-
 
         // =================================================
         // ENTRANCE TWEEN
@@ -1161,6 +1106,7 @@ export default class IntroScene extends Phaser.Scene {
         ) {
 
             this.evaEntranceTween.stop();
+
 
             this.evaEntranceTween =
                 null;
@@ -1216,6 +1162,7 @@ export default class IntroScene extends Phaser.Scene {
 
             this.evaPoseTween.stop();
 
+
             this.evaPoseTween =
                 null;
 
@@ -1231,6 +1178,7 @@ export default class IntroScene extends Phaser.Scene {
         ) {
 
             this.evaIdleTween.stop();
+
 
             this.evaIdleTween =
                 null;

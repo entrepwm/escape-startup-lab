@@ -7,7 +7,7 @@ const ROOM1_OBJECTS = [
 
         // Dining-area customer sprite
         x: 0.250,
-        y: 0.705,
+        y: 0.645,
 
         evidence: "reviews"
     },
