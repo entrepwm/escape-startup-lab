@@ -29,6 +29,31 @@ export default class RoomView {
             height;
 
 
+        // =====================================================
+        // REFERENCE COORDINATE SYSTEM
+        // =====================================================
+
+        /*
+         * All room object coordinates in:
+         *
+         * room1Objects.js
+         * room2Objects.js
+         * room3Objects.js
+         *
+         * are treated as coordinates inside a virtual
+         * 900 × 450 room.
+         *
+         * We convert those coordinates to the currently
+         * displayed RoomView dimensions.
+         */
+
+        this.referenceWidth =
+            900;
+
+        this.referenceHeight =
+            450;
+
+
         this.objects =
             [];
 
@@ -193,7 +218,7 @@ export default class RoomView {
 
 
         // =================================================
-        // SUBTLE OVERLAY
+        // OVERLAY
         // =================================================
 
         this.overlay =
@@ -297,6 +322,58 @@ export default class RoomView {
 
 
     // =====================================================
+    // ROOM-LOCAL POSITION → DISPLAY POSITION
+    // =====================================================
+
+    convertRoomPosition(
+        x,
+        y
+    ) {
+
+        const scaleX =
+
+            this.width /
+            this.referenceWidth;
+
+
+        const scaleY =
+
+            this.height /
+            this.referenceHeight;
+
+
+        const left =
+
+            this.x -
+            this.width / 2;
+
+
+        const top =
+
+            this.y -
+            this.height / 2;
+
+
+        return {
+
+            x:
+                left +
+                x * scaleX,
+
+            y:
+                top +
+                y * scaleY,
+
+            scaleX,
+
+            scaleY
+
+        };
+
+    }
+
+
+    // =====================================================
     // ADD OBJECT
     // =====================================================
 
@@ -311,21 +388,22 @@ export default class RoomView {
     }) {
 
         // =================================================
-        // CONVERT ROOM-LOCAL COORDINATES TO WORLD
+        // SCALE ROOM COORDINATES
         // =================================================
 
-        const worldX =
+        const position =
+            this.convertRoomPosition(
+                x,
+                y
+            );
 
-            this.x -
-            this.width / 2 +
-            x;
+
+        const worldX =
+            position.x;
 
 
         const worldY =
-
-            this.y -
-            this.height / 2 +
-            y;
+            position.y;
 
 
         // =================================================
@@ -452,14 +530,17 @@ export default class RoomView {
 
 
         // =================================================
-        // GENERIC EVIDENCE HOTSPOT
+        // GENERIC HOTSPOT
         // =================================================
 
         this.addHotspot({
 
             id,
+
             label,
+
             worldX,
+
             worldY
 
         });
@@ -674,29 +755,22 @@ export default class RoomView {
 
 
         // =================================================
-        // MOBILE-FRIENDLY HITBOX
+        // TOUCH-FRIENDLY HITBOX
         // =================================================
 
-        /*
-         * Visual sprite stays unchanged.
-         *
-         * Only the invisible clickable area becomes larger
-         * on touch devices.
-         */
-
-        const characterMinWidth =
+        const minimumWidth =
             this.isTouchDevice
                 ? 120
                 : 75;
 
 
-        const characterHorizontalPadding =
+        const horizontalPadding =
             this.isTouchDevice
                 ? 50
                 : 20;
 
 
-        const characterVerticalPadding =
+        const verticalPadding =
             this.isTouchDevice
                 ? 60
                 : 30;
@@ -705,10 +779,10 @@ export default class RoomView {
         const hitboxWidth =
             Math.max(
 
-                characterMinWidth,
+                minimumWidth,
 
                 sprite.displayWidth +
-                characterHorizontalPadding
+                horizontalPadding
 
             );
 
@@ -716,7 +790,7 @@ export default class RoomView {
         const hitboxHeight =
 
             targetHeight +
-            characterVerticalPadding;
+            verticalPadding;
 
 
         const hitbox =
@@ -1201,17 +1275,15 @@ export default class RoomView {
 
 
         // =================================================
-        // MOBILE-FRIENDLY INVISIBLE HITBOX
+        // MOBILE-FRIENDLY HITBOX
         // =================================================
 
         /*
-         * Desktop:
-         * 140 × 110
+         * Desktop retains the current comfortable size.
          *
-         * Touch devices:
-         * 190 × 150
+         * Touch devices receive a larger invisible area.
          *
-         * The visible blue hotspot does NOT become larger.
+         * This DOES NOT change the visual marker size.
          */
 
         const hitboxWidth =
@@ -1471,6 +1543,11 @@ export default class RoomView {
                 );
 
 
+                this.scene.tweens.killTweensOf(
+                    objectContainer
+                );
+
+
                 this.scene.tweens.add({
 
                     targets:
@@ -1489,7 +1566,16 @@ export default class RoomView {
                         true,
 
                     ease:
-                        "Power2"
+                        "Power2",
+
+                    onComplete:
+                        () => {
+
+                            objectContainer.setScale(
+                                1
+                            );
+
+                        }
 
                 });
 
@@ -1594,7 +1680,7 @@ export default class RoomView {
 
 
         // =================================================
-        // CHARACTER STATE
+        // CHARACTER
         // =================================================
 
         if (
@@ -1630,7 +1716,7 @@ export default class RoomView {
 
 
         // =================================================
-        // HOTSPOT STATE
+        // HOTSPOT
         // =================================================
 
         object.marker.setStrokeStyle(
