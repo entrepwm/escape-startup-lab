@@ -15,6 +15,24 @@ export default class RoomView {
             scene;
 
 
+        // =====================================================
+        // FIXED ROOM GEOMETRY
+        // =====================================================
+
+        /*
+         * IMPORTANT:
+         *
+         * These values exist inside Phaser's fixed
+         * 1280 × 720 logical coordinate system.
+         *
+         * Phaser.Scale.FIT scales the ENTIRE canvas when
+         * the browser/device becomes smaller.
+         *
+         * Therefore:
+         *
+         * DO NOT scale x/y object coordinates again here.
+         */
+
         this.x =
             x;
 
@@ -30,29 +48,8 @@ export default class RoomView {
 
 
         // =====================================================
-        // REFERENCE COORDINATE SYSTEM
+        // OBJECT STORAGE
         // =====================================================
-
-        /*
-         * All room object coordinates in:
-         *
-         * room1Objects.js
-         * room2Objects.js
-         * room3Objects.js
-         *
-         * are treated as coordinates inside a virtual
-         * 900 × 450 room.
-         *
-         * We convert those coordinates to the currently
-         * displayed RoomView dimensions.
-         */
-
-        this.referenceWidth =
-            900;
-
-        this.referenceHeight =
-            450;
-
 
         this.objects =
             [];
@@ -71,7 +68,7 @@ export default class RoomView {
 
 
         // =====================================================
-        // TOUCH DEVICE DETECTION
+        // TOUCH DEVICE
         // =====================================================
 
         this.isTouchDevice =
@@ -82,7 +79,7 @@ export default class RoomView {
 
 
         // =====================================================
-        // ROOM CONTAINER
+        // ROOT CONTAINER
         // =====================================================
 
         this.container =
@@ -98,7 +95,7 @@ export default class RoomView {
 
 
     // =====================================================
-    // CREATE ROOM
+    // CREATE
     // =====================================================
 
     create() {
@@ -188,7 +185,7 @@ export default class RoomView {
     ) {
 
         // =================================================
-        // BACKGROUND
+        // IMAGE
         // =================================================
 
         this.background =
@@ -218,7 +215,7 @@ export default class RoomView {
 
 
         // =================================================
-        // OVERLAY
+        // SUBTLE OVERLAY
         // =================================================
 
         this.overlay =
@@ -322,51 +319,69 @@ export default class RoomView {
 
 
     // =====================================================
-    // ROOM-LOCAL POSITION → DISPLAY POSITION
+    // GET ROOM BOUNDS
     // =====================================================
 
-    convertRoomPosition(
-        x,
-        y
+    getRoomBounds() {
+
+        return {
+
+            left:
+                this.x -
+                this.width / 2,
+
+            right:
+                this.x +
+                this.width / 2,
+
+            top:
+                this.y -
+                this.height / 2,
+
+            bottom:
+                this.y +
+                this.height / 2
+
+        };
+
+    }
+
+
+    // =====================================================
+    // ROOM LOCAL → WORLD POSITION
+    // =====================================================
+
+    getWorldPosition(
+        localX,
+        localY
     ) {
 
-        const scaleX =
-
-            this.width /
-            this.referenceWidth;
+        const bounds =
+            this.getRoomBounds();
 
 
-        const scaleY =
-
-            this.height /
-            this.referenceHeight;
-
-
-        const left =
-
-            this.x -
-            this.width / 2;
-
-
-        const top =
-
-            this.y -
-            this.height / 2;
-
+        /*
+         * IMPORTANT:
+         *
+         * localX/localY are already authored for the room.
+         *
+         * There is NO:
+         *
+         * width / referenceWidth
+         * height / referenceHeight
+         *
+         * calculation here.
+         */
 
         return {
 
             x:
-                left +
-                x * scaleX,
+                bounds.left +
+                localX,
 
             y:
-                top +
-                y * scaleY,
-
-            scaleX,
-
-            scaleY
+                bounds.top +
+                localY
 
         };
 
@@ -388,11 +403,11 @@ export default class RoomView {
     }) {
 
         // =================================================
-        // SCALE ROOM COORDINATES
+        // EXACT POSITION
         // =================================================
 
         const position =
-            this.convertRoomPosition(
+            this.getWorldPosition(
                 x,
                 y
             );
@@ -530,7 +545,7 @@ export default class RoomView {
 
 
         // =================================================
-        // GENERIC HOTSPOT
+        // GENERIC EVIDENCE
         // =================================================
 
         this.addHotspot({
@@ -640,13 +655,24 @@ export default class RoomView {
 
 
         // =================================================
+        // LABEL POSITION
+        // =================================================
+
+        const labelOffset =
+            this.getSafeLabelOffset(
+                worldX,
+                180
+            );
+
+
+        // =================================================
         // LABEL BACKGROUND
         // =================================================
 
         const labelBackground =
             this.scene.add.rectangle(
 
-                0,
+                labelOffset,
                 30,
 
                 180,
@@ -678,7 +704,7 @@ export default class RoomView {
         const title =
             this.scene.add.text(
 
-                0,
+                labelOffset,
                 30,
 
                 label,
@@ -721,7 +747,7 @@ export default class RoomView {
         const prompt =
             this.scene.add.text(
 
-                0,
+                labelOffset,
                 54,
 
                 promptText,
@@ -757,6 +783,11 @@ export default class RoomView {
         // =================================================
         // TOUCH-FRIENDLY HITBOX
         // =================================================
+
+        /*
+         * This only changes the invisible clickable area.
+         * It DOES NOT change position.
+         */
 
         const minimumWidth =
             this.isTouchDevice
@@ -1153,13 +1184,31 @@ export default class RoomView {
 
 
         // =================================================
+        // SAFE LABEL POSITION
+        // =================================================
+
+        /*
+         * This only shifts the hover LABEL when an object
+         * is near the room's left/right edge.
+         *
+         * The hotspot itself never moves.
+         */
+
+        const labelOffset =
+            this.getSafeLabelOffset(
+                worldX,
+                210
+            );
+
+
+        // =================================================
         // LABEL BACKGROUND
         // =================================================
 
         const labelBackground =
             this.scene.add.rectangle(
 
-                0,
+                labelOffset,
                 48,
 
                 210,
@@ -1191,7 +1240,7 @@ export default class RoomView {
         const title =
             this.scene.add.text(
 
-                0,
+                labelOffset,
                 48,
 
                 label,
@@ -1241,7 +1290,7 @@ export default class RoomView {
         const prompt =
             this.scene.add.text(
 
-                0,
+                labelOffset,
                 76,
 
                 "Investigate",
@@ -1275,16 +1324,8 @@ export default class RoomView {
 
 
         // =================================================
-        // MOBILE-FRIENDLY HITBOX
+        // INVISIBLE HITBOX
         // =================================================
-
-        /*
-         * Desktop retains the current comfortable size.
-         *
-         * Touch devices receive a larger invisible area.
-         *
-         * This DOES NOT change the visual marker size.
-         */
 
         const hitboxWidth =
             this.isTouchDevice
@@ -1631,6 +1672,80 @@ export default class RoomView {
 
 
     // =====================================================
+    // SAFE HOVER LABEL OFFSET
+    // =====================================================
+
+    getSafeLabelOffset(
+        worldX,
+        labelWidth
+    ) {
+
+        const bounds =
+            this.getRoomBounds();
+
+
+        const halfLabelWidth =
+            labelWidth / 2;
+
+
+        const margin =
+            12;
+
+
+        // =================================================
+        // TOO CLOSE TO LEFT EDGE
+        // =================================================
+
+        if (
+            worldX -
+            halfLabelWidth <
+            bounds.left +
+            margin
+        ) {
+
+            return (
+
+                bounds.left +
+                margin +
+                halfLabelWidth
+
+            ) - worldX;
+
+        }
+
+
+        // =================================================
+        // TOO CLOSE TO RIGHT EDGE
+        // =================================================
+
+        if (
+            worldX +
+            halfLabelWidth >
+            bounds.right -
+            margin
+        ) {
+
+            return (
+
+                bounds.right -
+                margin -
+                halfLabelWidth
+
+            ) - worldX;
+
+        }
+
+
+        // =================================================
+        // CENTERED
+        // =================================================
+
+        return 0;
+
+    }
+
+
+    // =====================================================
     // MARK INVESTIGATED
     // =====================================================
 
@@ -1664,8 +1779,8 @@ export default class RoomView {
         const object =
             this.objects.find(
 
-                obj =>
-                    obj.id === id
+                item =>
+                    item.id === id
 
             );
 
@@ -1680,7 +1795,7 @@ export default class RoomView {
 
 
         // =================================================
-        // CHARACTER
+        // CHARACTER STATE
         // =================================================
 
         if (
@@ -1716,7 +1831,7 @@ export default class RoomView {
 
 
         // =================================================
-        // HOTSPOT
+        // HOTSPOT STATE
         // =================================================
 
         object.marker.setStrokeStyle(
@@ -1766,7 +1881,7 @@ export default class RoomView {
 
 
     // =====================================================
-    // CHECK INVESTIGATION
+    // IS INVESTIGATED
     // =====================================================
 
     isInvestigated(
@@ -1813,7 +1928,7 @@ export default class RoomView {
 
 
     // =====================================================
-    // CLICK EVENT
+    // OBJECT CLICK CALLBACK
     // =====================================================
 
     onObjectClick(
