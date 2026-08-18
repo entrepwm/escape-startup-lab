@@ -1,20 +1,41 @@
 import Phaser from "phaser";
 
+
 export default class RoomView {
 
-    constructor(scene, x, y, width, height) {
+    constructor(
+        scene,
+        x,
+        y,
+        width,
+        height
+    ) {
 
-        this.scene = scene;
+        this.scene =
+            scene;
 
-        this.x = x;
-        this.y = y;
 
-        this.width = width;
-        this.height = height;
+        this.x =
+            x;
 
-        this.objects = [];
+        this.y =
+            y;
 
-        this.callback = null;
+
+        this.width =
+            width;
+
+        this.height =
+            height;
+
+
+        this.objects =
+            [];
+
+
+        this.callback =
+            null;
+
 
         // =====================================================
         // INVESTIGATION TRACKING
@@ -22,6 +43,17 @@ export default class RoomView {
 
         this.investigatedObjects =
             new Set();
+
+
+        // =====================================================
+        // TOUCH DEVICE DETECTION
+        // =====================================================
+
+        this.isTouchDevice =
+            (
+                "ontouchstart" in window ||
+                navigator.maxTouchPoints > 0
+            );
 
 
         // =====================================================
@@ -51,7 +83,7 @@ export default class RoomView {
 
 
         // =================================================
-        // ROOM 1 — RESTAURANT
+        // ROOM 1
         // =================================================
 
         if (
@@ -65,13 +97,14 @@ export default class RoomView {
                 "room1-restaurant"
             );
 
+
             return;
 
         }
 
 
         // =================================================
-        // ROOM 2 — OFFICE
+        // ROOM 2
         // =================================================
 
         if (
@@ -85,12 +118,14 @@ export default class RoomView {
                 "room2-office"
             );
 
+
             return;
 
         }
 
+
         // =================================================
-        // ROOM 3 — CEO OFFICE
+        // ROOM 3
         // =================================================
 
         if (
@@ -104,10 +139,12 @@ export default class RoomView {
                 "room3-ceo"
             );
 
+
             return;
 
         }
-        
+
+
         // =================================================
         // FALLBACK
         // =================================================
@@ -121,10 +158,12 @@ export default class RoomView {
     // IMAGE BACKGROUND
     // =====================================================
 
-    createImageBackground(textureKey) {
+    createImageBackground(
+        textureKey
+    ) {
 
         // =================================================
-        // BACKGROUND IMAGE
+        // BACKGROUND
         // =================================================
 
         this.background =
@@ -143,7 +182,9 @@ export default class RoomView {
                 this.width,
                 this.height
             )
-            .setDepth(0);
+            .setDepth(
+                0
+            );
 
 
         this.container.add(
@@ -268,6 +309,10 @@ export default class RoomView {
         y
 
     }) {
+
+        // =================================================
+        // CONVERT ROOM-LOCAL COORDINATES TO WORLD
+        // =================================================
 
         const worldX =
 
@@ -429,19 +474,12 @@ export default class RoomView {
     addCharacterSprite({
 
         id,
-
         label,
-
         texture,
-
         promptText,
-
         investigatedText,
-
         worldX,
-
         worldY,
-
         targetHeight = 100
 
     }) {
@@ -636,8 +674,50 @@ export default class RoomView {
 
 
         // =================================================
-        // HITBOX
+        // MOBILE-FRIENDLY HITBOX
         // =================================================
+
+        /*
+         * Visual sprite stays unchanged.
+         *
+         * Only the invisible clickable area becomes larger
+         * on touch devices.
+         */
+
+        const characterMinWidth =
+            this.isTouchDevice
+                ? 120
+                : 75;
+
+
+        const characterHorizontalPadding =
+            this.isTouchDevice
+                ? 50
+                : 20;
+
+
+        const characterVerticalPadding =
+            this.isTouchDevice
+                ? 60
+                : 30;
+
+
+        const hitboxWidth =
+            Math.max(
+
+                characterMinWidth,
+
+                sprite.displayWidth +
+                characterHorizontalPadding
+
+            );
+
+
+        const hitboxHeight =
+
+            targetHeight +
+            characterVerticalPadding;
+
 
         const hitbox =
             this.scene.add.rectangle(
@@ -646,12 +726,9 @@ export default class RoomView {
 
                 -(targetHeight / 2),
 
-                Math.max(
-                    75,
-                    sprite.displayWidth + 20
-                ),
+                hitboxWidth,
 
-                targetHeight + 30,
+                hitboxHeight,
 
                 0xffffff,
                 0
@@ -685,7 +762,7 @@ export default class RoomView {
 
 
         // =================================================
-        // HOVER IN
+        // POINTER OVER
         // =================================================
 
         hitbox.on(
@@ -739,7 +816,7 @@ export default class RoomView {
 
 
         // =================================================
-        // HOVER OUT
+        // POINTER OUT
         // =================================================
 
         hitbox.on(
@@ -793,7 +870,7 @@ export default class RoomView {
 
 
         // =================================================
-        // CLICK
+        // CLICK / TOUCH
         // =================================================
 
         hitbox.on(
@@ -844,7 +921,9 @@ export default class RoomView {
                 });
 
 
-                if (this.callback) {
+                if (
+                    this.callback
+                ) {
 
                     this.callback(
                         id
@@ -1061,7 +1140,10 @@ export default class RoomView {
                         "center",
 
                     wordWrap: {
-                        width: 195
+
+                        width:
+                            195
+
                     }
 
                 }
@@ -1119,8 +1201,30 @@ export default class RoomView {
 
 
         // =================================================
-        // HITBOX
+        // MOBILE-FRIENDLY INVISIBLE HITBOX
         // =================================================
+
+        /*
+         * Desktop:
+         * 140 × 110
+         *
+         * Touch devices:
+         * 190 × 150
+         *
+         * The visible blue hotspot does NOT become larger.
+         */
+
+        const hitboxWidth =
+            this.isTouchDevice
+                ? 190
+                : 140;
+
+
+        const hitboxHeight =
+            this.isTouchDevice
+                ? 150
+                : 110;
+
 
         const hitbox =
             this.scene.add.rectangle(
@@ -1128,8 +1232,8 @@ export default class RoomView {
                 0,
                 0,
 
-                140,
-                110,
+                hitboxWidth,
+                hitboxHeight,
 
                 0xffffff,
                 0
@@ -1165,7 +1269,7 @@ export default class RoomView {
 
 
         // =================================================
-        // HOVER IN
+        // POINTER OVER
         // =================================================
 
         hitbox.on(
@@ -1245,7 +1349,7 @@ export default class RoomView {
 
 
         // =================================================
-        // HOVER OUT
+        // POINTER OUT
         // =================================================
 
         hitbox.on(
@@ -1353,7 +1457,7 @@ export default class RoomView {
 
 
         // =================================================
-        // CLICK
+        // CLICK / TOUCH
         // =================================================
 
         hitbox.on(
@@ -1390,7 +1494,9 @@ export default class RoomView {
                 });
 
 
-                if (this.callback) {
+                if (
+                    this.callback
+                ) {
 
                     this.callback(
                         id
@@ -1442,7 +1548,9 @@ export default class RoomView {
     // MARK INVESTIGATED
     // =====================================================
 
-    markInvestigated(id) {
+    markInvestigated(
+        id
+    ) {
 
         if (
             this.investigatedObjects.has(
@@ -1476,7 +1584,9 @@ export default class RoomView {
             );
 
 
-        if (!object) {
+        if (
+            !object
+        ) {
 
             return;
 
@@ -1500,9 +1610,7 @@ export default class RoomView {
 
 
             object.prompt.setColor(
-
                 "#65f0ad"
-
             );
 
 
@@ -1560,16 +1668,12 @@ export default class RoomView {
 
 
         object.prompt.setText(
-
             "Investigated ✓"
-
         );
 
 
         object.prompt.setColor(
-
             "#65f0ad"
-
         );
 
     }
@@ -1579,7 +1683,9 @@ export default class RoomView {
     // CHECK INVESTIGATION
     // =====================================================
 
-    isInvestigated(id) {
+    isInvestigated(
+        id
+    ) {
 
         return this.investigatedObjects.has(
             id
@@ -1595,9 +1701,7 @@ export default class RoomView {
     getInvestigatedObjects() {
 
         return Array.from(
-
             this.investigatedObjects
-
         );
 
     }
@@ -1626,7 +1730,9 @@ export default class RoomView {
     // CLICK EVENT
     // =====================================================
 
-    onObjectClick(callback) {
+    onObjectClick(
+        callback
+    ) {
 
         this.callback =
             callback;

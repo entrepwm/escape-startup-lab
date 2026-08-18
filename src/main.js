@@ -111,6 +111,99 @@ const game =
         config
     );
 
+// =====================================================
+// Scaling
+// =====================================================
+
+function updateOrientationWarning() {
+
+    let warning =
+        document.getElementById(
+            "orientation-warning"
+        );
+
+
+    if (
+        !warning
+    ) {
+
+        warning =
+            document.createElement(
+                "div"
+            );
+
+
+        warning.id =
+            "orientation-warning";
+
+
+        warning.textContent =
+            "Please rotate your device to landscape mode.";
+
+
+        Object.assign(
+
+            warning.style,
+
+            {
+                position: "fixed",
+                inset: "0",
+                display: "none",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                padding: "24px",
+                background: "#0d1828",
+                color: "#ffffff",
+                fontFamily: "monospace",
+                fontSize: "24px",
+                fontWeight: "bold",
+                zIndex: "99999"
+            }
+
+        );
+
+
+        document.body.appendChild(
+            warning
+        );
+
+    }
+
+
+    if (
+        window.innerHeight >
+        window.innerWidth
+    ) {
+
+        warning.style.display =
+            "flex";
+
+    }
+
+    else {
+
+        warning.style.display =
+            "none";
+
+    }
+
+}
+
+
+updateOrientationWarning();
+
+
+window.addEventListener(
+    "resize",
+    updateOrientationWarning
+);
+
+
+window.addEventListener(
+    "orientationchange",
+    updateOrientationWarning
+);
 
 // =====================================================
 // ATTACH GLOBAL SYSTEM
