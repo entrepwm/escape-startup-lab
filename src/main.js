@@ -37,22 +37,40 @@ const scoreManager =
 
 const config = {
 
-    type: Phaser.AUTO,
+    type:
+        Phaser.AUTO,
 
     // Mount Phaser inside:
     // <div id="app"></div>
-    parent: "app",
+    parent:
+        "app",
 
-    width: 1280,
+    // Fixed logical game resolution.
+    // Every scene, sprite, hotspot, and button
+    // is positioned relative to this 1280x720 space.
+    width:
+        1280,
 
-    height: 720,
+    height:
+        720,
 
-    backgroundColor: "#1d2638",
+    backgroundColor:
+        "#1d2638",
 
     scale: {
 
+        // =================================================
+        // IMPORTANT:
+        // Keep the internal game resolution fixed at
+        // 1280x720 and scale the entire canvas uniformly.
+        //
+        // This prevents sprites, hotspots, buttons, and
+        // room objects from shifting between different
+        // laptop / monitor resolutions.
+        // =================================================
+
         mode:
-            Phaser.Scale.RESIZE,
+            Phaser.Scale.FIT,
 
         autoCenter:
             Phaser.Scale.CENTER_BOTH
