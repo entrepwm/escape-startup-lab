@@ -1,105 +1,85 @@
 const ROOM3_OBJECTS = [
 
-    // =====================================================
-    // INVESTMENT BUDGET
-    // =====================================================
-
     {
         id: "finance_desk",
 
-        label: "Investment Budget",
+        label:
+            "Investment Budget",
 
-        icon: "💰",
+        icon:
+            "💰",
 
-        // Bottom-left report stacks
-        x: 120,
-        y: 410,
+        x: 0.1333,
+        y: 0.9111,
 
-        evidence: "investment_budget"
-
+        evidence:
+            "investment_budget"
     },
-
-
-    // =====================================================
-    // OPERATIONS REPORT
-    // =====================================================
 
     {
         id: "operations_desk",
 
-        label: "Operations Report",
+        label:
+            "Operations Report",
 
-        icon: "📋",
+        icon:
+            "📋",
 
-        // Upper-left planning / process board
-        x: 260,
-        y: 125,
+        x: 0.2889,
+        y: 0.2778,
 
-        evidence: "operations_report"
-
+        evidence:
+            "operations_report"
     },
-
-
-    // =====================================================
-    // TECHNOLOGY REPORT
-    // =====================================================
 
     {
         id: "technology_desk",
 
-        label: "Technology Report",
+        label:
+            "Technology Report",
 
-        icon: "💻",
+        icon:
+            "💻",
 
-        // Main CEO desk
-        x: 515,
-        y: 335,
+        x: 0.5722,
+        y: 0.7444,
 
-        evidence: "technology_report"
-
+        evidence:
+            "technology_report"
     },
-
-
-    // =====================================================
-    // HR REPORT
-    // =====================================================
 
     {
         id: "hr_desk",
 
-        label: "HR Report",
+        label:
+            "HR Report",
 
-        icon: "👥",
+        icon:
+            "👥",
 
-        // Right-side filing / binder shelf
-        x: 865,
-        y: 165,
+        x: 0.9611,
+        y: 0.3667,
 
-        evidence: "staffing_report"
-
+        evidence:
+            "staffing_report"
     },
-
-
-    // =====================================================
-    // STRATEGY DASHBOARD
-    // =====================================================
 
     {
         id: "strategy_dashboard",
 
-        label: "Strategy Dashboard",
+        label:
+            "Strategy Dashboard",
 
-        icon: "📊",
+        icon:
+            "📊",
 
-        // Large wall dashboard
-        x: 590,
-        y: 115,
+        x: 0.6556,
+        y: 0.2556,
 
-        evidence: "strategy_comparison"
-
+        evidence:
+            "strategy_comparison"
     }
 
 ];
-
 
 export default ROOM3_OBJECTS;

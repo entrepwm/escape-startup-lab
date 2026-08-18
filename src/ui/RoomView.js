@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 
-
 export default class RoomView {
 
     constructor(
@@ -11,65 +10,19 @@ export default class RoomView {
         height
     ) {
 
-        this.scene =
-            scene;
+        this.scene = scene;
 
+        this.x = x;
+        this.y = y;
 
-        // =====================================================
-        // FIXED ROOM GEOMETRY
-        // =====================================================
+        this.width = width;
+        this.height = height;
 
-        /*
-         * IMPORTANT:
-         *
-         * These values exist inside Phaser's fixed
-         * 1280 × 720 logical coordinate system.
-         *
-         * Phaser.Scale.FIT scales the ENTIRE canvas when
-         * the browser/device becomes smaller.
-         *
-         * Therefore:
-         *
-         * DO NOT scale x/y object coordinates again here.
-         */
-
-        this.x =
-            x;
-
-        this.y =
-            y;
-
-
-        this.width =
-            width;
-
-        this.height =
-            height;
-
-
-        // =====================================================
-        // OBJECT STORAGE
-        // =====================================================
-
-        this.objects =
-            [];
-
-
-        this.callback =
-            null;
-
-
-        // =====================================================
-        // INVESTIGATION TRACKING
-        // =====================================================
+        this.objects = [];
+        this.callback = null;
 
         this.investigatedObjects =
             new Set();
-
-
-        // =====================================================
-        // TOUCH DEVICE
-        // =====================================================
 
         this.isTouchDevice =
             (
@@ -77,36 +30,24 @@ export default class RoomView {
                 navigator.maxTouchPoints > 0
             );
 
-
-        // =====================================================
-        // ROOT CONTAINER
-        // =====================================================
-
         this.container =
             this.scene.add.container(
                 0,
                 0
             );
 
-
         this.create();
-
     }
 
 
     // =====================================================
-    // CREATE
+    // CREATE ROOM
     // =====================================================
 
     create() {
 
         const sceneKey =
             this.scene.scene.key;
-
-
-        // =================================================
-        // ROOM 1
-        // =================================================
 
         if (
             sceneKey === "Room1Scene" &&
@@ -119,15 +60,8 @@ export default class RoomView {
                 "room1-restaurant"
             );
 
-
             return;
-
         }
-
-
-        // =================================================
-        // ROOM 2
-        // =================================================
 
         if (
             sceneKey === "Room2Scene" &&
@@ -140,15 +74,8 @@ export default class RoomView {
                 "room2-office"
             );
 
-
             return;
-
         }
-
-
-        // =================================================
-        // ROOM 3
-        // =================================================
 
         if (
             sceneKey === "Room3Scene" &&
@@ -161,18 +88,10 @@ export default class RoomView {
                 "room3-ceo"
             );
 
-
             return;
-
         }
 
-
-        // =================================================
-        // FALLBACK
-        // =================================================
-
         this.createFallbackBackground();
-
     }
 
 
@@ -184,20 +103,12 @@ export default class RoomView {
         textureKey
     ) {
 
-        // =================================================
-        // IMAGE
-        // =================================================
-
         this.background =
             this.scene.add.image(
-
                 this.x,
                 this.y,
-
                 textureKey
-
             );
-
 
         this.background
             .setDisplaySize(
@@ -208,56 +119,35 @@ export default class RoomView {
                 0
             );
 
-
         this.container.add(
             this.background
         );
 
-
-        // =================================================
-        // SUBTLE OVERLAY
-        // =================================================
-
         this.overlay =
             this.scene.add.rectangle(
-
                 this.x,
                 this.y,
-
                 this.width,
                 this.height,
-
                 0x000000,
                 0.035
-
             );
-
 
         this.overlay.setDepth(
             1
         );
 
-
         this.container.add(
             this.overlay
         );
 
-
-        // =================================================
-        // BORDER
-        // =================================================
-
         this.border =
             this.scene.add.rectangle(
-
                 this.x,
                 this.y,
-
                 this.width,
                 this.height
-
             );
-
 
         this.border
             .setFillStyle(
@@ -273,33 +163,26 @@ export default class RoomView {
                 2
             );
 
-
         this.container.add(
             this.border
         );
-
     }
 
 
     // =====================================================
-    // FALLBACK BACKGROUND
+    // FALLBACK
     // =====================================================
 
     createFallbackBackground() {
 
         this.background =
             this.scene.add.rectangle(
-
                 this.x,
                 this.y,
-
                 this.width,
                 this.height,
-
                 0xf3f3f3
-
             );
-
 
         this.background
             .setStrokeStyle(
@@ -310,22 +193,19 @@ export default class RoomView {
                 0
             );
 
-
         this.container.add(
             this.background
         );
-
     }
 
 
     // =====================================================
-    // GET ROOM BOUNDS
+    // BOUNDS
     // =====================================================
 
     getRoomBounds() {
 
         return {
-
             left:
                 this.x -
                 this.width / 2,
@@ -341,50 +221,58 @@ export default class RoomView {
             bottom:
                 this.y +
                 this.height / 2
-
         };
-
     }
 
 
     // =====================================================
-    // ROOM LOCAL → WORLD POSITION
+    // NORMALIZED ROOM POSITION → GAME POSITION
+    // =====================================================
+    //
+    // x and y MUST be between 0 and 1.
+    //
+    // Example:
+    //
+    // x: 0.50 = center of room horizontally
+    // y: 0.25 = 25% down from top
+    //
+    // Because the marker and room artwork use the exact same
+    // room rectangle, their relationship never changes.
     // =====================================================
 
     getWorldPosition(
-        localX,
-        localY
+        normalizedX,
+        normalizedY
     ) {
 
         const bounds =
             this.getRoomBounds();
 
+        const safeX =
+            Phaser.Math.Clamp(
+                Number(normalizedX) || 0,
+                0,
+                1
+            );
 
-        /*
-         * IMPORTANT:
-         *
-         * localX/localY are already authored for the room.
-         *
-         * There is NO:
-         *
-         * width / referenceWidth
-         * height / referenceHeight
-         *
-         * calculation here.
-         */
+        const safeY =
+            Phaser.Math.Clamp(
+                Number(normalizedY) || 0,
+                0,
+                1
+            );
 
         return {
-
             x:
                 bounds.left +
-                localX,
+                this.width *
+                safeX,
 
             y:
                 bounds.top +
-                localY
-
+                this.height *
+                safeY
         };
-
     }
 
 
@@ -402,24 +290,17 @@ export default class RoomView {
 
     }) {
 
-        // =================================================
-        // EXACT POSITION
-        // =================================================
-
         const position =
             this.getWorldPosition(
                 x,
                 y
             );
 
-
         const worldX =
             position.x;
 
-
         const worldY =
             position.y;
-
 
         // =================================================
         // ROOM 1 CUSTOMER
@@ -433,34 +314,22 @@ export default class RoomView {
         ) {
 
             this.addCharacterSprite({
-
                 id,
-
                 label,
-
                 texture:
                     "customer-south",
-
                 promptText:
                     "View Interview",
-
                 investigatedText:
                     "Interview Viewed ✓",
-
                 worldX,
-
                 worldY,
-
                 targetHeight:
                     92
-
             });
 
-
             return;
-
         }
-
 
         // =================================================
         // ROOM 1 EMPLOYEE
@@ -474,97 +343,70 @@ export default class RoomView {
         ) {
 
             this.addCharacterSprite({
-
                 id,
-
                 label,
-
                 texture:
                     "employee-south",
-
                 promptText:
                     "Talk to Employee",
-
                 investigatedText:
                     "Interview Viewed ✓",
-
                 worldX,
-
                 worldY,
-
                 targetHeight:
                     105
-
             });
 
-
             return;
-
         }
-
 
         // =================================================
         // ROOM 2 MANAGER
         // =================================================
 
         if (
-            id === "manager" &&
+            (
+                id === "manager" ||
+                id === "manager_report"
+            ) &&
             this.scene.textures.exists(
                 "manager-south"
             )
         ) {
 
             this.addCharacterSprite({
-
                 id,
-
                 label,
-
                 texture:
                     "manager-south",
-
                 promptText:
                     "Talk to Manager",
-
                 investigatedText:
                     "Manager Interviewed ✓",
-
                 worldX,
-
                 worldY,
-
                 targetHeight:
                     105
-
             });
 
-
             return;
-
         }
 
-
         // =================================================
-        // GENERIC EVIDENCE
+        // GENERIC HOTSPOT
         // =================================================
 
         this.addHotspot({
-
             id,
-
             label,
-
             worldX,
-
             worldY
-
         });
-
     }
 
 
     // =====================================================
-    // CHARACTER SPRITE
+    // CHARACTER
     // =====================================================
 
     addCharacterSprite({
@@ -580,83 +422,49 @@ export default class RoomView {
 
     }) {
 
-        // =================================================
-        // CONTAINER
-        // =================================================
-
         const objectContainer =
             this.scene.add.container(
-
                 worldX,
                 worldY
-
             );
-
 
         objectContainer.setDepth(
             20
         );
 
-
-        // =================================================
-        // SPRITE
-        // =================================================
-
         const sprite =
             this.scene.add.image(
-
                 0,
                 0,
-
                 texture
-
             );
-
 
         sprite.setOrigin(
             0.5,
             1
         );
 
-
         const baseScale =
-
             targetHeight /
             sprite.height;
-
 
         sprite.setScale(
             baseScale
         );
 
-
-        // =================================================
-        // SHADOW
-        // =================================================
-
         const shadow =
             this.scene.add.ellipse(
-
                 0,
                 3,
-
                 45,
                 14,
-
                 0x000000,
                 0.28
-
             );
-
 
         shadow.setDepth(
             -1
         );
-
-
-        // =================================================
-        // LABEL POSITION
-        // =================================================
 
         const labelOffset =
             this.getSafeLabelOffset(
@@ -664,419 +472,252 @@ export default class RoomView {
                 180
             );
 
-
-        // =================================================
-        // LABEL BACKGROUND
-        // =================================================
-
         const labelBackground =
             this.scene.add.rectangle(
-
                 labelOffset,
                 30,
-
                 180,
                 36,
-
                 0x111827,
                 0.95
-
             );
-
 
         labelBackground
             .setStrokeStyle(
-
                 2,
                 0x4cc9f0,
                 1
-
             )
             .setVisible(
                 false
             );
-
-
-        // =================================================
-        // LABEL
-        // =================================================
 
         const title =
             this.scene.add.text(
-
                 labelOffset,
                 30,
-
                 label,
-
                 {
-
                     fontFamily:
                         "monospace",
-
                     fontSize:
                         "16px",
-
                     color:
                         "#ffffff",
-
                     fontStyle:
                         "bold",
-
                     align:
                         "center"
-
                 }
-
-            );
-
-
-        title
+            )
             .setOrigin(
                 0.5
             )
             .setVisible(
                 false
             );
-
-
-        // =================================================
-        // PROMPT
-        // =================================================
 
         const prompt =
             this.scene.add.text(
-
                 labelOffset,
                 54,
-
                 promptText,
-
                 {
-
                     fontFamily:
                         "monospace",
-
                     fontSize:
                         "12px",
-
                     color:
                         "#8ad8ff",
-
                     align:
                         "center"
-
                 }
-
-            );
-
-
-        prompt
+            )
             .setOrigin(
                 0.5
             )
             .setVisible(
                 false
             );
-
-
-        // =================================================
-        // TOUCH-FRIENDLY HITBOX
-        // =================================================
-
-        /*
-         * This only changes the invisible clickable area.
-         * It DOES NOT change position.
-         */
 
         const minimumWidth =
             this.isTouchDevice
                 ? 120
                 : 75;
 
-
         const horizontalPadding =
             this.isTouchDevice
                 ? 50
                 : 20;
-
 
         const verticalPadding =
             this.isTouchDevice
                 ? 60
                 : 30;
 
-
         const hitboxWidth =
             Math.max(
-
                 minimumWidth,
-
                 sprite.displayWidth +
                 horizontalPadding
-
             );
 
-
         const hitboxHeight =
-
             targetHeight +
             verticalPadding;
 
-
         const hitbox =
             this.scene.add.rectangle(
-
                 0,
-
                 -(targetHeight / 2),
-
                 hitboxWidth,
-
                 hitboxHeight,
-
                 0xffffff,
                 0
-
             );
 
-
         hitbox.setInteractive({
-
             useHandCursor:
                 true
-
         });
 
-
         objectContainer.add([
-
             shadow,
-
             sprite,
-
             labelBackground,
-
             title,
-
             prompt,
-
             hitbox
-
         ]);
 
-
-        // =================================================
-        // POINTER OVER
-        // =================================================
-
         hitbox.on(
-
             "pointerover",
-
             () => {
 
                 labelBackground.setVisible(
                     true
                 );
 
-
                 title.setVisible(
                     true
                 );
-
 
                 prompt.setVisible(
                     true
                 );
 
-
                 this.scene.tweens.killTweensOf(
                     sprite
                 );
 
-
                 this.scene.tweens.add({
-
                     targets:
                         sprite,
-
                     scaleX:
                         baseScale * 1.08,
-
                     scaleY:
                         baseScale * 1.08,
-
                     duration:
                         140,
-
                     ease:
                         "Power2"
-
                 });
-
             }
-
         );
 
-
-        // =================================================
-        // POINTER OUT
-        // =================================================
-
         hitbox.on(
-
             "pointerout",
-
             () => {
 
                 labelBackground.setVisible(
                     false
                 );
 
-
                 title.setVisible(
                     false
                 );
-
 
                 prompt.setVisible(
                     false
                 );
 
-
                 this.scene.tweens.killTweensOf(
                     sprite
                 );
 
-
                 this.scene.tweens.add({
-
                     targets:
                         sprite,
-
                     scaleX:
                         baseScale,
-
                     scaleY:
                         baseScale,
-
                     duration:
                         140,
-
                     ease:
                         "Power2"
-
                 });
-
             }
-
         );
 
-
-        // =================================================
-        // CLICK / TOUCH
-        // =================================================
-
         hitbox.on(
-
             "pointerdown",
-
             () => {
 
                 this.markInvestigated(
                     id
                 );
 
-
                 this.scene.tweens.killTweensOf(
                     sprite
                 );
 
-
                 this.scene.tweens.add({
-
                     targets:
                         sprite,
-
                     scaleX:
                         baseScale * 1.12,
-
                     scaleY:
                         baseScale * 1.12,
-
                     duration:
                         90,
-
                     yoyo:
                         true,
-
                     ease:
                         "Power2",
-
                     onComplete:
                         () => {
-
                             sprite.setScale(
                                 baseScale
                             );
-
                         }
-
                 });
 
-
-                if (
-                    this.callback
-                ) {
-
+                if (this.callback) {
                     this.callback(
                         id
                     );
-
                 }
-
             }
-
         );
 
-
-        // =================================================
-        // STORE CHARACTER
-        // =================================================
-
         this.objects.push({
-
             id,
-
             label,
-
             type:
                 "character",
-
             texture,
-
             container:
                 objectContainer,
-
             sprite,
-
             shadow,
-
             title,
-
             prompt,
-
             labelBackground,
-
             hitbox,
-
             investigatedText,
-
             baseScale
-
         });
-
     }
 
 
@@ -1093,106 +734,54 @@ export default class RoomView {
 
     }) {
 
-        // =================================================
-        // CONTAINER
-        // =================================================
-
         const objectContainer =
             this.scene.add.container(
-
                 worldX,
                 worldY
-
             );
-
 
         objectContainer.setDepth(
             20
         );
 
-
-        // =================================================
-        // GLOW
-        // =================================================
-
         const glow =
             this.scene.add.circle(
-
                 0,
                 0,
-
                 34,
-
                 0x4cc9f0,
                 0.08
-
             );
 
-
         glow.setStrokeStyle(
-
             2,
             0x4cc9f0,
             0.45
-
         );
-
-
-        // =================================================
-        // MARKER
-        // =================================================
 
         const marker =
             this.scene.add.circle(
-
                 0,
                 0,
-
                 10,
-
                 0xffffff,
                 0.85
-
             );
 
-
         marker.setStrokeStyle(
-
             3,
             0x1683e8,
             1
-
         );
-
-
-        // =================================================
-        // CENTER DOT
-        // =================================================
 
         const centerDot =
             this.scene.add.circle(
-
                 0,
                 0,
-
                 4,
-
                 0x1683e8,
                 1
-
             );
-
-
-        // =================================================
-        // SAFE LABEL POSITION
-        // =================================================
-
-        /*
-         * This only shifts the hover LABEL when an object
-         * is near the room's left/right edge.
-         *
-         * The hotspot itself never moves.
-         */
 
         const labelOffset =
             this.getSafeLabelOffset(
@@ -1200,291 +789,179 @@ export default class RoomView {
                 210
             );
 
-
-        // =================================================
-        // LABEL BACKGROUND
-        // =================================================
-
         const labelBackground =
             this.scene.add.rectangle(
-
                 labelOffset,
                 48,
-
                 210,
                 34,
-
                 0x111827,
                 0.94
-
             );
-
 
         labelBackground
             .setStrokeStyle(
-
                 2,
                 0x4cc9f0,
                 1
-
             )
             .setVisible(
                 false
             );
-
-
-        // =================================================
-        // LABEL
-        // =================================================
 
         const title =
             this.scene.add.text(
-
                 labelOffset,
                 48,
-
                 label,
-
                 {
-
                     fontFamily:
                         "monospace",
-
                     fontSize:
                         "14px",
-
                     color:
                         "#ffffff",
-
                     fontStyle:
                         "bold",
-
                     align:
                         "center",
-
                     wordWrap: {
-
                         width:
                             195
-
                     }
-
                 }
-
-            );
-
-
-        title
+            )
             .setOrigin(
                 0.5
             )
             .setVisible(
                 false
             );
-
-
-        // =================================================
-        // PROMPT
-        // =================================================
 
         const prompt =
             this.scene.add.text(
-
                 labelOffset,
                 76,
-
                 "Investigate",
-
                 {
-
                     fontFamily:
                         "monospace",
-
                     fontSize:
                         "12px",
-
                     color:
                         "#8ad8ff",
-
                     align:
                         "center"
-
                 }
-
-            );
-
-
-        prompt
+            )
             .setOrigin(
                 0.5
             )
             .setVisible(
                 false
             );
-
-
-        // =================================================
-        // INVISIBLE HITBOX
-        // =================================================
 
         const hitboxWidth =
             this.isTouchDevice
                 ? 190
                 : 140;
 
-
         const hitboxHeight =
             this.isTouchDevice
                 ? 150
                 : 110;
 
-
         const hitbox =
             this.scene.add.rectangle(
-
                 0,
                 0,
-
                 hitboxWidth,
                 hitboxHeight,
-
                 0xffffff,
                 0
-
             );
 
-
         hitbox.setInteractive({
-
             useHandCursor:
                 true
-
         });
 
-
         objectContainer.add([
-
             glow,
-
             marker,
-
             centerDot,
-
             labelBackground,
-
             title,
-
             prompt,
-
             hitbox
-
         ]);
 
-
-        // =================================================
-        // POINTER OVER
-        // =================================================
-
         hitbox.on(
-
             "pointerover",
-
             () => {
 
                 labelBackground.setVisible(
                     true
                 );
 
-
                 title.setVisible(
                     true
                 );
-
 
                 prompt.setVisible(
                     true
                 );
 
-
                 glow.setFillStyle(
-
                     0x4cc9f0,
                     0.22
-
                 );
 
-
                 glow.setStrokeStyle(
-
                     3,
                     0x69dcff,
                     1
-
                 );
 
-
                 this.scene.tweens.killTweensOf([
-
                     glow,
                     marker,
                     centerDot
-
                 ]);
 
-
                 this.scene.tweens.add({
-
                     targets: [
-
                         glow,
                         marker,
                         centerDot
-
                     ],
-
                     scaleX:
                         1.18,
-
                     scaleY:
                         1.18,
-
                     duration:
                         120,
-
                     ease:
                         "Power2"
-
                 });
-
             }
-
         );
 
-
-        // =================================================
-        // POINTER OUT
-        // =================================================
-
         hitbox.on(
-
             "pointerout",
-
             () => {
 
                 labelBackground.setVisible(
                     false
                 );
 
-
                 title.setVisible(
                     false
                 );
 
-
                 prompt.setVisible(
                     false
                 );
-
 
                 if (
                     this.investigatedObjects.has(
@@ -1493,186 +970,115 @@ export default class RoomView {
                 ) {
 
                     glow.setFillStyle(
-
                         0x1fc77a,
                         0.16
-
                     );
 
-
                     glow.setStrokeStyle(
-
                         2,
                         0x1fc77a,
                         0.8
-
                     );
-
                 }
-
                 else {
 
                     glow.setFillStyle(
-
                         0x4cc9f0,
                         0.08
-
                     );
 
-
                     glow.setStrokeStyle(
-
                         2,
                         0x4cc9f0,
                         0.45
-
                     );
-
                 }
 
-
                 this.scene.tweens.killTweensOf([
-
                     glow,
                     marker,
                     centerDot
-
                 ]);
 
-
                 this.scene.tweens.add({
-
                     targets: [
-
                         glow,
                         marker,
                         centerDot
-
                     ],
-
                     scaleX:
                         1,
-
                     scaleY:
                         1,
-
                     duration:
                         120,
-
                     ease:
                         "Power2"
-
                 });
-
             }
-
         );
 
-
-        // =================================================
-        // CLICK / TOUCH
-        // =================================================
-
         hitbox.on(
-
             "pointerdown",
-
             () => {
 
                 this.markInvestigated(
                     id
                 );
 
-
                 this.scene.tweens.killTweensOf(
                     objectContainer
                 );
 
-
                 this.scene.tweens.add({
-
                     targets:
                         objectContainer,
-
                     scaleX:
                         1.08,
-
                     scaleY:
                         1.08,
-
                     duration:
                         90,
-
                     yoyo:
                         true,
-
                     ease:
                         "Power2",
-
                     onComplete:
                         () => {
-
                             objectContainer.setScale(
                                 1
                             );
-
                         }
-
                 });
 
-
-                if (
-                    this.callback
-                ) {
-
+                if (this.callback) {
                     this.callback(
                         id
                     );
-
                 }
-
             }
-
         );
 
-
-        // =================================================
-        // STORE HOTSPOT
-        // =================================================
-
         this.objects.push({
-
             id,
-
             label,
-
             type:
                 "hotspot",
-
             container:
                 objectContainer,
-
             glow,
-
             marker,
-
             centerDot,
-
             title,
-
             prompt,
-
             labelBackground,
-
             hitbox
-
         });
-
     }
 
 
     // =====================================================
-    // SAFE HOVER LABEL OFFSET
+    // SAFE LABEL OFFSET
     // =====================================================
 
     getSafeLabelOffset(
@@ -1683,18 +1089,11 @@ export default class RoomView {
         const bounds =
             this.getRoomBounds();
 
-
         const halfLabelWidth =
             labelWidth / 2;
 
-
         const margin =
             12;
-
-
-        // =================================================
-        // TOO CLOSE TO LEFT EDGE
-        // =================================================
 
         if (
             worldX -
@@ -1704,19 +1103,11 @@ export default class RoomView {
         ) {
 
             return (
-
                 bounds.left +
                 margin +
                 halfLabelWidth
-
             ) - worldX;
-
         }
-
-
-        // =================================================
-        // TOO CLOSE TO RIGHT EDGE
-        // =================================================
 
         if (
             worldX +
@@ -1726,22 +1117,13 @@ export default class RoomView {
         ) {
 
             return (
-
                 bounds.right -
                 margin -
                 halfLabelWidth
-
             ) - worldX;
-
         }
 
-
-        // =================================================
-        // CENTERED
-        // =================================================
-
         return 0;
-
     }
 
 
@@ -1758,130 +1140,81 @@ export default class RoomView {
                 id
             )
         ) {
-
             return;
-
         }
-
 
         this.investigatedObjects.add(
             id
         );
 
-
-        console.log(
-
-            `Object investigated: ${id}`
-
-        );
-
-
         const object =
             this.objects.find(
-
                 item =>
                     item.id === id
-
             );
 
-
-        if (
-            !object
-        ) {
-
+        if (!object) {
             return;
-
         }
 
-
-        // =================================================
-        // CHARACTER STATE
-        // =================================================
-
         if (
-            object.type === "character"
+            object.type ===
+            "character"
         ) {
 
             object.prompt.setText(
-
                 object.investigatedText ||
                 "Investigated ✓"
-
             );
-
 
             object.prompt.setColor(
                 "#65f0ad"
             );
 
-
             object.labelBackground
                 .setStrokeStyle(
-
                     2,
                     0x19c77a,
                     1
-
                 );
 
-
             return;
-
         }
 
-
-        // =================================================
-        // HOTSPOT STATE
-        // =================================================
-
         object.marker.setStrokeStyle(
-
             3,
             0x19c77a,
             1
-
         );
-
 
         object.centerDot.setFillStyle(
-
             0x19c77a,
             1
-
         );
-
 
         object.glow.setFillStyle(
-
             0x19c77a,
             0.16
-
         );
 
-
         object.glow.setStrokeStyle(
-
             2,
             0x19c77a,
             0.85
-
         );
-
 
         object.prompt.setText(
             "Investigated ✓"
         );
 
-
         object.prompt.setColor(
             "#65f0ad"
         );
-
     }
 
 
     // =====================================================
-    // IS INVESTIGATED
+    // STATE
     // =====================================================
 
     isInvestigated(
@@ -1891,45 +1224,24 @@ export default class RoomView {
         return this.investigatedObjects.has(
             id
         );
-
     }
-
-
-    // =====================================================
-    // GET INVESTIGATED OBJECTS
-    // =====================================================
 
     getInvestigatedObjects() {
 
         return Array.from(
             this.investigatedObjects
         );
-
     }
-
-
-    // =====================================================
-    // ALL OBJECTS INVESTIGATED
-    // =====================================================
 
     allObjectsInvestigated() {
 
         return this.objects.every(
-
             object =>
-
                 this.investigatedObjects.has(
                     object.id
                 )
-
         );
-
     }
-
-
-    // =====================================================
-    // OBJECT CLICK CALLBACK
-    // =====================================================
 
     onObjectClick(
         callback
@@ -1937,7 +1249,5 @@ export default class RoomView {
 
         this.callback =
             callback;
-
     }
-
 }

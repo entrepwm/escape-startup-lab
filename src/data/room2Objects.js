@@ -6,13 +6,12 @@ const ROOM2_OBJECTS = [
         label:
             "Customer Interview Documents",
 
-        x: 250,
-        y: 430,
+        x: 0.2778,
+        y: 0.9556,
 
         evidence:
             "customer_interview"
     },
-
 
     {
         id: "customer_survey",
@@ -20,13 +19,12 @@ const ROOM2_OBJECTS = [
         label:
             "Customer Survey",
 
-        x: 470,
-        y: 430,
+        x: 0.5222,
+        y: 0.9556,
 
         evidence:
             "customer_survey"
     },
-
 
     {
         id: "sales_dashboard",
@@ -34,13 +32,12 @@ const ROOM2_OBJECTS = [
         label:
             "Sales Dashboard",
 
-        x: 700,
-        y: 430,
+        x: 0.7778,
+        y: 0.9556,
 
         evidence:
             "sales_dashboard"
     },
-
 
     {
         id: "online_reviews",
@@ -48,13 +45,14 @@ const ROOM2_OBJECTS = [
         label:
             "Online Reviews",
 
-        x: 930,
-        y: 430,
+        // Corrected from old x:930,
+        // which pushed the marker outside the room.
+        x: 0.9600,
+        y: 0.9556,
 
         evidence:
             "online_reviews"
     },
-
 
     {
         id: "manager_report",
@@ -62,14 +60,14 @@ const ROOM2_OBJECTS = [
         label:
             "Manager",
 
-        x: 915,
-        y: 145,
+        // Corrected from old x:915.
+        x: 0.9400,
+        y: 0.3222,
 
         evidence:
             "manager_report"
     }
 
 ];
-
 
 export default ROOM2_OBJECTS;
