@@ -16,17 +16,22 @@ export default class MainMenuScene extends Phaser.Scene {
 
     create() {
 
-        const width =
-            this.scale.width;
+        // =====================================================
+        // FIXED LOGICAL GAME SIZE
+        // =====================================================
 
-        const height =
-            this.scale.height;
+        const GAME_WIDTH =
+            1280;
 
-        const centerX =
-            width / 2;
+        const GAME_HEIGHT =
+            720;
 
-        const centerY =
-            height / 2;
+
+        const CENTER_X =
+            GAME_WIDTH / 2;
+
+        const CENTER_Y =
+            GAME_HEIGHT / 2;
 
 
         this.isStarting =
@@ -60,8 +65,8 @@ export default class MainMenuScene extends Phaser.Scene {
         const background =
             this.add.image(
 
-                centerX,
-                centerY,
+                CENTER_X,
+                CENTER_Y,
 
                 "main-menu-background"
 
@@ -70,8 +75,10 @@ export default class MainMenuScene extends Phaser.Scene {
 
         background
             .setDisplaySize(
-                width,
-                height
+
+                GAME_WIDTH,
+                GAME_HEIGHT
+
             )
             .setDepth(
                 0
@@ -83,34 +90,32 @@ export default class MainMenuScene extends Phaser.Scene {
         // =====================================================
 
         /*
-         * These proportions match the actual green
-         * Start Assessment button baked into the artwork.
+         * Fixed coordinates inside the 1280 × 720 game.
+         *
+         * Phaser.Scale.FIT scales the artwork and this
+         * hit area together on desktop, laptop and mobile.
+         *
+         * The button is intentionally a little larger than
+         * the visible green button so it is easy to tap
+         * with a finger.
          */
 
         const buttonX =
-            centerX;
+            640;
 
         const buttonY =
-            height * 0.572;
+            425;
 
         const buttonWidth =
-            width * 0.35;
+            470;
 
         const buttonHeight =
-            height * 0.14;
+            105;
 
 
         // =====================================================
         // SUBTLE HOVER BORDER
         // =====================================================
-
-        /*
-         * No large filled rectangle.
-         *
-         * The artwork already contains the green glow.
-         * This border simply gives extra feedback when
-         * the player hovers over the button.
-         */
 
         const hoverBorder =
             this.add.rectangle(
@@ -141,7 +146,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
         // =====================================================
-        // INVISIBLE CLICK AREA
+        // INVISIBLE CLICK / TOUCH AREA
         // =====================================================
 
         const startButton =
@@ -164,8 +169,30 @@ export default class MainMenuScene extends Phaser.Scene {
 
             })
             .setDepth(
-                10
+                20
             );
+
+
+        // =====================================================
+        // MOBILE INPUT SAFETY
+        // =====================================================
+
+        /*
+         * Phaser's pointer events handle both mouse and touch.
+         *
+         * This is intentionally a large invisible rectangle
+         * so the user does not need pixel-perfect tapping.
+         */
+
+        startButton.input.hitArea.setTo(
+
+            -buttonWidth / 2,
+            -buttonHeight / 2,
+
+            buttonWidth,
+            buttonHeight
+
+        );
 
 
         // =====================================================
@@ -287,7 +314,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
         // =====================================================
-        // CLICK
+        // CLICK / TOUCH
         // =====================================================
 
         startButton.on(
@@ -306,7 +333,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
                 console.log(
-                    "Start Assessment clicked"
+                    "Start Assessment pressed"
                 );
 
 
@@ -363,6 +390,37 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
         // =====================================================
+        // POINTER UP FALLBACK
+        // =====================================================
+
+        /*
+         * Some mobile browsers can occasionally behave more
+         * reliably with pointerup after a tap.
+         *
+         * This does not start twice because startGame()
+         * already checks this.isStarting.
+         */
+
+        startButton.on(
+
+            "pointerup",
+
+            () => {
+
+                if (
+                    !this.isStarting
+                ) {
+
+                    this.startGame();
+
+                }
+
+            }
+
+        );
+
+
+        // =====================================================
         // KEYBOARD SUPPORT
         // =====================================================
 
@@ -403,10 +461,11 @@ export default class MainMenuScene extends Phaser.Scene {
         // =====================================================
 
         /*
-         * Keep this extremely subtle.
+         * Tiny zoom only.
          *
-         * A large zoom would make the invisible button
-         * stop aligning with the artwork.
+         * Keep this extremely subtle so the baked-in green
+         * button does not visibly move away from the fixed
+         * hit area.
          */
 
         const originalScaleX =
@@ -422,10 +481,12 @@ export default class MainMenuScene extends Phaser.Scene {
                 background,
 
             scaleX:
-                originalScaleX * 1.002,
+                originalScaleX *
+                1.001,
 
             scaleY:
-                originalScaleY * 1.002,
+                originalScaleY *
+                1.001,
 
             duration:
                 8000,
@@ -479,7 +540,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
 
         console.log(
-            "Starting IntroScene..."
+            "Starting TeamNameScene..."
         );
 
 
