@@ -11,40 +11,76 @@ export default class NotebookViewer {
         onSubmit
     ) {
 
-        this.scene =
-            scene;
-
-        this.window =
-            window;
-
-        this.scoreManager =
-            scoreManager;
-
-        this.onSubmit =
-            onSubmit;
+        this.scene = scene;
+        this.window = window;
+        this.scoreManager = scoreManager;
+        this.onSubmit = onSubmit;
 
 
         // =====================================================
         // NORMALIZE NOTEBOOK DATA
         // =====================================================
 
+        this.notebookData =
+            this.normalizeNotebookData(
+                notebookData
+            );
+
+
+        console.log(
+            "NotebookViewer questions loaded:",
+            this.notebookData.length,
+            this.notebookData
+        );
+
+
+        // =====================================================
+        // STATE
+        // =====================================================
+
+        this.answers = {};
+
+        this.currentPage = 0;
+
+        this.questionsPerPage = 1;
+
+        this.submitted = false;
+
+        this.warningMessage = null;
+
+
+        // =====================================================
+        // LAYOUT
+        // =====================================================
+
+        this.contentWidth = 410;
+
         /*
-         * Supported formats:
+         * Area khusus pertanyaan + pilihan.
          *
-         * 1. Direct array
-         *
-         * [
-         *     { id, question, options, correctAnswer }
-         * ]
-         *
-         * 2. Object wrapper
-         *
-         * {
-         *     questions: [
-         *         { id, question, options, correctAnswer }
-         *     ]
-         * }
+         * Footer berada di luar area ini.
          */
+
+        this.maxQuestionHeight = 310;
+
+        this.dividerY = 330;
+
+        this.pageIndicatorY = 345;
+
+        this.navigationY = 375;
+
+    }
+
+
+    // =====================================================
+    // NORMALIZE NOTEBOOK DATA
+    // =====================================================
+
+    normalizeNotebookData(
+        notebookData
+    ) {
+
+        // Direct array
 
         if (
             Array.isArray(
@@ -52,90 +88,87 @@ export default class NotebookViewer {
             )
         ) {
 
-            this.notebookData =
-                notebookData;
+            return notebookData;
 
         }
-        else if (
-            notebookData &&
+
+
+        if (
+            !notebookData ||
+            typeof notebookData !==
+                "object"
+        ) {
+
+            console.error(
+                "Invalid notebook data:",
+                notebookData
+            );
+
+
+            return [];
+
+        }
+
+
+        // Common wrapper formats
+
+        if (
             Array.isArray(
                 notebookData.questions
             )
         ) {
 
-            this.notebookData =
-                notebookData.questions;
-
-        }
-        else {
-
-            console.error(
-                "NotebookViewer menerima format notebook yang tidak valid:",
-                notebookData
-            );
-
-
-            this.notebookData =
-                [];
+            return notebookData.questions;
 
         }
 
 
-        console.log(
-            "NotebookViewer loaded questions:",
-            this.notebookData.length
+        if (
+            Array.isArray(
+                notebookData.items
+            )
+        ) {
+
+            return notebookData.items;
+
+        }
+
+
+        if (
+            Array.isArray(
+                notebookData.notebook
+            )
+        ) {
+
+            return notebookData.notebook;
+
+        }
+
+
+        if (
+            Array.isArray(
+                notebookData.data
+            )
+        ) {
+
+            return notebookData.data;
+
+        }
+
+
+        console.error(
+            "NotebookViewer could not find question array:",
+            notebookData
         );
 
 
-        // =====================================================
-        // NOTEBOOK STATE
-        // =====================================================
-
-        this.answers =
-            {};
-
-        this.currentPage =
-            0;
-
-        this.questionsPerPage =
-            1;
-
-        this.submitted =
-            false;
-
-
-        // =====================================================
-        // LAYOUT
-        // =====================================================
-
-        this.contentWidth =
-            410;
-
-        this.maxQuestionHeight =
-            340;
-
-        this.dividerY =
-            352;
-
-        this.pageIndicatorY =
-            364;
-
-        this.navigationY =
-            392;
-
-
-        // =====================================================
-        // WARNING STATE
-        // =====================================================
-
-        this.warningMessage =
-            null;
+        return [];
 
     }
 
 
     // =====================================================
-    // OPEN NOTEBOOK
+    // OPEN
     // =====================================================
 
     open() {
@@ -155,7 +188,7 @@ export default class NotebookViewer {
 
 
         // =================================================
-        // VALIDATE DATA
+        // VALIDATE NOTEBOOK
         // =================================================
 
         if (
@@ -165,23 +198,24 @@ export default class NotebookViewer {
             this.notebookData.length === 0
         ) {
 
-            console.error(
-                "Notebook contains no questions."
-            );
-
-
             this.window.open({
 
                 title:
-                    "Catatan Investigasi"
+                    "Investigation Notebook"
 
             });
 
 
             this.window.setContent(
 
-                "Data pertanyaan Catatan Investigasi tidak tersedia."
+                "Notebook data could not be loaded.\n\n" +
+                "Please check the browser console."
 
+            );
+
+
+            console.error(
+                "Notebook opened with zero questions."
             );
 
 
@@ -190,18 +224,15 @@ export default class NotebookViewer {
         }
 
 
-        this.currentPage =
-            0;
+        this.currentPage = 0;
 
-
-        this.warningMessage =
-            null;
+        this.warningMessage = null;
 
 
         this.window.open({
 
             title:
-                "Catatan Investigasi"
+                "Investigation Notebook"
 
         });
 
@@ -217,30 +248,14 @@ export default class NotebookViewer {
 
     renderPage() {
 
-        // =================================================
-        // VALIDATE NOTEBOOK
-        // =================================================
-
         if (
-            !Array.isArray(
-                this.notebookData
-            ) ||
             this.notebookData.length === 0
         ) {
-
-            console.error(
-                "Cannot render notebook: no questions."
-            );
-
 
             return;
 
         }
 
-
-        // =================================================
-        // CLEAR OLD CONTENT
-        // =================================================
 
         this.window.clearContent();
 
@@ -272,8 +287,7 @@ export default class NotebookViewer {
         );
 
 
-        let currentY =
-            0;
+        let currentY = 0;
 
 
         // =================================================
@@ -295,8 +309,6 @@ export default class NotebookViewer {
             );
 
 
-        // Prevent invalid page position
-
         if (
             this.currentPage >=
             totalPages
@@ -312,8 +324,7 @@ export default class NotebookViewer {
             this.currentPage < 0
         ) {
 
-            this.currentPage =
-                0;
+            this.currentPage = 0;
 
         }
 
@@ -368,12 +379,12 @@ export default class NotebookViewer {
                     0,
                     currentY,
 
-                    `PERTANYAAN ${i + 1}`,
+                    `QUESTION ${i + 1}`,
 
                     {
 
                         fontSize:
-                            "13px",
+                            "12px",
 
                         fontFamily:
                             "monospace",
@@ -395,7 +406,8 @@ export default class NotebookViewer {
 
 
             currentY +=
-                questionNumber.height + 8;
+                questionNumber.height +
+                6;
 
 
             // =================================================
@@ -409,12 +421,12 @@ export default class NotebookViewer {
                     currentY,
 
                     question.question ||
-                    "Pertanyaan tidak tersedia.",
+                    "Question unavailable.",
 
                     {
 
                         fontSize:
-                            "20px",
+                            "18px",
 
                         fontFamily:
                             "monospace",
@@ -433,7 +445,7 @@ export default class NotebookViewer {
                         },
 
                         lineSpacing:
-                            2
+                            1
 
                     }
 
@@ -446,7 +458,8 @@ export default class NotebookViewer {
 
 
             currentY +=
-                questionText.height + 16;
+                questionText.height +
+                13;
 
 
             // =================================================
@@ -481,7 +494,8 @@ export default class NotebookViewer {
 
 
                     currentY +=
-                        optionText.height + 8;
+                        optionText.height +
+                        6;
 
                 }
 
@@ -491,7 +505,7 @@ export default class NotebookViewer {
 
 
         // =================================================
-        // AUTO-COMPACT LONG QUESTIONS
+        // AUTO SCALE QUESTION AREA
         // =================================================
 
         if (
@@ -505,11 +519,18 @@ export default class NotebookViewer {
                 currentY;
 
 
+            /*
+             * Previous version stopped at 0.80.
+             *
+             * That was too large for long Indonesian
+             * questions.
+             */
+
             const safeScale =
                 Math.max(
 
                     calculatedScale,
-                    0.80
+                    0.50
 
                 );
 
@@ -522,7 +543,7 @@ export default class NotebookViewer {
 
 
         // =================================================
-        // FIXED FOOTER DIVIDER
+        // DIVIDER
         // =================================================
 
         const divider =
@@ -560,7 +581,7 @@ export default class NotebookViewer {
 
 
         // =================================================
-        // OPTIONAL WARNING
+        // WARNING
         // =================================================
 
         if (
@@ -571,7 +592,7 @@ export default class NotebookViewer {
                 this.scene.add.text(
 
                     this.contentWidth / 2,
-                    this.dividerY - 17,
+                    this.dividerY - 8,
 
                     this.warningMessage,
 
@@ -581,7 +602,7 @@ export default class NotebookViewer {
                             "monospace",
 
                         fontSize:
-                            "12px",
+                            "11px",
 
                         fontStyle:
                             "bold",
@@ -633,7 +654,7 @@ export default class NotebookViewer {
                         "monospace",
 
                     fontSize:
-                        "14px",
+                        "13px",
 
                     color:
                         "#555555"
@@ -653,7 +674,7 @@ export default class NotebookViewer {
 
 
         // =================================================
-        // PREVIOUS BUTTON
+        // PREVIOUS
         // =================================================
 
         if (
@@ -681,12 +702,9 @@ export default class NotebookViewer {
 
                 () => {
 
-                    this.warningMessage =
-                        null;
-
+                    this.warningMessage = null;
 
                     this.currentPage--;
-
 
                     this.renderPage();
 
@@ -703,7 +721,7 @@ export default class NotebookViewer {
 
 
         // =================================================
-        // NEXT BUTTON
+        // NEXT
         // =================================================
 
         if (
@@ -732,12 +750,9 @@ export default class NotebookViewer {
 
                 () => {
 
-                    this.warningMessage =
-                        null;
-
+                    this.warningMessage = null;
 
                     this.currentPage++;
-
 
                     this.renderPage();
 
@@ -754,7 +769,7 @@ export default class NotebookViewer {
 
 
         // =================================================
-        // SUBMIT BUTTON
+        // SUBMIT
         // =================================================
 
         if (
@@ -813,11 +828,6 @@ export default class NotebookViewer {
 
                 () => {
 
-                    console.log(
-                        "SUBMIT NOTEBOOK CLICKED"
-                    );
-
-
                     this.submitNotebook();
 
                 }
@@ -833,7 +843,7 @@ export default class NotebookViewer {
 
 
         // =================================================
-        // SET WINDOW CONTENT
+        // SET CONTENT
         // =================================================
 
         this.window.setContent(
@@ -854,23 +864,17 @@ export default class NotebookViewer {
     ) {
 
         const isSelected =
-            () => {
+            () =>
 
-                return (
-
-                    this.answers[
-                        question.id
-                    ] === option
-
-                );
-
-            };
+                this.answers[
+                    question.id
+                ] === option;
 
 
         const optionText =
             this.scene.add.text(
 
-                15,
+                12,
                 y,
 
                 isSelected()
@@ -883,7 +887,7 @@ export default class NotebookViewer {
                         "monospace",
 
                     fontSize:
-                        "17px",
+                        "15px",
 
                     color:
                         isSelected()
@@ -893,12 +897,12 @@ export default class NotebookViewer {
                     wordWrap: {
 
                         width:
-                            this.contentWidth - 15
+                            this.contentWidth - 12
 
                     },
 
                     lineSpacing:
-                        2
+                        1
 
                 }
 
@@ -959,20 +963,12 @@ export default class NotebookViewer {
 
             () => {
 
-                console.log(
-
-                    `Answer selected: ${question.id} = ${option}`
-
-                );
-
-
                 this.answers[
                     question.id
                 ] = option;
 
 
-                this.warningMessage =
-                    null;
+                this.warningMessage = null;
 
 
                 this.renderPage();
@@ -1013,7 +1009,7 @@ export default class NotebookViewer {
                         "monospace",
 
                     fontSize:
-                        "16px",
+                        "15px",
 
                     color:
                         color,
@@ -1084,8 +1080,7 @@ export default class NotebookViewer {
 
     getCorrectAnswers() {
 
-        const correctAnswers =
-            {};
+        const correctAnswers = {};
 
 
         this.notebookData.forEach(
@@ -1131,15 +1126,6 @@ export default class NotebookViewer {
         );
 
 
-        console.log(
-
-            "Correct notebook answers:",
-
-            correctAnswers
-
-        );
-
-
         return correctAnswers;
 
     }
@@ -1155,45 +1141,10 @@ export default class NotebookViewer {
             this.submitted
         ) {
 
-            console.warn(
-                "Notebook has already been submitted."
-            );
-
-
             return;
 
         }
 
-
-        if (
-            !Array.isArray(
-                this.notebookData
-            ) ||
-            this.notebookData.length === 0
-        ) {
-
-            console.error(
-                "Cannot submit an empty notebook."
-            );
-
-
-            return;
-
-        }
-
-
-        console.log(
-
-            "Notebook answers:",
-
-            this.answers
-
-        );
-
-
-        // =================================================
-        // CHECK FOR UNANSWERED QUESTIONS
-        // =================================================
 
         const unanswered =
             this.notebookData.filter(
@@ -1211,11 +1162,6 @@ export default class NotebookViewer {
             unanswered.length > 0
         ) {
 
-            console.warn(
-                "Notebook incomplete."
-            );
-
-
             this.warningMessage =
 
                 `Answer all questions before submitting (${unanswered.length} remaining).`;
@@ -1229,17 +1175,9 @@ export default class NotebookViewer {
         }
 
 
-        // =================================================
-        // GET CORRECT ANSWERS
-        // =================================================
-
         const correctAnswers =
             this.getCorrectAnswers();
 
-
-        // =================================================
-        // VALIDATE ANSWER CONFIGURATION
-        // =================================================
 
         if (
 
@@ -1261,7 +1199,7 @@ export default class NotebookViewer {
 
             this.warningMessage =
 
-                "Notebook configuration error: missing correct answers.";
+                "Notebook configuration error.";
 
 
             this.renderPage();
@@ -1272,12 +1210,7 @@ export default class NotebookViewer {
         }
 
 
-        // =================================================
-        // CALCULATE SCORE
-        // =================================================
-
-        let points =
-            0;
+        let points = 0;
 
 
         if (
@@ -1297,46 +1230,11 @@ export default class NotebookViewer {
         }
 
 
-        console.log(
+        this.submitted = true;
 
-            `Notebook score: +${points}`
-
-        );
-
-
-        if (
-            this.scoreManager &&
-            typeof this.scoreManager.getScore ===
-                "function"
-        ) {
-
-            console.log(
-
-                `Total game score: ${this.scoreManager.getScore()}`
-
-            );
-
-        }
-
-
-        // =================================================
-        // MARK SUBMITTED
-        // =================================================
-
-        this.submitted =
-            true;
-
-
-        // =================================================
-        // CLOSE NOTEBOOK
-        // =================================================
 
         this.window.close();
 
-
-        // =================================================
-        // NOTIFY ROOM
-        // =================================================
 
         if (
             this.onSubmit

@@ -1,39 +1,15 @@
 const ROOM1_ANSWER = {
 
-    // =====================================================
-    // JAWABAN CATATAN INVESTIGASI
-    // =====================================================
-
-    notebook: {
-
-        customer_satisfaction:
-            "Beragam",
-
-        food_quality:
-            "Pelanggan pada umumnya menilai kualitas makanan baik",
-
-        service_speed:
-            "Pelayanan lambat dan waktu tunggu yang panjang",
-
-        main_problem:
-            "Kecepatan pelayanan"
-
-    },
-
-
-    // =====================================================
-    // JAWABAN ASESMEN
-    // =====================================================
-
     correctRecommendation:
         "service",
 
-
     explanation:
 
-        "Ulasan pelanggan secara konsisten menyebutkan waktu tunggu yang lama meskipun kualitas makanan dinilai baik. " +
+        "Ulasan pelanggan secara konsisten menunjukkan adanya waktu tunggu yang lama meskipun kualitas makanan dinilai baik. " +
 
-        "Meningkatkan kecepatan pelayanan membantu mengatasi akar masalah utama restoran."
+        "Bukti dari pelanggan, karyawan, dapur, dan kasir menunjukkan bahwa masalah utama restoran terletak pada kapasitas operasional dan kecepatan pelayanan, terutama pada jam sibuk. " +
+
+        "Oleh karena itu, meningkatkan kecepatan pelayanan dan mengurangi waktu tunggu merupakan rekomendasi yang paling tepat untuk mengatasi akar masalah restoran."
 
 };
 
