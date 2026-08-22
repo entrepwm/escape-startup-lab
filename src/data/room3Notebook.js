@@ -1,367 +1,247 @@
 const ROOM3_NOTEBOOK = [
 
     // =====================================================
-    // Q1 — INVESTMENT BUDGET
+    // Q1 — ANGGARAN INVESTASI
     // =====================================================
 
     {
         id: "available_budget",
 
         question:
-            "How much investment capital has management approved for the improvement project?",
+            "Berapa besar modal investasi yang telah disetujui manajemen untuk proyek perbaikan?",
 
         type: "radio",
 
         options: [
-            "Rp20,000,000",
-            "Rp30,000,000",
-            "Rp50,000,000",
-            "Rp85,000,000"
+            "Rp20.000.000",
+            "Rp30.000.000",
+            "Rp50.000.000",
+            "Rp85.000.000"
         ],
 
         correctAnswer:
-            "Rp50,000,000"
+            "Rp50.000.000"
     },
 
 
     // =====================================================
-    // Q2 — OPERATIONAL BOTTLENECK
-    // =====================================================
-
-    {
-        id: "main_bottleneck",
-
-        question:
-            "According to the operations evidence, what is the restaurant's most important peak-period bottleneck?",
-
-        type: "radio",
-
-        options: [
-            "Insufficient marketing reach",
-            "Kitchen processing capacity",
-            "Restaurant atmosphere",
-            "Menu pricing"
-        ],
-
-        correctAnswer:
-            "Kitchen processing capacity"
-    },
-
-
-    // =====================================================
-    // Q3 — STAFF UTILIZATION
+    // Q2 — UTILISASI STAF
     // =====================================================
 
     {
         id: "staff_utilization",
 
         question:
-            "What happens to staff utilization during peak periods?",
+            "Apa yang terjadi pada tingkat utilisasi staf selama periode sibuk?",
 
         type: "radio",
 
         options: [
-            "It decreases to approximately 50%",
-            "It remains at approximately 68%",
-            "It increases to approximately 94%",
-            "It remains below 60%"
+            "Menurun menjadi sekitar 50%",
+            "Tetap berada di sekitar 68%",
+            "Meningkat menjadi sekitar 94%",
+            "Tetap berada di bawah 60%"
         ],
 
         correctAnswer:
-            "It increases to approximately 94%"
+            "Meningkat menjadi sekitar 94%"
     },
 
 
     // =====================================================
-    // Q4 — BOTTLENECK INTERPRETATION
+    // Q3 — INTERPRETASI BOTTLENECK
     // =====================================================
 
     {
         id: "capacity_interpretation",
 
         question:
-            "What does the combination of high staff utilization and long customer waiting times most strongly suggest?",
+            "Apa yang paling kuat ditunjukkan oleh kombinasi utilisasi staf yang tinggi dan waktu tunggu pelanggan yang panjang?",
 
         type: "radio",
 
         options: [
-            "The restaurant has excessive unused capacity",
-            "Demand is exceeding current operational capacity during peak periods",
-            "Customers are primarily dissatisfied with food quality",
-            "The restaurant should reduce its marketing activity"
+            "Restoran memiliki terlalu banyak kapasitas yang tidak digunakan",
+            "Permintaan melebihi kapasitas operasional saat ini selama periode sibuk",
+            "Pelanggan terutama tidak puas terhadap kualitas makanan",
+            "Restoran seharusnya mengurangi aktivitas pemasarannya"
         ],
 
         correctAnswer:
-            "Demand is exceeding current operational capacity during peak periods"
+            "Permintaan melebihi kapasitas operasional saat ini selama periode sibuk"
     },
 
 
     // =====================================================
-    // Q5 — CUSTOMER IMPACT
+    // Q4 — DAMPAK TERHADAP PELANGGAN
     // =====================================================
 
     {
         id: "waiting_time",
 
         question:
-            "What is the most direct customer consequence of the restaurant's peak-period capacity constraint?",
+            "Apa dampak paling langsung terhadap pelanggan akibat keterbatasan kapasitas restoran selama periode sibuk?",
 
         type: "radio",
 
         options: [
-            "Higher food prices",
-            "Longer waiting times",
-            "Lower advertising exposure",
-            "Reduced brand awareness"
+            "Harga makanan yang lebih tinggi",
+            "Waktu tunggu yang lebih lama",
+            "Paparan iklan yang lebih rendah",
+            "Kesadaran merek yang lebih rendah"
         ],
 
         correctAnswer:
-            "Longer waiting times"
+            "Waktu tunggu yang lebih lama"
     },
 
 
     // =====================================================
-    // Q6 — STAFFING OPTION
-    // =====================================================
-
-    {
-        id: "staff_benefit",
-
-        question:
-            "Why could hiring additional kitchen employees help address the current bottleneck?",
-
-        type: "radio",
-
-        options: [
-            "It directly increases available labor capacity during peak periods",
-            "It guarantees lower ingredient costs",
-            "It automatically eliminates all waiting time",
-            "It reduces the need for operational processes"
-        ],
-
-        correctAnswer:
-            "It directly increases available labor capacity during peak periods"
-    },
-
-
-    // =====================================================
-    // Q7 — EQUIPMENT OPTION
-    // =====================================================
-
-    {
-        id: "equipment_benefit",
-
-        question:
-            "What is the strongest strategic argument for upgrading kitchen equipment?",
-
-        type: "radio",
-
-        options: [
-            "It may increase throughput at the identified production bottleneck",
-            "It guarantees that customer demand will increase",
-            "It eliminates the need for employees",
-            "It mainly improves brand awareness"
-        ],
-
-        correctAnswer:
-            "It may increase throughput at the identified production bottleneck"
-    },
-
-
-    // =====================================================
-    // Q8 — TECHNOLOGY LIMITATION
-    // =====================================================
-
-    {
-        id: "technology_limitation",
-
-        question:
-            "Why might an online ordering or queue-management system fail to fully resolve the restaurant's main problem?",
-
-        type: "radio",
-
-        options: [
-            "Customers generally refuse to use technology",
-            "The systems may improve ordering flow without increasing kitchen processing capacity",
-            "Technology investments always reduce profitability",
-            "The systems would necessarily increase food prices"
-        ],
-
-        correctAnswer:
-            "The systems may improve ordering flow without increasing kitchen processing capacity"
-    },
-
-
-    // =====================================================
-    // Q9 — EVIDENCE INTEGRATION
-    // =====================================================
-
-    {
-        id: "evidence_integration",
-
-        question:
-            "Considering the operations, HR, and technology evidence together, which conclusion is best supported?",
-
-        type: "radio",
-
-        options: [
-            "The core problem is insufficient advertising",
-            "The restaurant should focus primarily on lowering prices",
-            "The restaurant should prioritize an intervention that increases peak-period throughput",
-            "The restaurant should redesign its brand identity before addressing operations"
-        ],
-
-        correctAnswer:
-            "The restaurant should prioritize an intervention that increases peak-period throughput"
-    },
-
-
-    // =====================================================
-    // Q10 — CASE-BASED STRATEGIC PRIORITIZATION
+    // Q5 — PRIORITAS STRATEGIS BERBASIS KASUS
     // =====================================================
 
     {
         id: "case_priority",
 
         question:
-            "Given the Rp50,000,000 budget constraint, what is the strongest basis for choosing among the available improvement options?",
+            "Dengan keterbatasan anggaran sebesar Rp50.000.000, apa dasar terkuat untuk memilih di antara berbagai opsi perbaikan yang tersedia?",
 
         type: "radio",
 
         options: [
-            "Choose the option with the lowest initial cost",
-            "Choose the most technologically advanced option",
-            "Prioritize the option that best addresses the bottleneck while remaining financially and operationally feasible",
-            "Select the option preferred by management regardless of evidence"
+            "Memilih opsi dengan biaya awal paling rendah",
+            "Memilih opsi yang paling maju secara teknologi",
+            "Memprioritaskan opsi yang paling efektif mengatasi bottleneck sekaligus tetap layak secara finansial dan operasional",
+            "Memilih opsi yang disukai manajemen tanpa mempertimbangkan bukti"
         ],
 
         correctAnswer:
-            "Prioritize the option that best addresses the bottleneck while remaining financially and operationally feasible"
+            "Memprioritaskan opsi yang paling efektif mengatasi bottleneck sekaligus tetap layak secara finansial dan operasional"
     },
 
 
     // =====================================================
-    // Q11 — STRATEGIC DECISION MAKING:
-    // MARGINAL VALUE
+    // Q6 — PENGAMBILAN KEPUTUSAN STRATEGIS:
+    // NILAI MARGINAL
     // =====================================================
 
     {
         id: "marginal_value",
 
         question:
-            "When comparing two investment alternatives under a fixed budget, which reasoning best reflects marginal analysis?",
+            "Ketika membandingkan dua alternatif investasi dalam anggaran yang terbatas, penalaran mana yang paling mencerminkan analisis marginal?",
 
         type: "radio",
 
         options: [
-            "Choose whichever option has the highest total cost because it probably delivers more value",
-            "Compare the additional benefit generated by each additional unit of resources committed",
-            "Select the alternative with the largest number of features",
-            "Ignore incremental benefits and focus only on total expenditure"
+            "Memilih opsi dengan biaya total tertinggi karena kemungkinan memberikan nilai lebih besar",
+            "Membandingkan manfaat tambahan yang dihasilkan oleh setiap tambahan unit sumber daya yang digunakan",
+            "Memilih alternatif dengan jumlah fitur paling banyak",
+            "Mengabaikan manfaat tambahan dan hanya berfokus pada total pengeluaran"
         ],
 
         correctAnswer:
-            "Compare the additional benefit generated by each additional unit of resources committed"
+            "Membandingkan manfaat tambahan yang dihasilkan oleh setiap tambahan unit sumber daya yang digunakan"
     },
 
 
     // =====================================================
-    // Q12 — STRATEGIC DECISION MAKING:
-    // RESOURCE ALLOCATION
+    // Q7 — PENGAMBILAN KEPUTUSAN STRATEGIS:
+    // ALOKASI SUMBER DAYA
     // =====================================================
 
     {
         id: "resource_allocation",
 
         question:
-            "A firm has several attractive projects but insufficient capital to fund all of them. Which principle should guide strategic resource allocation?",
+            "Sebuah perusahaan memiliki beberapa proyek yang menarik, tetapi tidak memiliki modal yang cukup untuk membiayai semuanya. Prinsip apa yang seharusnya menjadi dasar dalam alokasi sumber daya strategis?",
 
         type: "radio",
 
         options: [
-            "Allocate resources equally across all projects regardless of expected impact",
-            "Fund projects according to strategic relevance, expected value, constraints, and risk",
-            "Prioritize projects proposed by the most senior manager",
-            "Always select the project with the shortest implementation time"
+            "Membagi sumber daya secara merata ke semua proyek tanpa mempertimbangkan dampak yang diharapkan",
+            "Mendanai proyek berdasarkan relevansi strategis, nilai yang diharapkan, keterbatasan, dan risiko",
+            "Memprioritaskan proyek yang diusulkan oleh manajer dengan jabatan tertinggi",
+            "Selalu memilih proyek dengan waktu implementasi paling singkat"
         ],
 
         correctAnswer:
-            "Fund projects according to strategic relevance, expected value, constraints, and risk"
+            "Mendanai proyek berdasarkan relevansi strategis, nilai yang diharapkan, keterbatasan, dan risiko"
     },
 
 
     // =====================================================
-    // Q13 — STRATEGIC DECISION MAKING:
-    // STRATEGIC FIT
+    // Q8 — PENGAMBILAN KEPUTUSAN STRATEGIS:
+    // KESESUAIAN STRATEGIS
     // =====================================================
 
     {
         id: "strategic_fit",
 
         question:
-            "What does strategic fit mean when evaluating an entrepreneurial investment decision?",
+            "Apa yang dimaksud dengan kesesuaian strategis ketika mengevaluasi keputusan investasi kewirausahaan?",
 
         type: "radio",
 
         options: [
-            "The investment is fashionable within the industry",
-            "The investment is consistent with the firm's capabilities, priorities, and the problem it is trying to solve",
-            "The investment has the highest possible purchase price",
-            "The investment can be implemented without collecting evidence"
+            "Investasi tersebut sedang populer di dalam industri",
+            "Investasi tersebut sesuai dengan kemampuan perusahaan, prioritas, dan masalah yang ingin diselesaikan",
+            "Investasi tersebut memiliki harga pembelian setinggi mungkin",
+            "Investasi tersebut dapat diterapkan tanpa mengumpulkan bukti"
         ],
 
         correctAnswer:
-            "The investment is consistent with the firm's capabilities, priorities, and the problem it is trying to solve"
+            "Investasi tersebut sesuai dengan kemampuan perusahaan, prioritas, dan masalah yang ingin diselesaikan"
     },
 
 
     // =====================================================
-    // Q14 — STRATEGIC DECISION MAKING:
-    // UNCERTAINTY
+    // Q9 — PENGAMBILAN KEPUTUSAN STRATEGIS:
+    // KETIDAKPASTIAN
     // =====================================================
 
     {
         id: "decision_under_uncertainty",
 
         question:
-            "When expected outcomes are uncertain, which approach is most defensible for an entrepreneur making a major investment decision?",
+            "Ketika hasil yang diharapkan masih mengandung ketidakpastian, pendekatan mana yang paling dapat dipertanggungjawabkan bagi seorang wirausahawan sebelum membuat keputusan investasi besar?",
 
         type: "radio",
 
         options: [
-            "Assume the most optimistic outcome will occur",
-            "Delay every decision until uncertainty disappears completely",
-            "Compare plausible outcomes, risks, assumptions, and downside exposure before committing resources",
-            "Choose whichever alternative has the most innovative technology"
+            "Menganggap bahwa hasil yang paling optimistis pasti akan terjadi",
+            "Menunda semua keputusan sampai seluruh ketidakpastian hilang sepenuhnya",
+            "Membandingkan berbagai hasil yang mungkin terjadi, risiko, asumsi, dan potensi kerugian sebelum mengalokasikan sumber daya",
+            "Memilih alternatif yang memiliki teknologi paling inovatif"
         ],
 
         correctAnswer:
-            "Compare plausible outcomes, risks, assumptions, and downside exposure before committing resources"
+            "Membandingkan berbagai hasil yang mungkin terjadi, risiko, asumsi, dan potensi kerugian sebelum mengalokasikan sumber daya"
     },
 
 
     // =====================================================
-    // Q15 — STRATEGIC DECISION MAKING:
-    // IMPLEMENTATION RISK
+    // Q10 — PENGAMBILAN KEPUTUSAN STRATEGIS:
+    // RISIKO IMPLEMENTASI
     // =====================================================
 
     {
         id: "implementation_risk",
 
         question:
-            "Two alternatives have similar expected financial returns, but one requires substantial employee retraining and major workflow changes. Why might management reasonably prefer the other alternative?",
+            "Dua alternatif memiliki estimasi imbal hasil finansial yang serupa, tetapi salah satunya membutuhkan pelatihan ulang karyawan secara besar-besaran dan perubahan alur kerja yang signifikan. Mengapa manajemen dapat secara wajar memilih alternatif yang lain?",
 
         type: "radio",
 
         options: [
-            "Because strategic decisions should avoid all organizational change",
-            "Because implementation complexity and execution risk can reduce the value actually realized from an investment",
-            "Because employee training never creates long-term value",
-            "Because financial returns are irrelevant when choosing investments"
+            "Karena keputusan strategis harus menghindari seluruh bentuk perubahan organisasi",
+            "Karena kompleksitas implementasi dan risiko eksekusi dapat mengurangi nilai yang benar-benar diperoleh dari investasi",
+            "Karena pelatihan karyawan tidak pernah menciptakan nilai jangka panjang",
+            "Karena imbal hasil finansial tidak relevan dalam memilih investasi"
         ],
 
         correctAnswer:
-            "Because implementation complexity and execution risk can reduce the value actually realized from an investment"
+            "Karena kompleksitas implementasi dan risiko eksekusi dapat mengurangi nilai yang benar-benar diperoleh dari investasi"
     }
 
 ];

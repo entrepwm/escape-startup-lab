@@ -18,6 +18,7 @@ export default class TeamNameScene extends Phaser.Scene {
         const height =
             this.scale.height;
 
+
         // =====================================================
         // AUDIO
         // =====================================================
@@ -35,20 +36,26 @@ export default class TeamNameScene extends Phaser.Scene {
                     }
                 );
 
+
             this.game.openingMusic.play();
 
         }
-        
+
+
         // =====================================================
         // BACKGROUND
         // =====================================================
 
         this.add.rectangle(
+
             width / 2,
             height / 2,
+
             width,
             height,
+
             0x101827
+
         );
 
 
@@ -57,18 +64,25 @@ export default class TeamNameScene extends Phaser.Scene {
         // =====================================================
 
         const panelWidth =
-            Math.min(720, width * 0.72);
+            Math.min(
+                720,
+                width * 0.72
+            );
 
         const panelHeight =
             430;
 
 
         this.add.rectangle(
+
             width / 2,
             height / 2,
+
             panelWidth,
             panelHeight,
+
             0x17263b
+
         )
         .setStrokeStyle(
             2,
@@ -81,45 +95,84 @@ export default class TeamNameScene extends Phaser.Scene {
         // =====================================================
 
         this.add.text(
+
             width / 2,
             height / 2 - 155,
+
             "ESCAPE STARTUP LAB",
+
             {
-                fontFamily: "monospace",
-                fontSize: "16px",
-                fontStyle: "bold",
-                color: "#67d6ff"
+                fontFamily:
+                    "monospace",
+
+                fontSize:
+                    "16px",
+
+                fontStyle:
+                    "bold",
+
+                color:
+                    "#67d6ff"
             }
+
         )
-        .setOrigin(0.5);
+        .setOrigin(
+            0.5
+        );
 
 
         this.add.text(
+
             width / 2,
             height / 2 - 110,
-            "TEAM REGISTRATION",
+
+            "REGISTRASI TIM",
+
             {
-                fontFamily: "monospace",
-                fontSize: "30px",
-                fontStyle: "bold",
-                color: "#ffffff"
+                fontFamily:
+                    "monospace",
+
+                fontSize:
+                    "30px",
+
+                fontStyle:
+                    "bold",
+
+                color:
+                    "#ffffff"
             }
+
         )
-        .setOrigin(0.5);
+        .setOrigin(
+            0.5
+        );
 
 
         this.add.text(
+
             width / 2,
             height / 2 - 65,
-            "Enter your team name before beginning the Founder Assessment.",
+
+            "Masukkan nama tim Anda sebelum memulai Asesmen Pendiri.",
+
             {
-                fontFamily: "monospace",
-                fontSize: "15px",
-                color: "#aebdce",
-                align: "center"
+                fontFamily:
+                    "monospace",
+
+                fontSize:
+                    "15px",
+
+                color:
+                    "#aebdce",
+
+                align:
+                    "center"
             }
+
         )
-        .setOrigin(0.5);
+        .setOrigin(
+            0.5
+        );
 
 
         // =====================================================
@@ -127,7 +180,9 @@ export default class TeamNameScene extends Phaser.Scene {
         // =====================================================
 
         this.inputElement =
-            document.createElement("input");
+            document.createElement(
+                "input"
+            );
 
 
         this.inputElement.type =
@@ -135,7 +190,7 @@ export default class TeamNameScene extends Phaser.Scene {
 
 
         this.inputElement.placeholder =
-            "Enter team name";
+            "Masukkan nama tim";
 
 
         this.inputElement.maxLength =
@@ -147,22 +202,50 @@ export default class TeamNameScene extends Phaser.Scene {
 
 
         Object.assign(
+
             this.inputElement.style,
+
             {
-                width: "440px",
-                height: "50px",
-                padding: "0 16px",
-                fontFamily: "monospace",
-                fontSize: "18px",
-                fontWeight: "bold",
-                color: "#17263b",
-                background: "#fbfaf7",
-                border: "2px solid #24b8ff",
-                borderRadius: "5px",
-                outline: "none",
-                boxSizing: "border-box",
-                textAlign: "center"
+                width:
+                    "440px",
+
+                height:
+                    "50px",
+
+                padding:
+                    "0 16px",
+
+                fontFamily:
+                    "monospace",
+
+                fontSize:
+                    "18px",
+
+                fontWeight:
+                    "bold",
+
+                color:
+                    "#17263b",
+
+                background:
+                    "#fbfaf7",
+
+                border:
+                    "2px solid #24b8ff",
+
+                borderRadius:
+                    "5px",
+
+                outline:
+                    "none",
+
+                boxSizing:
+                    "border-box",
+
+                textAlign:
+                    "center"
             }
+
         );
 
 
@@ -180,17 +263,30 @@ export default class TeamNameScene extends Phaser.Scene {
 
         this.errorText =
             this.add.text(
+
                 width / 2,
                 height / 2 + 35,
+
                 "",
+
                 {
-                    fontFamily: "monospace",
-                    fontSize: "14px",
-                    fontStyle: "bold",
-                    color: "#ff7070"
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "14px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#ff7070"
                 }
+
             )
-            .setOrigin(0.5);
+            .setOrigin(
+                0.5
+            );
 
 
         // =====================================================
@@ -199,75 +295,114 @@ export default class TeamNameScene extends Phaser.Scene {
 
         this.startButton =
             this.add.rectangle(
+
                 width / 2,
                 height / 2 + 105,
+
                 300,
                 54,
+
                 0x203a55
+
             )
             .setStrokeStyle(
                 2,
                 0x24b8ff
             )
             .setInteractive({
-                useHandCursor: true
+
+                useHandCursor:
+                    true
+
             });
 
 
         this.startLabel =
             this.add.text(
+
                 width / 2,
                 height / 2 + 105,
-                "BEGIN ASSESSMENT  →",
-                {
-                    fontFamily: "monospace",
-                    fontSize: "17px",
-                    fontStyle: "bold",
-                    color: "#67d6ff"
-                }
-            )
-            .setOrigin(0.5);
 
+                "MULAI ASESMEN  →",
+
+                {
+                    fontFamily:
+                        "monospace",
+
+                    fontSize:
+                        "17px",
+
+                    fontStyle:
+                        "bold",
+
+                    color:
+                        "#67d6ff"
+                }
+
+            )
+            .setOrigin(
+                0.5
+            );
+
+
+        // =====================================================
+        // HOVER
+        // =====================================================
 
         this.startButton.on(
+
             "pointerover",
+
             () => {
 
                 this.startButton.setFillStyle(
                     0x294d70
                 );
 
+
                 this.startLabel.setColor(
                     "#ffffff"
                 );
 
             }
+
         );
 
 
         this.startButton.on(
+
             "pointerout",
+
             () => {
 
                 this.startButton.setFillStyle(
                     0x203a55
                 );
 
+
                 this.startLabel.setColor(
                     "#67d6ff"
                 );
 
             }
+
         );
 
 
+        // =====================================================
+        // CLICK
+        // =====================================================
+
         this.startButton.on(
+
             "pointerdown",
+
             () => {
 
                 this.submitTeamName();
 
             }
+
         );
 
 
@@ -279,7 +414,8 @@ export default class TeamNameScene extends Phaser.Scene {
             (event) => {
 
                 if (
-                    event.key === "Enter"
+                    event.key ===
+                    "Enter"
                 ) {
 
                     this.submitTeamName();
@@ -290,8 +426,11 @@ export default class TeamNameScene extends Phaser.Scene {
 
 
         this.inputElement.addEventListener(
+
             "keydown",
+
             this.keyHandler
+
         );
 
 
@@ -300,9 +439,13 @@ export default class TeamNameScene extends Phaser.Scene {
         // =====================================================
 
         this.scale.on(
+
             "resize",
+
             this.positionInput,
+
             this
+
         );
 
 
@@ -311,22 +454,32 @@ export default class TeamNameScene extends Phaser.Scene {
         // =====================================================
 
         this.events.once(
+
             Phaser.Scenes.Events.SHUTDOWN,
+
             () => {
 
                 this.cleanup();
 
             }
+
         );
 
 
+        // =====================================================
+        // AUTO FOCUS
+        // =====================================================
+
         setTimeout(
+
             () => {
 
                 this.inputElement?.focus();
 
             },
+
             100
+
         );
 
     }
@@ -348,18 +501,28 @@ export default class TeamNameScene extends Phaser.Scene {
 
 
         const teamName =
+
             this.inputElement.value
                 .trim()
-                .replace(/\s+/g, " ");
+                .replace(
+                    /\s+/g,
+                    " "
+                );
 
+
+        // =================================================
+        // VALIDATION
+        // =================================================
 
         if (
-            teamName.length < 2
+            teamName.length <
+            2
         ) {
 
             this.errorText.setText(
-                "Please enter a valid team name."
+                "Silakan masukkan nama tim yang valid."
             );
+
 
             return;
 
@@ -367,12 +530,14 @@ export default class TeamNameScene extends Phaser.Scene {
 
 
         if (
-            teamName.length > 40
+            teamName.length >
+            40
         ) {
 
             this.errorText.setText(
-                "Team name must be 40 characters or fewer."
+                "Nama tim maksimal 40 karakter."
             );
+
 
             return;
 
@@ -388,13 +553,18 @@ export default class TeamNameScene extends Phaser.Scene {
         ) {
 
             this.errorText.setText(
-                "Game data could not be initialized."
+                "Data permainan gagal diinisialisasi."
             );
+
 
             return;
 
         }
 
+
+        // =================================================
+        // STORE TEAM NAME
+        // =================================================
 
         scoreManager.setTeamName(
             teamName
@@ -402,9 +572,13 @@ export default class TeamNameScene extends Phaser.Scene {
 
 
         console.log(
-            `Registered team: ${teamName}`
+            `Tim terdaftar: ${teamName}`
         );
 
+
+        // =================================================
+        // NEXT SCENE
+        // =================================================
 
         this.scene.start(
             "IntroScene"
@@ -437,29 +611,37 @@ export default class TeamNameScene extends Phaser.Scene {
 
 
         const scaleX =
+
             rect.width /
             this.scale.width;
 
 
         const scaleY =
+
             rect.height /
             this.scale.height;
 
 
         const inputWidth =
-            440 * scaleX;
+
+            440 *
+            scaleX;
 
 
         const inputHeight =
-            50 * scaleY;
+
+            50 *
+            scaleY;
 
 
         const centerX =
+
             rect.left +
             rect.width / 2;
 
 
         const centerY =
+
             rect.top +
             rect.height / 2 -
             8 * scaleY;
@@ -498,9 +680,13 @@ export default class TeamNameScene extends Phaser.Scene {
     cleanup() {
 
         this.scale.off(
+
             "resize",
+
             this.positionInput,
+
             this
+
         );
 
 
@@ -509,8 +695,11 @@ export default class TeamNameScene extends Phaser.Scene {
         ) {
 
             this.inputElement.removeEventListener(
+
                 "keydown",
+
                 this.keyHandler
+
             );
 
 

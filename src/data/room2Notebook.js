@@ -1,14 +1,14 @@
 const ROOM2_NOTEBOOK = [
 
     // =====================================================
-    // Q1 — FOOD QUALITY: AGGREGATING DATA
+    // Q1 — KUALITAS MAKANAN: AGREGASI DATA
     // =====================================================
 
     {
         id: "food_positive_rating",
 
         question:
-            "In the customer survey, what percentage of respondents rated food quality either 4 or 5 stars?",
+            "Dalam survei pelanggan, berapa persentase responden yang memberikan nilai 4 atau 5 bintang untuk kualitas makanan?",
 
         type: "radio",
 
@@ -25,14 +25,14 @@ const ROOM2_NOTEBOOK = [
 
 
     // =====================================================
-    // Q2 — SERVICE SPEED: NEGATIVE RATINGS
+    // Q2 — KECEPATAN PELAYANAN: PENILAIAN NEGATIF
     // =====================================================
 
     {
         id: "service_negative_rating",
 
         question:
-            "What percentage of respondents rated service speed only 1 or 2 stars?",
+            "Berapa persentase responden yang memberikan nilai hanya 1 atau 2 bintang untuk kecepatan pelayanan?",
 
         type: "radio",
 
@@ -49,38 +49,38 @@ const ROOM2_NOTEBOOK = [
 
 
     // =====================================================
-    // Q3 — QUANTITATIVE GAP
+    // Q3 — KESENJANGAN KUANTITATIF
     // =====================================================
 
     {
         id: "quality_service_gap",
 
         question:
-            "Food quality receives 92% positive ratings (4–5 stars), while service speed receives only 25% positive ratings. What is the percentage-point gap between these two measures?",
+            "Kualitas makanan memperoleh 92% penilaian positif (4–5 bintang), sedangkan kecepatan pelayanan hanya memperoleh 25% penilaian positif. Berapa selisih persentase antara kedua ukuran tersebut?",
 
         type: "radio",
 
         options: [
-            "50 percentage points",
-            "57 percentage points",
-            "67 percentage points",
-            "75 percentage points"
+            "50 poin persentase",
+            "57 poin persentase",
+            "67 poin persentase",
+            "75 poin persentase"
         ],
 
         correctAnswer:
-            "67 percentage points"
+            "67 poin persentase"
     },
 
 
     // =====================================================
-    // Q4 — OVERALL SATISFACTION
+    // Q4 — KEPUASAN KESELURUHAN
     // =====================================================
 
     {
         id: "overall_satisfaction",
 
         question:
-            "According to the customer survey, what proportion of respondents are NOT classified as satisfied overall?",
+            "Menurut survei pelanggan, berapa proporsi responden yang TIDAK dikategorikan puas secara keseluruhan?",
 
         type: "radio",
 
@@ -97,194 +97,146 @@ const ROOM2_NOTEBOOK = [
 
 
     // =====================================================
-    // Q5 — TRANSACTION GROWTH
+    // Q5 — PERTUMBUHAN TRANSAKSI
     // =====================================================
 
     {
         id: "weekend_transaction_growth",
 
         question:
-            "Average transactions increase from 85 on weekdays to 140 on weekends. Approximately how much higher are weekend transactions compared with weekdays?",
+            "Rata-rata transaksi meningkat dari 85 pada hari kerja menjadi 140 pada akhir pekan. Kira-kira berapa persen lebih tinggi transaksi akhir pekan dibandingkan hari kerja?",
 
         type: "radio",
 
         options: [
-            "About 35%",
-            "About 50%",
-            "About 65%",
-            "About 85%"
+            "Sekitar 35%",
+            "Sekitar 50%",
+            "Sekitar 65%",
+            "Sekitar 85%"
         ],
 
         correctAnswer:
-            "About 65%"
+            "Sekitar 65%"
     },
 
 
     // =====================================================
-    // Q6 — WAITING-TIME GROWTH
+    // Q6 — PERTUMBUHAN WAKTU TUNGGU
     // =====================================================
 
     {
         id: "weekend_wait_growth",
 
         question:
-            "Average waiting time increases from 18 minutes on weekdays to 41 minutes on weekends. Approximately how much does waiting time increase relative to the weekday level?",
+            "Rata-rata waktu tunggu meningkat dari 18 menit pada hari kerja menjadi 41 menit pada akhir pekan. Kira-kira berapa persen peningkatan waktu tunggu dibandingkan tingkat pada hari kerja?",
 
         type: "radio",
 
         options: [
-            "About 28%",
-            "About 64%",
-            "About 100%",
-            "About 128%"
+            "Sekitar 28%",
+            "Sekitar 64%",
+            "Sekitar 100%",
+            "Sekitar 128%"
         ],
 
         correctAnswer:
-            "About 128%"
+            "Sekitar 128%"
     },
 
 
     // =====================================================
-    // Q7 — DEMAND VS. SERVICE CAPACITY
+    // Q7 — PERMINTAAN VS. KAPASITAS PELAYANAN
     // =====================================================
 
     {
         id: "demand_capacity_relationship",
 
         question:
-            "Weekend transactions are about 65% higher than weekday transactions, but average waiting time is about 128% higher. What is the strongest interpretation of this pattern?",
+            "Transaksi akhir pekan sekitar 65% lebih tinggi daripada hari kerja, tetapi rata-rata waktu tunggu sekitar 128% lebih tinggi. Interpretasi mana yang paling kuat terhadap pola ini?",
 
         type: "radio",
 
         options: [
-            "Service capacity appears to be scaling faster than customer demand",
-            "Waiting time is unrelated to transaction volume",
-            "Service capacity appears unable to keep pace with higher demand",
-            "The restaurant should increase demand further before changing operations"
+            "Kapasitas pelayanan tampaknya meningkat lebih cepat daripada permintaan pelanggan",
+            "Waktu tunggu tidak berhubungan dengan volume transaksi",
+            "Kapasitas pelayanan tampaknya tidak mampu mengimbangi peningkatan permintaan",
+            "Restoran seharusnya meningkatkan permintaan lebih lanjut sebelum mengubah operasional"
         ],
 
         correctAnswer:
-            "Service capacity appears unable to keep pace with higher demand"
+            "Kapasitas pelayanan tampaknya tidak mampu mengimbangi peningkatan permintaan"
     },
 
 
     // =====================================================
-    // Q8 — PEAK-PERIOD COMPARISON
-    // =====================================================
-
-    {
-        id: "peak_wait_comparison",
-
-        question:
-            "Friday evening peak waiting time is 47 minutes, compared with a weekend average of 41 minutes. Approximately how much higher is the peak waiting time than the weekend average?",
-
-        type: "radio",
-
-        options: [
-            "About 6%",
-            "About 15%",
-            "About 26%",
-            "About 41%"
-        ],
-
-        correctAnswer:
-            "About 15%"
-    },
-
-
-    // =====================================================
-    // Q9 — CUSTOMER SPEND VS. WAITING TIME
+    // Q8 — BELANJA PELANGGAN VS. WAKTU TUNGGU
     // =====================================================
 
     {
         id: "spend_wait_comparison",
 
         question:
-            "Average customer spend rises from Rp82K on weekdays to Rp91K on weekends, while waiting time rises from 18 to 41 minutes. Which conclusion is best supported by these numbers?",
+            "Rata-rata belanja pelanggan meningkat dari Rp82K pada hari kerja menjadi Rp91K pada akhir pekan, sementara waktu tunggu meningkat dari 18 menjadi 41 menit. Kesimpulan mana yang paling didukung oleh angka-angka tersebut?",
 
         type: "radio",
 
         options: [
-            "Higher spending fully compensates customers for much longer waiting times",
-            "Customer spend rises only modestly while waiting time increases dramatically",
-            "Customers spend less whenever the restaurant becomes busier",
-            "The data prove that price is the main source of dissatisfaction"
+            "Peningkatan belanja pelanggan sepenuhnya mengompensasi waktu tunggu yang jauh lebih lama",
+            "Belanja pelanggan hanya meningkat sedikit sementara waktu tunggu meningkat secara drastis",
+            "Pelanggan selalu membelanjakan lebih sedikit ketika restoran semakin sibuk",
+            "Data membuktikan bahwa harga adalah sumber utama ketidakpuasan"
         ],
 
         correctAnswer:
-            "Customer spend rises only modestly while waiting time increases dramatically"
+            "Belanja pelanggan hanya meningkat sedikit sementara waktu tunggu meningkat secara drastis"
     },
 
 
     // =====================================================
-    // Q10 — MANAGER HYPOTHESIS VS. EVIDENCE
-    // =====================================================
-
-    {
-        id: "manager_hypothesis_test",
-
-        question:
-            "The manager believes pricing is the main problem and proposes discounts. Which combination of evidence most strongly challenges that hypothesis?",
-
-        type: "radio",
-
-        options: [
-            "61% overall satisfaction combined with higher weekend spending",
-            "92% positive food-quality ratings, 50% low service-speed ratings, and peak waiting times of 47 minutes",
-            "The restaurant has competitors and customers sometimes visit with friends",
-            "Weekend spending is Rp91K and weekday spending is Rp82K"
-        ],
-
-        correctAnswer:
-            "92% positive food-quality ratings, 50% low service-speed ratings, and peak waiting times of 47 minutes"
-    },
-
-
-    // =====================================================
-    // Q11 — ENTREPRENEURSHIP: CONSTRAINT / BOTTLENECK ANALYSIS
+    // Q9 — KEWIRAUSAHAAN: ANALISIS HAMBATAN / BOTTLENECK
     // =====================================================
 
     {
         id: "bottleneck_analysis",
 
         question:
-            "Suppose management can improve only one part of the business immediately. Based on the evidence, which decision best reflects bottleneck-oriented resource allocation?",
+            "Misalkan manajemen hanya dapat memperbaiki satu bagian bisnis dalam waktu dekat. Berdasarkan bukti, keputusan mana yang paling mencerminkan alokasi sumber daya yang berorientasi pada bottleneck?",
 
         type: "radio",
 
         options: [
-            "Increase advertising because demand growth should always be prioritized",
-            "Reduce menu prices because lower prices automatically improve customer experience",
-            "Invest in service or operational capacity because waiting time deteriorates sharply as demand rises",
-            "Expand the menu because variety is more strategically important than throughput"
+            "Meningkatkan iklan karena pertumbuhan permintaan harus selalu menjadi prioritas",
+            "Menurunkan harga menu karena harga yang lebih rendah otomatis meningkatkan pengalaman pelanggan",
+            "Berinvestasi pada kapasitas pelayanan atau operasional karena waktu tunggu memburuk secara tajam ketika permintaan meningkat",
+            "Memperluas menu karena variasi lebih penting secara strategis daripada kapasitas pelayanan"
         ],
 
         correctAnswer:
-            "Invest in service or operational capacity because waiting time deteriorates sharply as demand rises"
+            "Berinvestasi pada kapasitas pelayanan atau operasional karena waktu tunggu memburuk secara tajam ketika permintaan meningkat"
     },
 
 
     // =====================================================
-    // Q12 — ENTREPRENEURSHIP: EVIDENCE-BASED OPPORTUNITY
+    // Q10 — KEWIRAUSAHAAN: PELUANG BERBASIS BUKTI
     // =====================================================
 
     {
         id: "opportunity_evaluation",
 
         question:
-            "Which statement best describes the entrepreneurial opportunity revealed by the Room 2 evidence?",
+            "Pernyataan mana yang paling tepat menggambarkan peluang kewirausahaan yang terungkap dari bukti di Room 2?",
 
         type: "radio",
 
         options: [
-            "The main opportunity is to create demand because current customer interest is too low",
-            "The main opportunity is to improve the restaurant's ability to convert strong product demand into a faster, more reliable customer experience",
-            "The main opportunity is to reposition the restaurant around lower food quality and lower prices",
-            "The main opportunity is to copy competitor promotions without testing customer behavior"
+            "Peluang utama adalah menciptakan permintaan karena minat pelanggan saat ini terlalu rendah",
+            "Peluang utama adalah meningkatkan kemampuan restoran untuk mengubah permintaan produk yang kuat menjadi pengalaman pelanggan yang lebih cepat dan lebih andal",
+            "Peluang utama adalah memosisikan ulang restoran dengan kualitas makanan yang lebih rendah dan harga yang lebih murah",
+            "Peluang utama adalah meniru promosi pesaing tanpa menguji perilaku pelanggan"
         ],
 
         correctAnswer:
-            "The main opportunity is to improve the restaurant's ability to convert strong product demand into a faster, more reliable customer experience"
+            "Peluang utama adalah meningkatkan kemampuan restoran untuk mengubah permintaan produk yang kuat menjadi pengalaman pelanggan yang lebih cepat dan lebih andal"
     }
 
 ];

@@ -21,19 +21,6 @@ export default class IntroScene extends Phaser.Scene {
         // FIXED LOGICAL GAME SIZE
         // =================================================
 
-        /*
-         * IMPORTANT:
-         *
-         * The game is designed at 1280 × 720.
-         *
-         * Phaser.Scale.FIT scales this entire coordinate
-         * system up/down for different laptop and phone
-         * displays.
-         *
-         * Therefore we do NOT reposition EVA based on the
-         * physical browser size.
-         */
-
         const GAME_WIDTH =
             1280;
 
@@ -179,7 +166,7 @@ export default class IntroScene extends Phaser.Scene {
                 CENTER_X,
                 125,
 
-                "Founder Assessment Initiated",
+                "Asesmen Pendiri Dimulai",
 
                 {
 
@@ -218,22 +205,6 @@ export default class IntroScene extends Phaser.Scene {
         // =================================================
         // EVA POSITION
         // =================================================
-
-        /*
-         * EVA uses a FIXED position inside the 1280×720
-         * coordinate system.
-         *
-         * Old position was roughly:
-         *
-         *     y = 410
-         *
-         * With a 300px tall sprite that placed her head
-         * around y=110, directly beside the subtitle.
-         *
-         * Moving the bottom anchor to 455 puts her head
-         * lower while still keeping her above the
-         * dialogue box.
-         */
 
         this.evaTargetX =
             CENTER_X;
@@ -401,7 +372,7 @@ export default class IntroScene extends Phaser.Scene {
                     "EVA",
 
                 text:
-                    "Welcome, Candidate Team.",
+                    "Selamat datang, Tim Kandidat.",
 
                 pose:
                     "wink"
@@ -414,7 +385,7 @@ export default class IntroScene extends Phaser.Scene {
                     "EVA",
 
                 text:
-                    "I am EVA, your Entrepreneurial Virtual Assistant.",
+                    "Saya EVA, Asisten Virtual Kewirausahaan Anda.",
 
                 pose:
                     "confident"
@@ -427,7 +398,7 @@ export default class IntroScene extends Phaser.Scene {
                     "EVA",
 
                 text:
-                    "Today you will complete three Founder Assessments designed to evaluate your entrepreneurial thinking.",
+                    "Hari ini Anda akan menyelesaikan tiga Asesmen Pendiri yang dirancang untuk menguji cara berpikir kewirausahaan Anda.",
 
                 pose:
                     "present"
@@ -440,7 +411,7 @@ export default class IntroScene extends Phaser.Scene {
                     "EVA",
 
                 text:
-                    "Search every room carefully. Evidence may be hidden inside reports, interviews, financial records, and customer feedback.",
+                    "Periksa setiap ruangan dengan teliti. Bukti dapat tersembunyi di dalam laporan, wawancara, catatan keuangan, dan umpan balik pelanggan.",
 
                 pose:
                     "talk"
@@ -453,7 +424,7 @@ export default class IntroScene extends Phaser.Scene {
                     "EVA",
 
                 text:
-                    "Your objective is not to find the 'correct answer', but to justify the strongest recommendation using evidence.",
+                    "Tujuan Anda bukan sekadar menemukan 'jawaban yang benar', tetapi memberikan rekomendasi terkuat yang didukung oleh bukti.",
 
                 pose:
                     "think"
@@ -466,7 +437,7 @@ export default class IntroScene extends Phaser.Scene {
                     "EVA",
 
                 text:
-                    "The Investment Committee will evaluate both your reasoning and your final proposal.",
+                    "Komite Investasi akan menilai kualitas penalaran Anda serta proposal akhir yang Anda berikan.",
 
                 pose:
                     "confident"
@@ -479,7 +450,7 @@ export default class IntroScene extends Phaser.Scene {
                     "EVA",
 
                 text:
-                    "Good luck.\n\nYour assessment begins now.",
+                    "Semoga berhasil.\n\nAsesmen Anda dimulai sekarang.",
 
                 pose:
                     "wink"
@@ -535,25 +506,6 @@ export default class IntroScene extends Phaser.Scene {
             }
 
         );
-
-
-        // =================================================
-        // IMPORTANT:
-        // NO RESIZE LISTENER
-        // =================================================
-
-        /*
-         * Do NOT do:
-         *
-         * this.scale.on("resize", ...)
-         *
-         * Phaser.Scale.FIT scales the entire 1280×720
-         * game uniformly.
-         *
-         * That keeps EVA, titles, background and dialogue
-         * in exactly the same relative positions on every
-         * device.
-         */
 
 
         // =================================================
@@ -632,7 +584,7 @@ export default class IntroScene extends Phaser.Scene {
 
             console.warn(
 
-                `EVA texture '${texture}' not found.`
+                `Texture EVA '${texture}' tidak ditemukan.`
 
             );
 
@@ -654,14 +606,6 @@ export default class IntroScene extends Phaser.Scene {
         // =================================================
         // NORMALIZE SIZE
         // =================================================
-
-        /*
-         * Every EVA pose may have slightly different source
-         * dimensions.
-         *
-         * They will all appear exactly 300 logical pixels
-         * tall.
-         */
 
         this.evaBaseScale =
 
@@ -946,10 +890,6 @@ export default class IntroScene extends Phaser.Scene {
 
     finishIntro() {
 
-        // =================================================
-        // STOP RANDOM TIMERS
-        // =================================================
-
         if (
             this.evaRandomPoseTimer
         ) {
@@ -980,10 +920,6 @@ export default class IntroScene extends Phaser.Scene {
         }
 
 
-        // =================================================
-        // STOP POSE TWEEN
-        // =================================================
-
         if (
             this.evaPoseTween
         ) {
@@ -997,10 +933,6 @@ export default class IntroScene extends Phaser.Scene {
         }
 
 
-        // =================================================
-        // STOP IDLE TWEEN
-        // =================================================
-
         if (
             this.evaIdleTween
         ) {
@@ -1013,10 +945,6 @@ export default class IntroScene extends Phaser.Scene {
 
         }
 
-
-        // =================================================
-        // FINAL EVA POSE
-        // =================================================
 
         if (
             this.eva
@@ -1040,10 +968,6 @@ export default class IntroScene extends Phaser.Scene {
         }
 
 
-        // =================================================
-        // EVA EXIT
-        // =================================================
-
         this.tweens.add({
 
             targets:
@@ -1064,10 +988,6 @@ export default class IntroScene extends Phaser.Scene {
 
         });
 
-
-        // =================================================
-        // CAMERA FADE OUT
-        // =================================================
 
         this.cameras.main.fadeOut(
             500
@@ -1097,10 +1017,6 @@ export default class IntroScene extends Phaser.Scene {
 
     cleanupScene() {
 
-        // =================================================
-        // ENTRANCE TWEEN
-        // =================================================
-
         if (
             this.evaEntranceTween
         ) {
@@ -1113,10 +1029,6 @@ export default class IntroScene extends Phaser.Scene {
 
         }
 
-
-        // =================================================
-        // RANDOM POSE TIMER
-        // =================================================
 
         if (
             this.evaRandomPoseTimer
@@ -1133,10 +1045,6 @@ export default class IntroScene extends Phaser.Scene {
         }
 
 
-        // =================================================
-        // RETURN POSE TIMER
-        // =================================================
-
         if (
             this.evaReturnPoseTimer
         ) {
@@ -1152,10 +1060,6 @@ export default class IntroScene extends Phaser.Scene {
         }
 
 
-        // =================================================
-        // POSE TWEEN
-        // =================================================
-
         if (
             this.evaPoseTween
         ) {
@@ -1168,10 +1072,6 @@ export default class IntroScene extends Phaser.Scene {
 
         }
 
-
-        // =================================================
-        // IDLE TWEEN
-        // =================================================
 
         if (
             this.evaIdleTween

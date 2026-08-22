@@ -1,181 +1,181 @@
 const ROOM2_EVIDENCE = [
 
     // =====================================================
-    // 1. CUSTOMER INTERVIEW
+    // 1. WAWANCARA PELANGGAN
     // =====================================================
 
     {
         id: "customer_interview",
 
-        title: "Customer Interview",
+        title: "Wawancara Pelanggan",
 
         type: "document",
 
         icon: "📝",
 
         content:
-`Customer Interview
+`Wawancara Pelanggan
 
-Customer A:
-"I really like the restaurant's atmosphere. It's comfortable and the staff are friendly."
+Pelanggan A:
+"Saya sangat menyukai suasana restoran ini. Nyaman dan stafnya ramah."
 
-Customer B:
-"The food is good, but I usually have to wait quite a long time."
+Pelanggan B:
+"Makanannya enak, tetapi biasanya saya harus menunggu cukup lama."
 
-Customer C:
-"I don't mind paying a little more if the service is faster."
+Pelanggan C:
+"Saya tidak keberatan membayar sedikit lebih mahal jika pelayanannya lebih cepat."
 
-Customer D:
-"I sometimes come here with friends, but we avoid it during busy hours because it takes too long."`
+Pelanggan D:
+"Saya kadang datang ke sini bersama teman-teman, tetapi kami menghindarinya saat jam sibuk karena waktu tunggunya terlalu lama."`
     },
 
 
     // =====================================================
-    // 2. CUSTOMER SURVEY
+    // 2. SURVEI PELANGGAN
     // =====================================================
 
     {
         id: "customer_survey",
 
-        title: "Customer Survey",
+        title: "Survei Pelanggan",
 
         type: "excel",
 
         icon: "📊",
 
         content:
-`Customer Satisfaction Survey
-Number of respondents: 100
+`Survei Kepuasan Pelanggan
+Jumlah responden: 100
 
-Food Quality
+Kualitas Makanan
 ★★★★★  72%
 ★★★★☆   20%
 ★★★☆☆    6%
 ★★☆☆☆    2%
 ★☆☆☆☆    0%
 
-Service Speed
-★★★★★  8%
+Kecepatan Pelayanan
+★★★★★   8%
 ★★★★☆   17%
 ★★★☆☆   25%
 ★★☆☆☆   30%
 ★☆☆☆☆   20%
 
-Overall Satisfaction
+Kepuasan Secara Keseluruhan
 
-Satisfied .......... 61%
-Neutral ............ 24%
-Dissatisfied ...... 15%`
+Puas ............... 61%
+Netral ............. 24%
+Tidak Puas ......... 15%`
     },
 
 
     // =====================================================
-    // 3. ONLINE REVIEWS
+    // 3. ULASAN ONLINE
     // =====================================================
 
     {
         id: "online_reviews",
 
-        title: "Online Reviews",
+        title: "Ulasan Online",
 
         type: "pdf",
 
         icon: "⭐",
 
         content:
-`Selected Online Reviews
+`Pilihan Ulasan Online
 
 ★★★★★
-"Great food and nice atmosphere. Definitely coming back!"
+"Makanan enak dan suasananya menyenangkan. Pasti akan kembali!"
 
 ★★★★☆
-"Food was excellent, but the waiting time was frustrating."
+"Makanannya sangat enak, tetapi waktu tunggunya membuat frustrasi."
 
 ★★★☆☆
-"The quality is good, but service becomes very slow during lunch."
+"Kualitasnya baik, tetapi pelayanan menjadi sangat lambat saat jam makan siang."
 
 ★★☆☆☆
-"Good food, but I waited almost 45 minutes."
+"Makanannya enak, tetapi saya menunggu hampir 45 menit."
 
 ★★☆☆☆
-"Staff were friendly, but the restaurant needs to improve its service speed."
+"Stafnya ramah, tetapi restoran perlu meningkatkan kecepatan pelayanannya."
 
 ★★★★★
-"Once the food arrived it was great. I just wish it arrived faster."`
+"Setelah makanannya datang, rasanya sangat enak. Saya hanya berharap makanannya bisa datang lebih cepat."`
     },
 
 
     // =====================================================
-    // 4. SALES DASHBOARD
+    // 4. DASBOR PENJUALAN
     // =====================================================
 
     {
         id: "sales_dashboard",
 
-        title: "Sales Dashboard",
+        title: "Dasbor Penjualan",
 
         type: "excel",
 
         icon: "📈",
 
         content:
-`Monthly Sales Dashboard
+`Dasbor Penjualan Bulanan
 
-             Weekday      Weekend
+                    Hari Kerja     Akhir Pekan
 
-Average
-Transactions     85          140
+Rata-rata
+Transaksi              85              140
 
-Average
-Waiting Time    18 min       41 min
+Rata-rata
+Waktu Tunggu         18 menit         41 menit
 
-Average
-Customer Spend  Rp82K       Rp91K
+Rata-rata
+Belanja Pelanggan     Rp82K            Rp91K
 
 
-Peak Period:
+Periode Puncak:
 
-Friday evening
+Jumat malam
 18:00–20:00
 
-Average Waiting Time:
-47 minutes
+Rata-rata Waktu Tunggu:
+47 menit
 
-Customer Complaints:
-Highest during peak periods.`
+Keluhan Pelanggan:
+Tertinggi selama periode puncak.`
     },
 
 
     // =====================================================
-    // 5. MANAGER INTERVIEW
+    // 5. WAWANCARA MANAJER
     // =====================================================
 
     {
         id: "manager_report",
 
-        title: "Manager Report",
+        title: "Laporan Manajer",
 
         type: "document",
 
         icon: "🧑‍💼",
 
         content:
-`Manager Interview
+`Wawancara Manajer
 
-Manager:
+Manajer:
 
-"I think our main problem is that customers don't understand our pricing."
+"Saya pikir masalah utama kita adalah pelanggan tidak memahami harga yang kita tetapkan."
 
-"Some competitors offer cheaper meals, so I believe we should focus on discounts."
+"Beberapa pesaing menawarkan makanan yang lebih murah, jadi saya yakin kita seharusnya fokus pada diskon."
 
-"Our kitchen is already working as hard as possible."
+"Dapur kita sudah bekerja semaksimal mungkin."
 
-"We could probably solve the problem by launching a promotion to attract more customers."
+"Kita mungkin dapat menyelesaikan masalah ini dengan menjalankan promosi untuk menarik lebih banyak pelanggan."
 
-Manager's Proposed Solution:
+Solusi yang Diusulkan Manajer:
 
-Increase promotional discounts
-and advertising during peak periods.`
+Meningkatkan diskon promosi
+dan iklan selama periode puncak.`
     }
 
 ];

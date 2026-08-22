@@ -2,95 +2,95 @@ const ROOM1_EVIDENCE = [
 
     {
         id: "reviews",
-        title: "Customer Reviews",
+        title: "Ulasan Pelanggan",
         type: "pdf",
         icon: "📄",
         content:
 `★★★★★
-"The food is delicious but I waited 40 minutes."
+"Makanannya lezat, tetapi saya menunggu selama 40 menit."
 
 ★★★★☆
-"Excellent taste but service is extremely slow."
+"Rasanya sangat enak, tetapi pelayanannya sangat lambat."
 
 ★★☆☆☆
-"I almost left because nobody came to take my order."`
+"Saya hampir pergi karena tidak ada yang datang untuk mencatat pesanan saya."`
     },
 
     {
         id: "sales",
-        title: "Sales Report",
+        title: "Laporan Penjualan",
         type: "excel",
         icon: "📊",
         content:
-`Monthly Sales
+`Penjualan Bulanan
 
-Monday .......... 12M
+Senin .......... 12 juta
 
-Tuesday ......... 11M
+Selasa ......... 11 juta
 
-Friday .......... 28M`
+Jumat .......... 28 juta`
     },
 
     {
         id: "employee",
-        title: "Employee Interview",
+        title: "Wawancara Karyawan",
         type: "document",
         icon: "📝",
         content:
-`Kitchen Staff
+`Staf Dapur
 
-"There are only two cooks during lunch."
+"Hanya ada dua koki saat jam makan siang."
 
-Cashier
+Kasir
 
-"Customers arrive faster than food can be prepared."`
+"Pelanggan datang lebih cepat daripada makanan dapat disiapkan."`
     },
 
     {
         id: "kitchen_photo",
-        title: "Kitchen_Photo.png",
+        title: "Foto_Dapur.png",
         type: "image",
         icon: "🖼",
 
-    // Placeholder for now
         content:
-            
-            "• Food quality checks show that most dishes meet the restaurant's standards.\n" +
 
-            "• During normal periods, orders are prepared without major delays.\n" +
+            "• Pemeriksaan kualitas makanan menunjukkan bahwa sebagian besar hidangan memenuhi standar restoran.\n" +
 
-            "• During peak periods, the kitchen receives orders faster than staff can complete them.\n" +
+            "• Pada periode normal, pesanan dapat disiapkan tanpa keterlambatan yang berarti.\n" +
 
-            "• Some dishes require several preparation steps, which slows down service when demand is high.\n" +
+            "• Pada jam sibuk, dapur menerima pesanan lebih cepat daripada kemampuan staf untuk menyelesaikannya.\n" +
 
-            "• Staff members often wait for shared equipment or workspace during the busiest periods.\n\n" +
+            "• Beberapa hidangan memerlukan beberapa tahap persiapan, sehingga memperlambat pelayanan ketika permintaan tinggi.\n" +
 
-            "Key Insight:\n" +
+            "• Staf sering harus menunggu penggunaan peralatan atau ruang kerja bersama pada periode paling sibuk.\n\n" +
 
-            "The kitchen appears capable during normal demand, but capacity becomes a bottleneck during peak periods."
+            "Temuan Utama:\n" +
+
+            "Dapur mampu menangani permintaan pada kondisi normal, tetapi kapasitas menjadi hambatan utama pada jam sibuk."
     },
 
     {
         id: "receipt",
-        title: "Cashier Transaction Notes",
+        title: "Catatan Transaksi Kasir",
         icon: "💳",
 
         content:
-            "Cashier Observation\n\n" +
 
-            "• The cashier reports that order queues build quickly during busy periods.\n" +
+            "Observasi Kasir\n\n" +
 
-            "• Customers often ask how long their orders will take before paying.\n" +
+            "• Kasir melaporkan bahwa antrean pesanan meningkat dengan cepat pada jam sibuk.\n" +
 
-            "• Refund requests are uncommon, but complaints about waiting are frequent.\n" +
+            "• Pelanggan sering bertanya berapa lama pesanan mereka akan selesai sebelum melakukan pembayaran.\n" +
 
-            "• Average spending per customer remains relatively stable.\n" +
+            "• Permintaan pengembalian dana jarang terjadi, tetapi keluhan mengenai waktu tunggu cukup sering muncul.\n" +
 
-            "• The cashier believes the biggest pressure occurs when several large groups arrive at the same time.\n\n" +
+            "• Rata-rata pengeluaran per pelanggan relatif stabil.\n" +
 
-            "Key Insight:\n" +
+            "• Menurut kasir, tekanan terbesar terjadi ketika beberapa kelompok besar datang pada waktu yang bersamaan.\n\n" +
 
-            "The evidence suggests that the customer experience problem may be linked more strongly to service flow and waiting time than to pricing."
+            "Temuan Utama:\n" +
+
+            "Bukti menunjukkan bahwa masalah pengalaman pelanggan lebih kuat berkaitan dengan alur pelayanan dan waktu tunggu dibandingkan dengan harga."
     }
 
 ];

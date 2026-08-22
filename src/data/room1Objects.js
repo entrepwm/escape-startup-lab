@@ -2,10 +2,10 @@ const ROOM1_OBJECTS = [
 
     {
         id: "customer",
-        label: "Customer",
+        label: "Pelanggan",
         icon: "🙂",
 
-        // Dining-area customer sprite
+        // Sprite pelanggan di area makan
         x: 0.250,
         y: 0.645,
 
@@ -14,10 +14,10 @@ const ROOM1_OBJECTS = [
 
     {
         id: "employee",
-        label: "Employee",
+        label: "Karyawan",
         icon: "👨‍🍳",
 
-        // Far-right employee sprite
+        // Sprite karyawan di sisi kanan ruangan
         x: 0.952,
         y: 0.475,
 
@@ -26,10 +26,10 @@ const ROOM1_OBJECTS = [
 
     {
         id: "blackboard",
-        label: "Blackboard",
+        label: "Papan Menu",
         icon: "📋",
 
-        // Menu / blackboard area above the service counter
+        // Area papan menu di atas konter pelayanan
         x: 0.425,
         y: 0.135,
 
@@ -38,10 +38,10 @@ const ROOM1_OBJECTS = [
 
     {
         id: "kitchen",
-        label: "Kitchen",
+        label: "Dapur",
         icon: "🚪",
 
-        // Kitchen prep island
+        // Area persiapan di dapur
         x: 0.650,
         y: 0.370,
 
@@ -50,10 +50,10 @@ const ROOM1_OBJECTS = [
 
     {
         id: "cashier",
-        label: "Cashier",
+        label: "Kasir",
         icon: "💰",
 
-        // Register / cashier area
+        // Area mesin kasir
         x: 0.505,
         y: 0.295,
 

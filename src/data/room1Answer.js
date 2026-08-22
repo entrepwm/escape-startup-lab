@@ -1,33 +1,41 @@
 const ROOM1_ANSWER = {
 
     // =====================================================
-    // NOTEBOOK ANSWERS
+    // JAWABAN CATATAN INVESTIGASI
     // =====================================================
 
     notebook: {
 
-        customer_satisfaction: "Mixed",
+        customer_satisfaction:
+            "Beragam",
 
-        food_quality: "Excellent",
+        food_quality:
+            "Pelanggan pada umumnya menilai kualitas makanan baik",
 
-        service_speed: "Slow",
+        service_speed:
+            "Pelayanan lambat dan waktu tunggu yang panjang",
 
-        main_problem: "Service Speed",
-
-        confidence: "Very Confident"
+        main_problem:
+            "Kecepatan pelayanan"
 
     },
 
+
     // =====================================================
-    // ASSESSMENT ANSWER
+    // JAWABAN ASESMEN
     // =====================================================
 
-    correctRecommendation: "service",
+    correctRecommendation:
+        "service",
+
 
     explanation:
 
-        "Customer reviews consistently mention long waiting times despite high food quality. Improving service speed addresses the root cause."
+        "Ulasan pelanggan secara konsisten menyebutkan waktu tunggu yang lama meskipun kualitas makanan dinilai baik. " +
+
+        "Meningkatkan kecepatan pelayanan membantu mengatasi akar masalah utama restoran."
 
 };
+
 
 export default ROOM1_ANSWER;

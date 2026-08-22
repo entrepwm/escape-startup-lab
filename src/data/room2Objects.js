@@ -4,9 +4,9 @@ const ROOM2_OBJECTS = [
         id: "customer_interview",
 
         label:
-            "Customer Interview Documents",
+            "Dokumen Wawancara Pelanggan",
 
-        // First evidence desk
+        // Meja bukti pertama
         x: 0.260,
         y: 0.715,
 
@@ -19,9 +19,9 @@ const ROOM2_OBJECTS = [
         id: "customer_survey",
 
         label:
-            "Customer Survey",
+            "Survei Pelanggan",
 
-        // Survey papers on second evidence desk
+        // Dokumen survei di meja bukti kedua
         x: 0.430,
         y: 0.715,
 
@@ -34,9 +34,9 @@ const ROOM2_OBJECTS = [
         id: "sales_dashboard",
 
         label:
-            "Sales Dashboard",
+            "Dasbor Penjualan",
 
-        // Analytics monitor workstation
+        // Monitor analitik di workstation
         x: 0.610,
         y: 0.655,
 
@@ -49,9 +49,9 @@ const ROOM2_OBJECTS = [
         id: "online_reviews",
 
         label:
-            "Online Reviews",
+            "Ulasan Online",
 
-        // Laptop / review workstation
+        // Laptop / workstation ulasan
         x: 0.790,
         y: 0.675,
 
@@ -64,9 +64,9 @@ const ROOM2_OBJECTS = [
         id: "manager_report",
 
         label:
-            "Manager",
+            "Manajer",
 
-        // Manager desk / nameplate area
+        // Meja manajer / area papan nama
         x: 0.755,
         y: 0.325,
 

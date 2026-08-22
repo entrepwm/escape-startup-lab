@@ -2,27 +2,27 @@ const ROOM1_ASSESSMENT = [
 
     {
         id: "marketing",
-        text: "Improve Marketing"
+        text: "Tingkatkan Pemasaran"
     },
 
     {
         id: "service",
-        text: "Improve Service Speed"
+        text: "Tingkatkan Kecepatan Pelayanan"
     },
 
     {
         id: "food",
-        text: "Improve Food Quality"
+        text: "Tingkatkan Kualitas Makanan"
     },
 
     {
         id: "staff",
-        text: "Reduce Staff"
+        text: "Kurangi Jumlah Staf"
     },
 
     {
         id: "equipment",
-        text: "Buy New Equipment"
+        text: "Beli Peralatan Baru"
     }
 
 ];

@@ -2,22 +2,22 @@ const ROOM2_ASSESSMENT = [
 
     {
         id: "capacity",
-        text: "Increase kitchen and service capacity during peak periods"
+        text: "Tingkatkan kapasitas dapur dan pelayanan selama periode sibuk"
     },
 
     {
         id: "discount",
-        text: "Introduce promotional discounts during peak periods"
+        text: "Berikan diskon promosi selama periode sibuk"
     },
 
     {
         id: "advertising",
-        text: "Increase advertising to attract more customers"
+        text: "Tingkatkan iklan untuk menarik lebih banyak pelanggan"
     },
 
     {
         id: "menu",
-        text: "Redesign the menu to improve perceived food value"
+        text: "Desain ulang menu untuk meningkatkan persepsi nilai makanan"
     }
 
 ];

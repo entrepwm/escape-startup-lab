@@ -30,7 +30,7 @@ export default class Room3Scene extends Phaser.Scene {
     create() {
 
         console.log(
-            "Starting Room 3: Mission 03 - Strategic Decision"
+            "Memulai Room 3: Misi 03 - Keputusan Strategis"
         );
 
 
@@ -66,8 +66,9 @@ export default class Room3Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "Room 3 could not initialize ScoreManager."
+                "Room 3 gagal menginisialisasi ScoreManager."
             );
+
 
             return;
 
@@ -169,8 +170,9 @@ export default class Room3Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "ScoreManager was not found on this.game."
+                "ScoreManager tidak ditemukan pada this.game."
             );
+
 
             return;
 
@@ -180,13 +182,6 @@ export default class Room3Scene extends Phaser.Scene {
         // =================================================
         // SET CURRENT ROOM
         // =================================================
-
-        /*
-         * This only resets room-specific notebook /
-         * assessment state.
-         *
-         * It must NOT reset the global 20-minute timer.
-         */
 
         this.scoreManager.setRoom(
             3
@@ -240,13 +235,9 @@ export default class Room3Scene extends Phaser.Scene {
                 (points) => {
 
                     console.log(
-                        `Room 3 Notebook completed. +${points} points`
+                        `Catatan Room 3 selesai. +${points} poin`
                     );
 
-
-                    // =========================================
-                    // UPDATE SCORE HUD
-                    // =========================================
 
                     this.terminal.setScore(
 
@@ -254,10 +245,6 @@ export default class Room3Scene extends Phaser.Scene {
 
                     );
 
-
-                    // =========================================
-                    // UNLOCK ASSESSMENT
-                    // =========================================
 
                     this.unlockAssessment();
 
@@ -297,7 +284,7 @@ export default class Room3Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "Room 3 RoomView could not be created."
+                "RoomView untuk Room 3 gagal dibuat."
             );
 
         }
@@ -317,7 +304,7 @@ export default class Room3Scene extends Phaser.Scene {
 
         this.terminal.setRoom(
 
-            "MISSION 03: STRATEGIC DECISION\nCEO OFFICE"
+            "MISI 03: KEPUTUSAN STRATEGIS\nKANTOR CEO"
 
         );
 
@@ -328,13 +315,13 @@ export default class Room3Scene extends Phaser.Scene {
 
         this.terminal.setDialogue(
 
-            "Welcome to Room 3.\n" +
+            "Selamat datang di Room 3.\n" +
 
-            "Management has limited resources and cannot implement every possible solution.\n\n" +
+            "Manajemen memiliki sumber daya yang terbatas dan tidak dapat menerapkan semua solusi yang tersedia.\n\n" +
 
-            "Complete your Investigation Notebook to unlock the Assessment.\n" +
+            "Selesaikan Catatan Investigasi untuk membuka Asesmen.\n" +
 
-            "Evidence is optional, but thorough investigation may earn additional recognition."
+            "Pemeriksaan bukti bersifat opsional, tetapi investigasi menyeluruh dapat memberikan penghargaan tambahan."
 
         );
 
@@ -383,8 +370,9 @@ export default class Room3Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "RoomView not initialized."
+                "RoomView belum diinisialisasi."
             );
+
 
             return;
 
@@ -392,6 +380,7 @@ export default class Room3Scene extends Phaser.Scene {
 
 
         ROOM3_OBJECTS.forEach(
+
             object => {
 
                 this.roomView.addObject(
@@ -399,6 +388,7 @@ export default class Room3Scene extends Phaser.Scene {
                 );
 
             }
+
         );
 
     }
@@ -417,8 +407,9 @@ export default class Room3Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "Global timer methods are missing from ScoreManager."
+                "Method timer global tidak tersedia di ScoreManager."
             );
+
 
             return;
 
@@ -441,6 +432,7 @@ export default class Room3Scene extends Phaser.Scene {
         ) {
 
             this.handleGlobalTimeExpired();
+
 
             return;
 
@@ -486,23 +478,11 @@ export default class Room3Scene extends Phaser.Scene {
                         }
 
 
-                        // =====================================
-                        // DECREASE GLOBAL SHARED TIME
-                        // =====================================
-
                         this.scoreManager.tickGameTimer();
 
 
-                        // =====================================
-                        // UPDATE HUD
-                        // =====================================
-
                         this.updateGlobalTimerDisplay();
 
-
-                        // =====================================
-                        // TIME EXPIRED
-                        // =====================================
 
                         if (
                             this.scoreManager.isTimerExpired()
@@ -553,29 +533,18 @@ export default class Room3Scene extends Phaser.Scene {
             this.scoreManager.getFormattedTime();
 
 
-        // =================================================
-        // DISPLAY ONLY
-        // =================================================
-
         this.terminal.setTime(
             formatted
         );
 
 
-        // =================================================
-        // COLOR WARNING
-        // =================================================
-
         if (
             this.terminal.timeText
         ) {
 
-            // =============================================
-            // FINAL MINUTE
-            // =============================================
-
             if (
-                remaining <= 60
+                remaining <=
+                60
             ) {
 
                 this.terminal.timeText.setColor(
@@ -583,14 +552,9 @@ export default class Room3Scene extends Phaser.Scene {
                 );
 
             }
-
-
-            // =============================================
-            // FINAL THREE MINUTES
-            // =============================================
-
             else if (
-                remaining <= 180
+                remaining <=
+                180
             ) {
 
                 this.terminal.timeText.setColor(
@@ -598,12 +562,6 @@ export default class Room3Scene extends Phaser.Scene {
                 );
 
             }
-
-
-            // =============================================
-            // NORMAL
-            // =============================================
-
             else {
 
                 this.terminal.timeText.setColor(
@@ -623,10 +581,6 @@ export default class Room3Scene extends Phaser.Scene {
 
     handleGlobalTimeExpired() {
 
-        // =================================================
-        // PREVENT MULTIPLE TRANSITIONS
-        // =================================================
-
         if (
             this.timeExpiredHandled
         ) {
@@ -641,20 +595,12 @@ export default class Room3Scene extends Phaser.Scene {
 
 
         console.log(
-            "20-minute global game timer expired in Room 3."
+            "Timer global 20 menit habis di Room 3."
         );
 
 
-        // =================================================
-        // STOP ROOM 3 LOCAL CLOCK
-        // =================================================
-
         this.stopLocalTimerEvent();
 
-
-        // =================================================
-        // UPDATE TERMINAL
-        // =================================================
 
         if (
             this.terminal
@@ -678,17 +624,13 @@ export default class Room3Scene extends Phaser.Scene {
 
             this.terminal.setDialogue(
 
-                "TIME EXPIRED.\n" +
-                "The Founder Assessment has ended."
+                "WAKTU HABIS.\n" +
+                "Asesmen Pendiri telah berakhir."
 
             );
 
         }
 
-
-        // =================================================
-        // CLOSE OPEN WINDOW
-        // =================================================
 
         if (
             this.window &&
@@ -700,10 +642,6 @@ export default class Room3Scene extends Phaser.Scene {
 
         }
 
-
-        // =================================================
-        // FINAL RESULTS
-        // =================================================
 
         this.scene.start(
 
@@ -751,7 +689,7 @@ export default class Room3Scene extends Phaser.Scene {
     unlockAssessment() {
 
         console.log(
-            "Room 3 Assessment unlocked!"
+            "Asesmen Room 3 terbuka!"
         );
 
 
@@ -766,11 +704,11 @@ export default class Room3Scene extends Phaser.Scene {
 
         this.terminal.setDialogue(
 
-            "Notebook submitted.\n" +
+            "Catatan Investigasi telah dikumpulkan.\n" +
 
-            "Your final Assessment is now available.\n" +
+            "Asesmen akhir Anda sekarang tersedia.\n" +
 
-            "You may still investigate additional evidence before making your strategic recommendation."
+            "Anda masih dapat memeriksa bukti tambahan sebelum membuat rekomendasi strategis."
 
         );
 
@@ -783,17 +721,9 @@ export default class Room3Scene extends Phaser.Scene {
 
     registerEvents() {
 
-        // =================================================
-        // SIDEBAR BUTTONS
-        // =================================================
-
         this.terminal.onButtonClick(
 
             (id) => {
-
-                // =================================================
-                // BLOCK INPUT AFTER TIME ENDS
-                // =================================================
 
                 if (
                     this.timeExpiredHandled
@@ -808,21 +738,12 @@ export default class Room3Scene extends Phaser.Scene {
                     id
                 ) {
 
-
-                    // =====================================
-                    // NOTEBOOK
-                    // =====================================
-
                     case "notebook":
 
                         this.notebookViewer.open();
 
                         break;
 
-
-                    // =====================================
-                    // ASSESSMENT
-                    // =====================================
 
                     case "assessment":
 
@@ -831,20 +752,12 @@ export default class Room3Scene extends Phaser.Scene {
                         break;
 
 
-                    // =====================================
-                    // HINT
-                    // =====================================
-
                     case "hint":
 
                         this.openHint();
 
                         break;
 
-
-                    // =====================================
-                    // PROGRESS
-                    // =====================================
 
                     case "progress":
 
@@ -853,27 +766,15 @@ export default class Room3Scene extends Phaser.Scene {
                         break;
 
 
-                    // =====================================
-                    // CONTINUE / DEV SHORTCUT
-                    // =====================================
-
                     case "continue":
 
                         console.log(
-                            "DEV: Continuing Room 3 → Final Results"
+                            "DEV: Melanjutkan Room 3 → Hasil Akhir"
                         );
 
 
-                        // =================================
-                        // STOP ROOM 3 LOCAL CLOCK
-                        // =================================
-
                         this.stopLocalTimerEvent();
 
-
-                        // =================================
-                        // FINAL RESULTS
-                        // =================================
 
                         this.scene.start(
 
@@ -888,18 +789,15 @@ export default class Room3Scene extends Phaser.Scene {
 
                         );
 
+
                         break;
 
-
-                    // =====================================
-                    // UNKNOWN BUTTON
-                    // =====================================
 
                     default:
 
                         console.warn(
 
-                            `Unknown sidebar button: ${id}`
+                            `Tombol sidebar tidak dikenal: ${id}`
 
                         );
 
@@ -909,10 +807,6 @@ export default class Room3Scene extends Phaser.Scene {
 
         );
 
-
-        // =================================================
-        // ROOM OBJECTS
-        // =================================================
 
         if (
             !this.roomView
@@ -953,25 +847,17 @@ export default class Room3Scene extends Phaser.Scene {
 
     openAssessment() {
 
-        // =================================================
-        // TIMER CHECK
-        // =================================================
-
         if (
             this.scoreManager.isTimerExpired()
         ) {
 
             this.handleGlobalTimeExpired();
 
+
             return;
 
         }
 
-
-        // =================================================
-        // ONLY REQUIREMENT:
-        // NOTEBOOK MUST BE SUBMITTED
-        // =================================================
 
         if (
             !this.scoreManager.isNotebookSubmitted()
@@ -980,16 +866,16 @@ export default class Room3Scene extends Phaser.Scene {
             this.window.open({
 
                 title:
-                    "Assessment Locked"
+                    "Asesmen Terkunci"
 
             });
 
 
             this.window.setContent(
 
-                "Complete and submit the Investigation Notebook first.\n\n" +
+                "Selesaikan dan kumpulkan Catatan Investigasi terlebih dahulu.\n\n" +
 
-                "Evidence investigation is optional."
+                "Pemeriksaan bukti bersifat opsional."
 
             );
 
@@ -999,27 +885,8 @@ export default class Room3Scene extends Phaser.Scene {
         }
 
 
-        // =================================================
-        // NO EVIDENCE REQUIREMENT
-        // =================================================
-
-        /*
-         * Evidence remains optional.
-         *
-         * Thorough Investigator is a bonus only.
-         */
-
-
-        // =================================================
-        // CHECK OPTIONAL ACHIEVEMENT
-        // =================================================
-
         this.checkThoroughInvestigator();
 
-
-        // =================================================
-        // OPEN ASSESSMENT
-        // =================================================
 
         this.assessmentViewer.open();
 
@@ -1044,6 +911,7 @@ export default class Room3Scene extends Phaser.Scene {
 
 
         const allInvestigated =
+
             this.roomView
                 .allObjectsInvestigated();
 
@@ -1059,17 +927,17 @@ export default class Room3Scene extends Phaser.Scene {
 
             console.log(
 
-                "ACHIEVEMENT UNLOCKED: " +
-                "Thorough Investigator — Room 3"
+                "ACHIEVEMENT TERBUKA: " +
+                "Investigator Menyeluruh — Room 3"
 
             );
 
 
             this.terminal.setDialogue(
 
-                "Achievement unlocked: Thorough Investigator!\n" +
+                "Pencapaian terbuka: Investigator Menyeluruh!\n" +
 
-                "You examined every available strategic evidence source."
+                "Anda telah memeriksa seluruh sumber bukti strategis yang tersedia."
 
             );
 
@@ -1090,22 +958,18 @@ export default class Room3Scene extends Phaser.Scene {
         this.window.open({
 
             title:
-                "EVA Hint"
+                "Petunjuk EVA"
 
         });
 
 
         this.window.setContent(
 
-            "Don't automatically choose the cheapest or most innovative option.\n\n" +
+            "Jangan langsung memilih pilihan yang paling murah atau paling inovatif.\n\n" +
 
-            "First identify the actual bottleneck, then compare each solution's " +
+            "Identifikasi terlebih dahulu bottleneck yang sebenarnya, kemudian bandingkan dampak, biaya, kelayakan, kesesuaian strategis, dan nilai jangka panjang dari setiap solusi.\n\n" +
 
-            "impact, cost, feasibility, strategic fit, and long-term value.\n\n" +
-
-            "Evidence investigation is optional, but stronger strategic decisions " +
-
-            "usually come from stronger evidence."
+            "Pemeriksaan bukti bersifat opsional, tetapi keputusan strategis yang lebih kuat biasanya berasal dari bukti yang lebih kuat."
 
         );
 
@@ -1126,33 +990,29 @@ export default class Room3Scene extends Phaser.Scene {
             this.scoreManager.getFormattedTime();
 
 
-        // =================================================
-        // NOTEBOOK STATUS
-        // =================================================
-
         const notebookStatus =
+
             this.scoreManager.isNotebookSubmitted()
-                ? "Completed"
-                : "Not Completed";
 
+                ? "Selesai"
 
-        // =================================================
-        // ASSESSMENT STATUS
-        // =================================================
+                : "Belum Selesai";
+
 
         const assessmentStatus =
+
             this.scoreManager.isAssessmentSubmitted()
-                ? "Completed"
+
+                ? "Selesai"
+
                 : (
                     this.scoreManager.isNotebookSubmitted()
-                        ? "Unlocked"
-                        : "Locked"
+
+                        ? "Terbuka"
+
+                        : "Terkunci"
                 );
 
-
-        // =================================================
-        // EVIDENCE PROGRESS
-        // =================================================
 
         let investigatedCount =
             0;
@@ -1169,6 +1029,7 @@ export default class Room3Scene extends Phaser.Scene {
         ) {
 
             investigatedCount =
+
                 this.roomView
                     .getInvestigatedObjects()
                     .length;
@@ -1176,50 +1037,45 @@ export default class Room3Scene extends Phaser.Scene {
         }
 
 
-        // =================================================
-        // ACHIEVEMENT CHECK
-        // =================================================
-
         this.checkThoroughInvestigator();
 
 
         const achievementStatus =
+
             this.thoroughInvestigatorEarned
-                ? "Unlocked ✓"
+
+                ? "Terbuka ✓"
+
                 : `${investigatedCount} / ${totalEvidence}`;
 
-
-        // =================================================
-        // WINDOW
-        // =================================================
 
         this.window.open({
 
             title:
-                "Mission Progress"
+                "Progres Misi"
 
         });
 
 
         this.window.setContent(
 
-            "MISSION 03: STRATEGIC DECISION\n" +
+            "MISI 03: KEPUTUSAN STRATEGIS\n" +
 
-            "CEO OFFICE\n\n" +
+            "KANTOR CEO\n\n" +
 
-            `Time Remaining: ${timeRemaining}\n\n` +
+            `Sisa Waktu: ${timeRemaining}\n\n` +
 
-            `Notebook: ${notebookStatus}\n` +
+            `Catatan Investigasi: ${notebookStatus}\n` +
 
-            `Assessment: ${assessmentStatus}\n` +
+            `Asesmen: ${assessmentStatus}\n` +
 
-            `Evidence: ${investigatedCount} / ${totalEvidence}\n\n` +
+            `Bukti: ${investigatedCount} / ${totalEvidence}\n\n` +
 
-            "BONUS ACHIEVEMENT\n" +
+            "PENCAPAIAN BONUS\n" +
 
-            `Thorough Investigator: ${achievementStatus}\n\n` +
+            `Investigator Menyeluruh: ${achievementStatus}\n\n` +
 
-            `Current Score: ${score}`
+            `Skor Saat Ini: ${score}`
 
         );
 
@@ -1235,6 +1091,7 @@ export default class Room3Scene extends Phaser.Scene {
     ) {
 
         const object =
+
             ROOM3_OBJECTS.find(
 
                 obj =>
@@ -1243,17 +1100,13 @@ export default class Room3Scene extends Phaser.Scene {
             );
 
 
-        // =================================================
-        // UNKNOWN OBJECT
-        // =================================================
-
         if (
             !object
         ) {
 
             console.warn(
 
-                `Unknown Room 3 object: ${id}`
+                `Objek Room 3 tidak dikenal: ${id}`
 
             );
 
@@ -1265,14 +1118,10 @@ export default class Room3Scene extends Phaser.Scene {
 
         console.log(
 
-            `Room 3 object clicked: ${object.id}`
+            `Objek Room 3 diklik: ${object.id}`
 
         );
 
-
-        // =================================================
-        // CHECK EVIDENCE
-        // =================================================
 
         if (
             !object.evidence
@@ -1280,7 +1129,7 @@ export default class Room3Scene extends Phaser.Scene {
 
             console.warn(
 
-                `No evidence assigned to room object: ${object.id}`
+                `Tidak ada bukti yang terhubung ke objek Room 3: ${object.id}`
 
             );
 
@@ -1290,20 +1139,12 @@ export default class Room3Scene extends Phaser.Scene {
         }
 
 
-        // =================================================
-        // OPEN EVIDENCE
-        // =================================================
-
         this.evidenceViewer.openEvidence(
 
             object.evidence
 
         );
 
-
-        // =================================================
-        // CHECK OPTIONAL ACHIEVEMENT
-        // =================================================
 
         this.checkThoroughInvestigator();
 
@@ -1315,13 +1156,6 @@ export default class Room3Scene extends Phaser.Scene {
     // =====================================================
 
     cleanupScene() {
-
-        /*
-         * Stop only Room 3's local Phaser timer event.
-         *
-         * The ScoreManager timer state is preserved
-         * until the entire game is reset.
-         */
 
         this.stopLocalTimerEvent();
 

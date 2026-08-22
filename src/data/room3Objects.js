@@ -3,11 +3,11 @@ const ROOM3_OBJECTS = [
     {
         id: "finance_desk",
 
-        label: "Investment Budget",
+        label: "Anggaran Investasi",
 
         icon: "💰",
 
-        // Bottom-left report stacks
+        // Tumpukan laporan di kiri bawah
         x: 0.135,
         y: 0.750,
 
@@ -19,11 +19,11 @@ const ROOM3_OBJECTS = [
     {
         id: "operations_desk",
 
-        label: "Operations Report",
+        label: "Laporan Operasional",
 
         icon: "📋",
 
-        // Upper-left process / planning board
+        // Papan proses / perencanaan di kiri atas
         x: 0.290,
         y: 0.280,
 
@@ -35,11 +35,11 @@ const ROOM3_OBJECTS = [
     {
         id: "technology_desk",
 
-        label: "Technology Report",
+        label: "Laporan Teknologi",
 
         icon: "💻",
 
-        // Laptop / technology report on CEO desk
+        // Laptop / laporan teknologi di meja CEO
         x: 0.480,
         y: 0.565,
 
@@ -51,11 +51,11 @@ const ROOM3_OBJECTS = [
     {
         id: "hr_desk",
 
-        label: "HR Report",
+        label: "Laporan SDM",
 
         icon: "👥",
 
-        // Right-side binder / filing shelf
+        // Binder / rak arsip di sisi kanan
         x: 0.815,
         y: 0.320,
 
@@ -67,11 +67,11 @@ const ROOM3_OBJECTS = [
     {
         id: "strategy_dashboard",
 
-        label: "Strategy Dashboard",
+        label: "Dasbor Strategi",
 
         icon: "📊",
 
-        // Large dark dashboard on back wall
+        // Dasbor besar di dinding belakang
         x: 0.500,
         y: 0.195,
 

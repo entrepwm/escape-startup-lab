@@ -1,265 +1,267 @@
 const ROOM3_EVIDENCE = [
 
     // =====================================================
-    // 1. FINANCE DESK
+    // 1. MEJA KEUANGAN
     // =====================================================
 
     {
         id: "investment_budget",
 
-        title: "Investment Budget",
+        title: "Anggaran Investasi",
 
         icon: "💰",
 
         content:
-`STRATEGY LAB — INVESTMENT BUDGET
+`STRATEGY LAB — ANGGARAN INVESTASI
 
-Available Improvement Budget:
-Rp50,000,000
+Anggaran Perbaikan Tersedia:
+Rp50.000.000
 
-Current Monthly Operating Cash:
-Rp85,000,000
+Kas Operasional Bulanan Saat Ini:
+Rp85.000.000
 
-Management has approved a maximum
-investment of Rp50,000,000 for the
-improvement project.
+Manajemen telah menyetujui investasi
+maksimum sebesar Rp50.000.000 untuk
+proyek perbaikan.
 
-AVAILABLE OPTIONS
+OPSI YANG TERSEDIA
 
-Additional Staff
-Initial Cost: Rp30,000,000
-Monthly Cost: Rp8,000,000
+Penambahan Staf
+Biaya Awal: Rp30.000.000
+Biaya Bulanan: Rp8.000.000
 
-Kitchen Equipment Upgrade
-Initial Cost: Rp40,000,000
-Monthly Cost: Rp2,000,000
+Peningkatan Peralatan Dapur
+Biaya Awal: Rp40.000.000
+Biaya Bulanan: Rp2.000.000
 
-Online Ordering System
-Initial Cost: Rp20,000,000
-Monthly Cost: Rp3,000,000
+Sistem Pemesanan Online
+Biaya Awal: Rp20.000.000
+Biaya Bulanan: Rp3.000.000
 
-Queue Management System
-Initial Cost: Rp15,000,000
-Monthly Cost: Rp2,000,000
+Sistem Manajemen Antrean
+Biaya Awal: Rp15.000.000
+Biaya Bulanan: Rp2.000.000
 
-Restaurant Layout Redesign
-Initial Cost: Rp25,000,000
-Monthly Cost: Rp1,000,000`
+Desain Ulang Tata Letak Restoran
+Biaya Awal: Rp25.000.000
+Biaya Bulanan: Rp1.000.000`
     },
 
 
     // =====================================================
-    // 2. OPERATIONS DESK
+    // 2. MEJA OPERASIONAL
     // =====================================================
 
     {
         id: "operations_report",
 
-        title: "Peak-Hour Operations Report",
+        title: "Laporan Operasional Jam Sibuk",
 
         icon: "👨‍🍳",
 
         content:
-`PEAK-HOUR OPERATIONS REPORT
+`LAPORAN OPERASIONAL JAM SIBUK
 
-NORMAL PERIOD
+PERIODE NORMAL
 
-Average orders/hour: 28
-Average waiting time: 14 minutes
+Rata-rata pesanan/jam: 28
+Rata-rata waktu tunggu: 14 menit
 
-PEAK PERIOD
+PERIODE SIBUK
 
-Average orders/hour: 52
-Kitchen capacity: 38 orders/hour
-Average waiting time: 47 minutes
+Rata-rata pesanan/jam: 52
+Kapasitas dapur: 38 pesanan/jam
+Rata-rata waktu tunggu: 47 menit
 
-KITCHEN UTILIZATION
+UTILISASI DAPUR
 
 Normal: 74%
-Peak: 97%
+Sibuk: 97%
 
-STAFF UTILIZATION
+UTILISASI STAF
 
 Normal: 68%
-Peak: 94%
+Sibuk: 94%
 
-MAIN OPERATIONAL BOTTLENECK
+BOTTLENECK OPERASIONAL UTAMA
 
-Kitchen processing capacity
-during peak periods.`
+Kapasitas pemrosesan dapur
+selama periode sibuk.`
     },
 
 
     // =====================================================
-    // 3. TECHNOLOGY DESK
+    // 3. MEJA TEKNOLOGI
     // =====================================================
 
     {
         id: "technology_report",
 
-        title: "Digital Solutions Report",
+        title: "Laporan Solusi Digital",
 
         icon: "💻",
 
         content:
-`DIGITAL SOLUTIONS REPORT
+`LAPORAN SOLUSI DIGITAL
 
-ONLINE ORDERING
+PEMESANAN ONLINE
 
-Potential benefits:
-• Reduces ordering time
-• Allows customers to order before arrival
-• Reduces congestion at ordering points
+Potensi manfaat:
+• Mengurangi waktu pemesanan
+• Memungkinkan pelanggan memesan sebelum tiba
+• Mengurangi kepadatan di titik pemesanan
 
-Estimated waiting-time improvement:
+Estimasi perbaikan waktu tunggu:
 8–12%
 
-Implementation:
-2 weeks
+Implementasi:
+2 minggu
 
-Training requirement:
-Low
+Kebutuhan pelatihan:
+Rendah
 
 
-QUEUE MANAGEMENT SYSTEM
+SISTEM MANAJEMEN ANTREAN
 
-Potential benefits:
-• Organizes customer flow
-• Provides estimated waiting time
-• Reduces perceived uncertainty
+Potensi manfaat:
+• Mengatur alur pelanggan
+• Memberikan estimasi waktu tunggu
+• Mengurangi ketidakpastian yang dirasakan pelanggan
 
-Estimated waiting-time improvement:
+Estimasi perbaikan waktu tunggu:
 5–10%
 
-Implementation:
-1 week
+Implementasi:
+1 minggu
 
-Training requirement:
-Very Low
+Kebutuhan pelatihan:
+Sangat Rendah
 
 
-IMPORTANT
+PENTING
 
-Neither system directly increases
-the restaurant's kitchen capacity.`
+Tidak satu pun dari kedua sistem ini
+secara langsung meningkatkan
+kapasitas dapur restoran.`
     },
 
 
     // =====================================================
-    // 4. HR DESK
+    // 4. MEJA SDM
     // =====================================================
 
     {
         id: "staffing_report",
 
-        title: "Staffing & Training Report",
+        title: "Laporan Staf & Pelatihan",
 
         icon: "👥",
 
         content:
-`STAFFING & TRAINING REPORT
+`LAPORAN STAF & PELATIHAN
 
-CURRENT PEAK-PERIOD STAFFING
+JUMLAH STAF SAAT PERIODE SIBUK
 
-Kitchen: 5 employees
-Service: 4 employees
+Dapur: 5 karyawan
+Pelayanan: 4 karyawan
 
-ADDITIONAL STAFF REQUIRED
+TAMBAHAN STAF YANG DIBUTUHKAN
 
-Kitchen: +2 employees
+Dapur: +2 karyawan
 
-ESTIMATED EFFECT
+ESTIMASI DAMPAK
 
-Peak kitchen capacity:
-38 → 50 orders/hour
+Kapasitas dapur saat periode sibuk:
+38 → 50 pesanan/jam
 
-Estimated waiting time:
-47 → approximately 25–30 minutes
+Estimasi waktu tunggu:
+47 → sekitar 25–30 menit
 
-INITIAL RECRUITMENT & TRAINING
+BIAYA AWAL REKRUTMEN & PELATIHAN
 
-Rp30,000,000
+Rp30.000.000
 
-ADDITIONAL MONTHLY LABOR COST
+TAMBAHAN BIAYA TENAGA KERJA BULANAN
 
-Rp8,000,000
+Rp8.000.000
 
-RECRUITMENT TIMELINE
+WAKTU REKRUTMEN
 
-3–4 weeks
+3–4 minggu
 
-RISK
+RISIKO
 
-Moderate
+Sedang
 
-STAFF AVAILABILITY
+KETERSEDIAAN STAF
 
-Two qualified kitchen workers
-are currently available in the area.`
+Dua tenaga dapur yang memenuhi
+kualifikasi saat ini tersedia
+di area sekitar.`
     },
 
 
     // =====================================================
-    // 5. STRATEGY DASHBOARD
+    // 5. DASBOR STRATEGI
     // =====================================================
 
     {
         id: "strategy_comparison",
 
-        title: "Strategy Comparison",
+        title: "Perbandingan Strategi",
 
         icon: "📊",
 
         content:
-`STRATEGY LAB — OPTION COMPARISON
+`STRATEGY LAB — PERBANDINGAN OPSI
 
-AVAILABLE BUDGET
-Rp50,000,000
-
-
-OPTION A — ADDITIONAL STAFF
-
-Initial Cost: Rp30M
-Operational Impact: HIGH
-Implementation: 3–4 weeks
-Long-term Cost: HIGH
-Feasibility: HIGH
+ANGGARAN TERSEDIA
+Rp50.000.000
 
 
-OPTION B — KITCHEN EQUIPMENT
+OPSI A — PENAMBAHAN STAF
 
-Initial Cost: Rp40M
-Operational Impact: HIGH
-Implementation: 4–6 weeks
-Long-term Cost: LOW
-Feasibility: MEDIUM
-
-
-OPTION C — ONLINE ORDERING
-
-Initial Cost: Rp20M
-Operational Impact: MEDIUM
-Implementation: 2 weeks
-Long-term Cost: MEDIUM
-Feasibility: HIGH
+Biaya Awal: Rp30 juta
+Dampak Operasional: TINGGI
+Implementasi: 3–4 minggu
+Biaya Jangka Panjang: TINGGI
+Kelayakan: TINGGI
 
 
-OPTION D — QUEUE MANAGEMENT
+OPSI B — PERALATAN DAPUR
 
-Initial Cost: Rp15M
-Operational Impact: LOW–MEDIUM
-Implementation: 1 week
-Long-term Cost: LOW
-Feasibility: HIGH
+Biaya Awal: Rp40 juta
+Dampak Operasional: TINGGI
+Implementasi: 4–6 minggu
+Biaya Jangka Panjang: RENDAH
+Kelayakan: SEDANG
 
 
-OPTION E — LAYOUT REDESIGN
+OPSI C — PEMESANAN ONLINE
 
-Initial Cost: Rp25M
-Operational Impact: MEDIUM
-Implementation: 3 weeks
-Long-term Cost: LOW
-Feasibility: MEDIUM`
+Biaya Awal: Rp20 juta
+Dampak Operasional: SEDANG
+Implementasi: 2 minggu
+Biaya Jangka Panjang: SEDANG
+Kelayakan: TINGGI
+
+
+OPSI D — MANAJEMEN ANTREAN
+
+Biaya Awal: Rp15 juta
+Dampak Operasional: RENDAH–SEDANG
+Implementasi: 1 minggu
+Biaya Jangka Panjang: RENDAH
+Kelayakan: TINGGI
+
+
+OPSI E — DESAIN ULANG TATA LETAK
+
+Biaya Awal: Rp25 juta
+Dampak Operasional: SEDANG
+Implementasi: 3 minggu
+Biaya Jangka Panjang: RENDAH
+Kelayakan: SEDANG`
     }
 
 ];

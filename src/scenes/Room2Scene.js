@@ -30,7 +30,7 @@ export default class Room2Scene extends Phaser.Scene {
     create() {
 
         console.log(
-            "Starting Room 2: Mission 02 - Opportunity Analysis"
+            "Memulai Room 2: Misi 02 - Analisis Peluang"
         );
 
 
@@ -66,8 +66,9 @@ export default class Room2Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "Room 2 could not initialize ScoreManager."
+                "Room 2 gagal menginisialisasi ScoreManager."
             );
+
 
             return;
 
@@ -149,8 +150,9 @@ export default class Room2Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "ScoreManager not found in Room2Scene."
+                "ScoreManager tidak ditemukan di Room2Scene."
             );
+
 
             return;
 
@@ -162,10 +164,9 @@ export default class Room2Scene extends Phaser.Scene {
         // =================================================
 
         /*
-         * This resets only Room 2 notebook /
-         * assessment submission state.
+         * Hanya mereset status notebook dan assessment Room 2.
          *
-         * The global timer must NOT reset here.
+         * Timer global TIDAK direset di sini.
          */
 
         this.scoreManager.setRoom(
@@ -240,7 +241,7 @@ export default class Room2Scene extends Phaser.Scene {
                 (points) => {
 
                     console.log(
-                        `Room 2 Notebook completed. +${points} points`
+                        `Catatan Room 2 selesai. +${points} poin`
                     );
 
 
@@ -297,7 +298,7 @@ export default class Room2Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "Room 2 RoomView could not be created."
+                "RoomView untuk Room 2 gagal dibuat."
             );
 
         }
@@ -317,7 +318,7 @@ export default class Room2Scene extends Phaser.Scene {
 
         this.terminal.setRoom(
 
-            "MISSION 02: OPPORTUNITY ANALYSIS\nMANAGEMENT OFFICE"
+            "MISI 02: ANALISIS PELUANG\nKANTOR MANAJEMEN"
 
         );
 
@@ -328,9 +329,9 @@ export default class Room2Scene extends Phaser.Scene {
 
         this.terminal.setDialogue(
 
-            "Welcome to Room 2.\n" +
-            "Complete your Investigation Notebook to unlock the Assessment.\n" +
-            "Evidence is optional, but thorough investigation may earn additional recognition."
+            "Selamat datang di Room 2.\n" +
+            "Selesaikan Catatan Investigasi untuk membuka Asesmen.\n" +
+            "Pemeriksaan bukti bersifat opsional, tetapi investigasi menyeluruh dapat memberikan penghargaan tambahan."
 
         );
 
@@ -379,8 +380,9 @@ export default class Room2Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "RoomView not initialized."
+                "RoomView belum diinisialisasi."
             );
+
 
             return;
 
@@ -388,6 +390,7 @@ export default class Room2Scene extends Phaser.Scene {
 
 
         ROOM2_OBJECTS.forEach(
+
             object => {
 
                 this.roomView.addObject(
@@ -395,6 +398,7 @@ export default class Room2Scene extends Phaser.Scene {
                 );
 
             }
+
         );
 
     }
@@ -413,8 +417,9 @@ export default class Room2Scene extends Phaser.Scene {
         ) {
 
             console.error(
-                "Global timer methods are missing from ScoreManager."
+                "Method timer global tidak tersedia di ScoreManager."
             );
+
 
             return;
 
@@ -437,6 +442,7 @@ export default class Room2Scene extends Phaser.Scene {
         ) {
 
             this.handleGlobalTimeExpired();
+
 
             return;
 
@@ -549,25 +555,18 @@ export default class Room2Scene extends Phaser.Scene {
             this.scoreManager.getFormattedTime();
 
 
-        // =================================================
-        // TERMINAL ONLY DISPLAYS TIME
-        // =================================================
-
         this.terminal.setTime(
             formatted
         );
 
-
-        // =================================================
-        // COLOR WARNING
-        // =================================================
 
         if (
             this.terminal.timeText
         ) {
 
             if (
-                remaining <= 60
+                remaining <=
+                60
             ) {
 
                 this.terminal.timeText.setColor(
@@ -575,9 +574,9 @@ export default class Room2Scene extends Phaser.Scene {
                 );
 
             }
-
             else if (
-                remaining <= 180
+                remaining <=
+                180
             ) {
 
                 this.terminal.timeText.setColor(
@@ -585,7 +584,6 @@ export default class Room2Scene extends Phaser.Scene {
                 );
 
             }
-
             else {
 
                 this.terminal.timeText.setColor(
@@ -605,10 +603,6 @@ export default class Room2Scene extends Phaser.Scene {
 
     handleGlobalTimeExpired() {
 
-        // =================================================
-        // PREVENT DOUBLE TRANSITION
-        // =================================================
-
         if (
             this.timeExpiredHandled
         ) {
@@ -623,7 +617,7 @@ export default class Room2Scene extends Phaser.Scene {
 
 
         console.log(
-            "20-minute global game timer expired in Room 2."
+            "Timer global 20 menit habis di Room 2."
         );
 
 
@@ -660,8 +654,8 @@ export default class Room2Scene extends Phaser.Scene {
 
             this.terminal.setDialogue(
 
-                "TIME EXPIRED.\n" +
-                "The Founder Assessment has ended."
+                "WAKTU HABIS.\n" +
+                "Asesmen Pendiri telah berakhir."
 
             );
 
@@ -733,7 +727,7 @@ export default class Room2Scene extends Phaser.Scene {
     unlockAssessment() {
 
         console.log(
-            "Room 2 Assessment unlocked!"
+            "Asesmen Room 2 terbuka!"
         );
 
 
@@ -748,9 +742,9 @@ export default class Room2Scene extends Phaser.Scene {
 
         this.terminal.setDialogue(
 
-            "Notebook submitted.\n" +
-            "Your final Assessment is now available.\n" +
-            "You may still investigate additional evidence before answering."
+            "Catatan Investigasi telah dikumpulkan.\n" +
+            "Asesmen akhir Anda sekarang tersedia.\n" +
+            "Anda masih dapat memeriksa bukti tambahan sebelum memberikan jawaban."
 
         );
 
@@ -771,10 +765,6 @@ export default class Room2Scene extends Phaser.Scene {
 
             (id) => {
 
-                // =================================================
-                // BLOCK INPUT AFTER TIMER ENDS
-                // =================================================
-
                 if (
                     this.timeExpiredHandled
                 ) {
@@ -788,21 +778,12 @@ export default class Room2Scene extends Phaser.Scene {
                     id
                 ) {
 
-
-                    // =====================================
-                    // NOTEBOOK
-                    // =====================================
-
                     case "notebook":
 
                         this.notebookViewer.open();
 
                         break;
 
-
-                    // =====================================
-                    // ASSESSMENT
-                    // =====================================
 
                     case "assessment":
 
@@ -811,20 +792,12 @@ export default class Room2Scene extends Phaser.Scene {
                         break;
 
 
-                    // =====================================
-                    // HINT
-                    // =====================================
-
                     case "hint":
 
                         this.openHint();
 
                         break;
 
-
-                    // =====================================
-                    // PROGRESS
-                    // =====================================
 
                     case "progress":
 
@@ -833,14 +806,10 @@ export default class Room2Scene extends Phaser.Scene {
                         break;
 
 
-                    // =====================================
-                    // TEMPORARY DEVELOPMENT SHORTCUT
-                    // =====================================
-
                     case "continue":
 
                         console.log(
-                            "DEV: Skipping Room 2 → Room 3"
+                            "DEV: Melewati Room 2 → Room 3"
                         );
 
 
@@ -873,17 +842,16 @@ export default class Room2Scene extends Phaser.Scene {
 
                         );
 
+
                         break;
 
-
-                    // =====================================
-                    // UNKNOWN BUTTON
-                    // =====================================
 
                     default:
 
                         console.warn(
-                            `Unknown sidebar button: ${id}`
+
+                            `Tombol sidebar tidak dikenal: ${id}`
+
                         );
 
                 }
@@ -946,6 +914,7 @@ export default class Room2Scene extends Phaser.Scene {
 
             this.handleGlobalTimeExpired();
 
+
             return;
 
         }
@@ -962,15 +931,16 @@ export default class Room2Scene extends Phaser.Scene {
             this.window.open({
 
                 title:
-                    "Assessment Locked"
+                    "Asesmen Terkunci"
 
             });
 
 
             this.window.setContent(
 
-                "Complete and submit the Investigation Notebook first.\n\n" +
-                "Evidence investigation is optional."
+                "Selesaikan dan kumpulkan Catatan Investigasi terlebih dahulu.\n\n" +
+
+                "Pemeriksaan bukti bersifat opsional."
 
             );
 
@@ -981,18 +951,7 @@ export default class Room2Scene extends Phaser.Scene {
 
 
         // =================================================
-        // NO EVIDENCE REQUIREMENT
-        // =================================================
-
-        /*
-         * Evidence remains optional.
-         *
-         * Thorough Investigator is only a bonus.
-         */
-
-
-        // =================================================
-        // CHECK OPTIONAL ACHIEVEMENT
+        // EVIDENCE REMAINS OPTIONAL
         // =================================================
 
         this.checkThoroughInvestigator();
@@ -1025,6 +984,7 @@ export default class Room2Scene extends Phaser.Scene {
 
 
         const allInvestigated =
+
             this.roomView
                 .allObjectsInvestigated();
 
@@ -1039,14 +999,14 @@ export default class Room2Scene extends Phaser.Scene {
 
 
             console.log(
-                "ACHIEVEMENT UNLOCKED: Thorough Investigator — Room 2"
+                "ACHIEVEMENT TERBUKA: Investigator Menyeluruh — Room 2"
             );
 
 
             this.terminal.setDialogue(
 
-                "Achievement unlocked: Thorough Investigator!\n" +
-                "You examined every available source of evidence."
+                "Pencapaian terbuka: Investigator Menyeluruh!\n" +
+                "Anda telah memeriksa seluruh sumber bukti yang tersedia."
 
             );
 
@@ -1067,21 +1027,18 @@ export default class Room2Scene extends Phaser.Scene {
         this.window.open({
 
             title:
-                "EVA Hint"
+                "Petunjuk EVA"
 
         });
 
 
         this.window.setContent(
 
-            "Compare what the manager believes with what customers " +
-            "and the operational data actually show.\n\n" +
+            "Bandingkan apa yang diyakini oleh manajer dengan apa yang sebenarnya ditunjukkan oleh pelanggan dan data operasional.\n\n" +
 
-            "Look for patterns across interviews, surveys, reviews, " +
-            "and the sales dashboard rather than relying on one source.\n\n" +
+            "Cari pola dari wawancara, survei, ulasan, dan dasbor penjualan daripada hanya mengandalkan satu sumber informasi.\n\n" +
 
-            "Evidence investigation is optional, but stronger conclusions " +
-            "usually come from stronger evidence."
+            "Pemeriksaan bukti bersifat opsional, tetapi kesimpulan yang lebih kuat biasanya berasal dari bukti yang lebih kuat."
 
         );
 
@@ -1107,9 +1064,12 @@ export default class Room2Scene extends Phaser.Scene {
         // =================================================
 
         const notebookStatus =
+
             this.scoreManager.isNotebookSubmitted()
-                ? "Completed"
-                : "Not Completed";
+
+                ? "Selesai"
+
+                : "Belum Selesai";
 
 
         // =================================================
@@ -1117,12 +1077,17 @@ export default class Room2Scene extends Phaser.Scene {
         // =================================================
 
         const assessmentStatus =
+
             this.scoreManager.isAssessmentSubmitted()
-                ? "Completed"
+
+                ? "Selesai"
+
                 : (
                     this.scoreManager.isNotebookSubmitted()
-                        ? "Unlocked"
-                        : "Locked"
+
+                        ? "Terbuka"
+
+                        : "Terkunci"
                 );
 
 
@@ -1145,6 +1110,7 @@ export default class Room2Scene extends Phaser.Scene {
         ) {
 
             investigatedCount =
+
                 this.roomView
                     .getInvestigatedObjects()
                     .length;
@@ -1160,8 +1126,11 @@ export default class Room2Scene extends Phaser.Scene {
 
 
         const achievementStatus =
+
             this.thoroughInvestigatorEarned
-                ? "Unlocked ✓"
+
+                ? "Terbuka ✓"
+
                 : `${investigatedCount} / ${totalEvidence}`;
 
 
@@ -1172,29 +1141,29 @@ export default class Room2Scene extends Phaser.Scene {
         this.window.open({
 
             title:
-                "Mission Progress"
+                "Progres Misi"
 
         });
 
 
         this.window.setContent(
 
-            "MISSION 02: OPPORTUNITY ANALYSIS\n" +
-            "MANAGEMENT OFFICE\n\n" +
+            "MISI 02: ANALISIS PELUANG\n" +
+            "KANTOR MANAJEMEN\n\n" +
 
-            `Time Remaining: ${timeRemaining}\n\n` +
+            `Sisa Waktu: ${timeRemaining}\n\n` +
 
-            `Notebook: ${notebookStatus}\n` +
+            `Catatan Investigasi: ${notebookStatus}\n` +
 
-            `Assessment: ${assessmentStatus}\n` +
+            `Asesmen: ${assessmentStatus}\n` +
 
-            `Evidence: ${investigatedCount} / ${totalEvidence}\n\n` +
+            `Bukti: ${investigatedCount} / ${totalEvidence}\n\n` +
 
-            "BONUS ACHIEVEMENT\n" +
+            "PENCAPAIAN BONUS\n" +
 
-            `Thorough Investigator: ${achievementStatus}\n\n` +
+            `Investigator Menyeluruh: ${achievementStatus}\n\n` +
 
-            `Current Score: ${score}`
+            `Skor Saat Ini: ${score}`
 
         );
 
@@ -1210,6 +1179,7 @@ export default class Room2Scene extends Phaser.Scene {
     ) {
 
         const object =
+
             ROOM2_OBJECTS.find(
 
                 obj =>
@@ -1218,17 +1188,16 @@ export default class Room2Scene extends Phaser.Scene {
             );
 
 
-        // =================================================
-        // UNKNOWN OBJECT
-        // =================================================
-
         if (
             !object
         ) {
 
             console.warn(
-                `Unknown Room 2 object: ${id}`
+
+                `Objek Room 2 tidak dikenal: ${id}`
+
             );
+
 
             return;
 
@@ -1236,21 +1205,22 @@ export default class Room2Scene extends Phaser.Scene {
 
 
         console.log(
-            `Room 2 object clicked: ${object.id}`
+
+            `Objek Room 2 diklik: ${object.id}`
+
         );
 
-
-        // =================================================
-        // CHECK EVIDENCE
-        // =================================================
 
         if (
             !object.evidence
         ) {
 
             console.warn(
-                `No evidence assigned to room object: ${object.id}`
+
+                `Tidak ada bukti yang terhubung ke objek Room 2: ${object.id}`
+
             );
+
 
             return;
 
@@ -1284,9 +1254,9 @@ export default class Room2Scene extends Phaser.Scene {
     cleanupScene() {
 
         /*
-         * Stop ONLY the Room 2 Phaser event.
+         * Hanya hentikan Phaser timer event milik Room 2.
          *
-         * Do not reset ScoreManager's global timer.
+         * Jangan reset timer global di ScoreManager.
          */
 
         this.stopLocalTimerEvent();

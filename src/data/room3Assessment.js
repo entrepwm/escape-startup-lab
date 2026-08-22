@@ -1,62 +1,62 @@
 const ROOM3_ASSESSMENT = [
 
     // =====================================================
-    // OPTION A — ADDITIONAL STAFF
+    // OPSI A — TAMBAHAN STAF
     // =====================================================
 
     {
         id: "additional_staff",
 
         text:
-            "Hire two additional kitchen employees to increase peak-period capacity."
+            "Rekrut dua karyawan dapur tambahan untuk meningkatkan kapasitas selama periode sibuk."
     },
 
 
     // =====================================================
-    // OPTION B — KITCHEN EQUIPMENT
+    // OPSI B — PERALATAN DAPUR
     // =====================================================
 
     {
         id: "kitchen_equipment",
 
         text:
-            "Invest Rp40 million in upgraded kitchen equipment to improve operational capacity."
+            "Investasikan Rp40 juta untuk meningkatkan peralatan dapur guna menambah kapasitas operasional."
     },
 
 
     // =====================================================
-    // OPTION C — ONLINE ORDERING
+    // OPSI C — PEMESANAN ONLINE
     // =====================================================
 
     {
         id: "online_ordering",
 
         text:
-            "Invest Rp20 million in an online ordering system to reduce ordering time and improve convenience."
+            "Investasikan Rp20 juta pada sistem pemesanan online untuk mengurangi waktu pemesanan dan meningkatkan kenyamanan pelanggan."
     },
 
 
     // =====================================================
-    // OPTION D — QUEUE MANAGEMENT
+    // OPSI D — MANAJEMEN ANTREAN
     // =====================================================
 
     {
         id: "queue_management",
 
         text:
-            "Invest Rp15 million in a queue management system to improve customer flow and reduce uncertainty."
+            "Investasikan Rp15 juta pada sistem manajemen antrean untuk memperbaiki alur pelanggan dan mengurangi ketidakpastian waktu tunggu."
     },
 
 
     // =====================================================
-    // OPTION E — LAYOUT REDESIGN
+    // OPSI E — DESAIN ULANG TATA LETAK
     // =====================================================
 
     {
         id: "layout_redesign",
 
         text:
-            "Invest Rp25 million in redesigning the restaurant layout to improve operational flow."
+            "Investasikan Rp25 juta untuk mendesain ulang tata letak restoran guna meningkatkan alur operasional."
     }
 
 ];

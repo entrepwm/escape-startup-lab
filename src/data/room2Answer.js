@@ -1,11 +1,17 @@
 const ROOM2_ANSWER = {
 
-    correctRecommendation: "capacity",
+    correctRecommendation:
+        "capacity",
 
     explanation:
 
-        "The evidence consistently indicates that service speed is the main problem, especially during peak periods. Customer reviews and interviews mention long waiting times, while the sales dashboard shows that waiting time rises sharply when customer volume increases. Improving kitchen and service capacity directly addresses this bottleneck, whereas discounts or additional advertising could increase demand and make the waiting-time problem worse."
+        "Bukti secara konsisten menunjukkan bahwa kecepatan pelayanan merupakan masalah utama, terutama selama periode sibuk. " +
+
+        "Ulasan dan wawancara pelanggan menyebutkan waktu tunggu yang lama, sementara dasbor penjualan menunjukkan bahwa waktu tunggu meningkat tajam ketika jumlah pelanggan bertambah. " +
+
+        "Meningkatkan kapasitas dapur dan pelayanan secara langsung mengatasi bottleneck tersebut, sedangkan pemberian diskon atau peningkatan iklan justru dapat menambah permintaan dan memperburuk masalah waktu tunggu."
 
 };
+
 
 export default ROOM2_ANSWER;
