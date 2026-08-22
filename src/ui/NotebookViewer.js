@@ -17,14 +17,74 @@ export default class NotebookViewer {
         this.window =
             window;
 
-        this.notebookData =
-            notebookData;
-
         this.scoreManager =
             scoreManager;
 
         this.onSubmit =
             onSubmit;
+
+
+        // =====================================================
+        // NORMALIZE NOTEBOOK DATA
+        // =====================================================
+
+        /*
+         * Supported formats:
+         *
+         * 1. Direct array
+         *
+         * [
+         *     { id, question, options, correctAnswer }
+         * ]
+         *
+         * 2. Object wrapper
+         *
+         * {
+         *     questions: [
+         *         { id, question, options, correctAnswer }
+         *     ]
+         * }
+         */
+
+        if (
+            Array.isArray(
+                notebookData
+            )
+        ) {
+
+            this.notebookData =
+                notebookData;
+
+        }
+        else if (
+            notebookData &&
+            Array.isArray(
+                notebookData.questions
+            )
+        ) {
+
+            this.notebookData =
+                notebookData.questions;
+
+        }
+        else {
+
+            console.error(
+                "NotebookViewer menerima format notebook yang tidak valid:",
+                notebookData
+            );
+
+
+            this.notebookData =
+                [];
+
+        }
+
+
+        console.log(
+            "NotebookViewer loaded questions:",
+            this.notebookData.length
+        );
 
 
         // =====================================================
@@ -51,20 +111,9 @@ export default class NotebookViewer {
         this.contentWidth =
             410;
 
-        /*
-         * Question content is allowed to occupy this much
-         * vertical space before being slightly scaled down.
-         */
         this.maxQuestionHeight =
             340;
 
-
-        /*
-         * Footer positions are FIXED.
-         *
-         * Long questions can no longer push these controls
-         * beneath the notebook window.
-         */
         this.dividerY =
             352;
 
@@ -99,6 +148,43 @@ export default class NotebookViewer {
                 "Notebook already submitted."
             );
 
+
+            return;
+
+        }
+
+
+        // =================================================
+        // VALIDATE DATA
+        // =================================================
+
+        if (
+            !Array.isArray(
+                this.notebookData
+            ) ||
+            this.notebookData.length === 0
+        ) {
+
+            console.error(
+                "Notebook contains no questions."
+            );
+
+
+            this.window.open({
+
+                title:
+                    "Catatan Investigasi"
+
+            });
+
+
+            this.window.setContent(
+
+                "Data pertanyaan Catatan Investigasi tidak tersedia."
+
+            );
+
+
             return;
 
         }
@@ -115,7 +201,7 @@ export default class NotebookViewer {
         this.window.open({
 
             title:
-                "Investigation Notebook"
+                "Catatan Investigasi"
 
         });
 
@@ -130,6 +216,27 @@ export default class NotebookViewer {
     // =====================================================
 
     renderPage() {
+
+        // =================================================
+        // VALIDATE NOTEBOOK
+        // =================================================
+
+        if (
+            !Array.isArray(
+                this.notebookData
+            ) ||
+            this.notebookData.length === 0
+        ) {
+
+            console.error(
+                "Cannot render notebook: no questions."
+            );
+
+
+            return;
+
+        }
+
 
         // =================================================
         // CLEAR OLD CONTENT
@@ -153,13 +260,6 @@ export default class NotebookViewer {
         // QUESTION CONTAINER
         // =================================================
 
-        /*
-         * Questions are separated from the footer.
-         *
-         * Only this container may be scaled if a question
-         * is unusually long.
-         */
-
         const questionContainer =
             this.scene.add.container(
                 0,
@@ -181,12 +281,41 @@ export default class NotebookViewer {
         // =================================================
 
         const totalPages =
-            Math.ceil(
+            Math.max(
 
-                this.notebookData.length /
-                this.questionsPerPage
+                1,
+
+                Math.ceil(
+
+                    this.notebookData.length /
+                    this.questionsPerPage
+
+                )
 
             );
+
+
+        // Prevent invalid page position
+
+        if (
+            this.currentPage >=
+            totalPages
+        ) {
+
+            this.currentPage =
+                totalPages - 1;
+
+        }
+
+
+        if (
+            this.currentPage < 0
+        ) {
+
+            this.currentPage =
+                0;
+
+        }
 
 
         const startIndex =
@@ -220,6 +349,15 @@ export default class NotebookViewer {
                 this.notebookData[i];
 
 
+            if (
+                !question
+            ) {
+
+                continue;
+
+            }
+
+
             // =================================================
             // QUESTION NUMBER
             // =================================================
@@ -230,7 +368,7 @@ export default class NotebookViewer {
                     0,
                     currentY,
 
-                    `QUESTION ${i + 1}`,
+                    `PERTANYAAN ${i + 1}`,
 
                     {
 
@@ -270,7 +408,8 @@ export default class NotebookViewer {
                     0,
                     currentY,
 
-                    question.question,
+                    question.question ||
+                    "Pertanyaan tidak tersedia.",
 
                     {
 
@@ -314,7 +453,16 @@ export default class NotebookViewer {
             // OPTIONS
             // =================================================
 
-            question.options.forEach(
+            const options =
+                Array.isArray(
+                    question.options
+                )
+                    ? question.options
+                    : [];
+
+
+            options.forEach(
+
                 option => {
 
                     const optionText =
@@ -336,6 +484,7 @@ export default class NotebookViewer {
                         optionText.height + 8;
 
                 }
+
             );
 
         }
@@ -355,11 +504,6 @@ export default class NotebookViewer {
                 this.maxQuestionHeight /
                 currentY;
 
-
-            /*
-             * Don't allow the text to become excessively
-             * small.
-             */
 
             const safeScale =
                 Math.max(
@@ -386,11 +530,9 @@ export default class NotebookViewer {
 
 
         divider.lineStyle(
-
             1,
             0xd4d4d4,
             1
-
         );
 
 
@@ -448,7 +590,14 @@ export default class NotebookViewer {
                             "#cc0000",
 
                         align:
-                            "center"
+                            "center",
+
+                        wordWrap: {
+
+                            width:
+                                this.contentWidth
+
+                        }
 
                     }
 
@@ -764,10 +913,6 @@ export default class NotebookViewer {
         });
 
 
-        // =================================================
-        // HOVER IN
-        // =================================================
-
         optionText.on(
 
             "pointerover",
@@ -789,10 +934,6 @@ export default class NotebookViewer {
         );
 
 
-        // =================================================
-        // HOVER OUT
-        // =================================================
-
         optionText.on(
 
             "pointerout",
@@ -811,10 +952,6 @@ export default class NotebookViewer {
 
         );
 
-
-        // =================================================
-        // SELECT
-        // =================================================
 
         optionText.on(
 
@@ -952,11 +1089,8 @@ export default class NotebookViewer {
 
 
         this.notebookData.forEach(
-            question => {
 
-                // =================================================
-                // STANDARD FORMAT
-                // =================================================
+            question => {
 
                 if (
                     question.correctAnswer !==
@@ -969,12 +1103,6 @@ export default class NotebookViewer {
                         question.correctAnswer;
 
                 }
-
-
-                // =================================================
-                // ALTERNATIVE FORMAT: answer
-                // =================================================
-
                 else if (
                     question.answer !==
                     undefined
@@ -986,12 +1114,6 @@ export default class NotebookViewer {
                         question.answer;
 
                 }
-
-
-                // =================================================
-                // ALTERNATIVE FORMAT: correct
-                // =================================================
-
                 else if (
                     question.correct !==
                     undefined
@@ -1005,6 +1127,7 @@ export default class NotebookViewer {
                 }
 
             }
+
         );
 
 
@@ -1028,10 +1151,6 @@ export default class NotebookViewer {
 
     submitNotebook() {
 
-        // =================================================
-        // PREVENT DOUBLE SUBMISSION
-        // =================================================
-
         if (
             this.submitted
         ) {
@@ -1039,6 +1158,24 @@ export default class NotebookViewer {
             console.warn(
                 "Notebook has already been submitted."
             );
+
+
+            return;
+
+        }
+
+
+        if (
+            !Array.isArray(
+                this.notebookData
+            ) ||
+            this.notebookData.length === 0
+        ) {
+
+            console.error(
+                "Cannot submit an empty notebook."
+            );
+
 
             return;
 
@@ -1078,13 +1215,6 @@ export default class NotebookViewer {
                 "Notebook incomplete."
             );
 
-
-            /*
-             * Don't replace the notebook with an error page.
-             *
-             * Keep the player on the current page and show
-             * a small warning above the footer.
-             */
 
             this.warningMessage =
 
@@ -1177,7 +1307,7 @@ export default class NotebookViewer {
         if (
             this.scoreManager &&
             typeof this.scoreManager.getScore ===
-            "function"
+                "function"
         ) {
 
             console.log(
